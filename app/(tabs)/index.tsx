@@ -1,31 +1,29 @@
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View } from '../../components/Themed';
+import { View, Text } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import LottieView from 'lottie-react-native';
+import { styled } from 'nativewind';
 
 export default function TabOneScreen() {
+  const animation = useRef(null);
+
+  useEffect(() => {
+    if (animation.current != null) {
+      // @ts-expect-error: Type is wrong
+      animation.current.play();
+    }
+  }, []);
+
+  const StyledLottieView = styled(LottieView);
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+    <View className=" flex h-full w-full justify-center bg-amber-800">
+      <Text className="self-center p-3 pt-4 text-2xl text-yellow-300">Hello TOPIX</Text>
+      <StyledLottieView
+        autoPlay
+        ref={animation}
+        className={'w-56 self-center'}
+        source={require('../../assets/lottie/talking.json')}
+        loop
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});
