@@ -1,9 +1,14 @@
-import 'react-native-url-polyfill/auto'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { createClient } from '@supabase/supabase-js'
+import 'react-native-url-polyfill/auto';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createClient } from '@supabase/supabase-js';
+import { Alert } from 'react-native';
 
-const supabaseUrl = "https://oeybruqyypqhrcxcgkbw.supabase.co";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9leWJydXF5eXBxaHJjeGNna2J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTYzMjM3NDQsImV4cCI6MjAxMTg5OTc0NH0.WHyDOkZI_dPG8-yMZXT48WD4uf_-GJHGLpjldtHdIwU";
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+if (supabaseUrl == null || supabaseAnonKey == null) {
+  throw new Error('Missing env variables SUPABASE_URL or SUPABASE_ANON_KEY');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -12,4 +17,34 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: false,
   },
-})
+});
+
+export async function signInWithEmail(email: string, password: string) {
+  const { error, data } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error != null) {
+    Alert.alert(error.message);
+    return { error, data: null };
+  }
+
+  return { error: null, data };
+}
+
+export async function signUpWithEmail(email: string, password: string) {
+  console.log('signUpWithEmail', email, password);
+  const { error, data } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  if (error != null) {
+    console.log(error);
+    Alert.alert(error.message);
+    return { error, data: null };
+  }
+
+  return { error: null, data };
+}
