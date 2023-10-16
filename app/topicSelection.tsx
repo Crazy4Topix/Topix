@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Pressable, SafeAreaView, View, Text } from 'react-native';
+import { Pressable, SafeAreaView, View, Text, Image } from 'react-native';
+import LoadingBar from '../components/LoadingBar';
 
 export default function TopicSelection() {
   const [topics, setTopics] = useState([
@@ -11,11 +12,20 @@ export default function TopicSelection() {
     { text: 'Games & Hobbies', value: 'games-hobbies', selected: false },
     { text: 'Government & Organizations', value: 'government-organizations', selected: false },
     { text: 'Health', value: 'health', selected: false },
+    { text: 'Kids & Family', value: 'kids-family', selected: false },
+    { text: 'Music', value: 'music', selected: false },
   ]);
 
   return (
     <View className={'mt-12 flex w-full justify-center'}>
-      <Text className={'font-Poppins_500_medium mx-8 text-center text-2xl'}>
+      <Image
+        source={require('../assets/images/Topix_wit.png')}
+        className={' h-24 w-8/12 self-center'}
+      />
+      <View className={'py-5'}>
+        <LoadingBar percentage={50} />
+      </View>
+      <Text className={'mx-8 pb-10 text-center font-Poppins_500_medium text-2xl'}>
         <Text>Kies de</Text>
         <Text className={'font-Poppins_700_bold'}> Topix </Text>
         <Text>die jij interessant vindt</Text>
@@ -26,7 +36,7 @@ export default function TopicSelection() {
             <Pressable
               className={`${
                 topic.selected ? 'bg-primary' : 'bg-secondary'
-              } flex h-16 w-36 justify-center rounded-lg`}
+              } flex h-20 w-5/12 justify-center rounded-lg`}
               key={'topic-' + topic.text}
               onPress={() => {
                 setTopics(
@@ -39,7 +49,7 @@ export default function TopicSelection() {
                 );
               }}
             >
-              <Text className={'font-Poppins_500_medium text-center'}>{topic.text}</Text>
+              <Text className={'text-center font-Poppins_500_medium'}>{topic.text}</Text>
             </Pressable>
           );
         })}

@@ -47,7 +47,7 @@ export default function Signup() {
       .upsert({
         id: data?.data?.user?.id,
         full_name: values.name,
-        birthday: values.birthday,
+        birthdate: values.birthday,
         gender: values.gender,
       })
       .select();
