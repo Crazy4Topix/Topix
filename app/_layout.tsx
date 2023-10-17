@@ -26,6 +26,7 @@ import {
   Poppins_900Black_Italic,
 } from '@expo-google-fonts/poppins';
 import SignUpHeader from '../components/SignUpHeader';
+import { SupabaseUserProvider } from '../contexts/supabase_user';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -68,26 +69,29 @@ function RootLayoutNav() {
 
   return (
     <SupabaseUserSessionProvider>
-      <Stack
-        screenOptions={{
-          header: (props) => <SignUpHeader {...props} />,
-        }}
-      >
-        <Stack.Screen
-          name={'welcome'}
-          options={{
-            headerShown: false,
+      <SupabaseUserProvider>
+        <Stack
+          screenOptions={{
+            header: (props) => <SignUpHeader {...props} />,
           }}
-        />
-        <Stack.Screen name={'signup'} />
-        <Stack.Screen
-          name={'login'}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen name={'topicSelection'} />
-      </Stack>
+        >
+          <Stack.Screen
+            name={'welcome'}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen name={'signup'} />
+          <Stack.Screen
+            name={'login'}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen name={'userInformation'} />
+          <Stack.Screen name={'topicSelection'} />
+        </Stack>
+      </SupabaseUserProvider>
     </SupabaseUserSessionProvider>
   );
 }

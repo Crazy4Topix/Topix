@@ -1,17 +1,21 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { type FunctionComponent, useContext, useState } from 'react';
 import { Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
 import * as yup from 'yup';
-import { signUpWithEmail, supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import { styled } from 'nativewind';
 import { Picker } from '@react-native-picker/picker';
 import { Formik } from 'formik';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { SupabaseUser } from '../contexts/supabase_user';
+import { useNavigation } from 'expo-router';
+import { SupabaseUserSession } from '../contexts/user_session';
 
-interface OwnProps {}
+const userInformation: FunctionComponent = () => {
+  const { user } = useContext(SupabaseUser);
+  const { session } = useContext(SupabaseUserSession);
 
-type Props = OwnProps;
+  const navigation = useNavigation();
 
-const userInformation: FunctionComponent<Props> = (props) => {
   const validationSchema = yup.object({
     name: yup.string().required('name is required'),
     gender: yup
@@ -24,45 +28,44 @@ const userInformation: FunctionComponent<Props> = (props) => {
       .max(new Date(), 'Cannot be in the future'),
   });
 
-  const submitForm = async (
-    values: { name: string; gender: string; birthday: Date },
-    { setErrors }: any
-  ) => {
-    // TODO: implement session
-    // setSession(data.data.session);
-    // const { error, status } = await supabase
-    //   .from('profiles')
-    //   .upsert({
-    //     id: data?.data?.user?.id,
-    //     full_name: values.name,
-    //     birthdate: values.birthday,
-    //     gender: values.gender,
-    //   })
-    //   .select();
-    //
-    // console.log('Update', status, data?.data?.user, error);
-    //
-    // if (error !== null) {
-    //   console.log('Error creating profile', error);
-    // }
+  const submitForm = async (values: { name: string; gender: string; birthday: Date }) => {
+    const { error, status } = await supabase
+      .from('profiles')
+      .upsert({
+        id: user?.id,
+        full_name: values.name,
+        birthdate: values.birthday,
+        gender: values.gender,
+      })
+      .select();
+
+    console.log('Update', status, user, error);
+
+    if (error !== null) {
+      console.log('Error creating profile', error, user, session);
+      return;
+    }
+
+    // @ts-expect-error It complains about never but it is there
+    navigation.navigate('topicSelection');
   };
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const StyledPicker = styled(Picker);
 
   return (
-    <SafeAreaView className={'mx-5 h-full pt-12'}>
+    <SafeAreaView className={'h-full w-full bg-white px-5 pt-12'}>
       <Formik
         initialValues={{ name: '', gender: 'other', birthday: new Date() }}
         onSubmit={submitForm}
         validationSchema={validationSchema}
       >
         {({ handleChange, setFieldValue, handleBlur, handleSubmit, values, errors, touched }) => (
-          <View className={'flex bg-background'}>
+          <View className={'flex'}>
             <Text className={'text-lg text-primary-text'}>Full name</Text>
             <TextInput
               className={
-                'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
+                'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-Poppins_regular text-base text-primary-text'
               }
               onChangeText={handleChange('name')}
               onBlur={handleBlur('name')}
@@ -132,7 +135,7 @@ const userInformation: FunctionComponent<Props> = (props) => {
             )}
             <View className={'flex shrink'}>
               <Text className={'text-lg text-red-600'}>
-                {errors.birthday != null && touched.birthday === true && errors.birthday}
+                {errors.birthday != null && touched.birthday === true && String(errors.birthday)}
               </Text>
             </View>
 
@@ -143,7 +146,7 @@ const userInformation: FunctionComponent<Props> = (props) => {
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >
-              <Text className={'self-center text-white'}>Submit</Text>
+              <Text className={'self-center text-white'}>Next</Text>
             </Pressable>
           </View>
         )}

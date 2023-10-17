@@ -11,18 +11,20 @@ const SignUpHeader: FunctionComponent<Props> = (props: OwnProps) => {
   const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
-    console.log(props.route.name);
-    return () => {
-      if (props.route.name === 'signup') {
-        setPercentage(25);
-      } else if (props.route.name === 'update_user_info') {
-        setPercentage(50);
-      } else if (props.route.name === 'topicSelection') {
-        setPercentage(75);
-      } else {
-        setPercentage(0);
-      }
-    };
+    console.log(props.route.name, props.route.name === 'signup');
+    if (props.route.name === 'signup') {
+      console.log('25 percent');
+      setPercentage(25);
+    } else if (props.route.name === 'userInformation') {
+      console.log('50 percent');
+      setPercentage(50);
+    } else if (props.route.name === 'topicSelection') {
+      console.log('75 percent');
+      setPercentage(75);
+    } else {
+      console.log('Nothing');
+      setPercentage(0);
+    }
   }, [props.route.name]);
 
   return (
