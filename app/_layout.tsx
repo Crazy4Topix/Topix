@@ -76,6 +76,7 @@ function RootLayoutNav() {
         <Stack.Screen name={'signup'} />
         <Stack.Screen name={'login'} />
         <Stack.Screen name={'topicSelection'} />
+        <Stack.Screen name={'homePage'} />
       </Stack>
     </SupabaseUserSessionProvider>
   );
