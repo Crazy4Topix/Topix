@@ -8,3 +8,4 @@ npm install
 ```
 npm run android --tunnel
 ```
+run
