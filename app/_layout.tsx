@@ -37,6 +37,10 @@ NativeWindStyleSheet.setOutput({
   default: 'native',
 });
 
+export const unstable_settings = {
+  initialRouteName: '(app)',
+};
+
 export default function RootLayout() {
   return <RootLayoutNav />;
 }
@@ -73,8 +77,15 @@ function RootLayoutNav() {
         <Stack
           screenOptions={{
             header: (props) => <SignUpHeader {...props} />,
+            animation: 'slide_from_right',
           }}
         >
+          <Stack.Screen
+            name="(app)"
+            options={{
+              headerShown: false,
+            }}
+          />
           <Stack.Screen
             name={'welcome'}
             options={{

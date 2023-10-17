@@ -18,11 +18,10 @@ export const SupabaseUserSessionProvider = ({ children }: ProvidersProps) => {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    void supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Session', session);
-      setSession(session);
-    });
-
+    // void supabase.auth.getSession().then(({ data: { session } }) => {
+    //   console.log('Session', session);
+    //   setSession(session);
+    // });
     supabase.auth.onAuthStateChange((_event, session) => {
       console.log('Session changed', session, _event);
       setSession(session);

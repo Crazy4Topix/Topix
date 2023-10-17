@@ -29,7 +29,7 @@ const TopicSelection = () => {
 
   return (
     <View className={'flex w-full justify-center bg-white pt-12'}>
-      <Text className={'font-primary_medium mx-8 pb-10 text-center text-2xl'}>
+      <Text className={'mx-8 pb-10 text-center font-primary_medium text-2xl'}>
         <Text>Kies de</Text>
         <Text className={'font-primary_bold'}> Topix </Text>
         <Text>die jij interessant vindt</Text>
@@ -53,14 +53,13 @@ const TopicSelection = () => {
                 );
               }}
             >
-              <Text className={'font-primary_medium text-center'}>{topic.text}</Text>
+              <Text className={'text-center font-primary_medium'}>{topic.text}</Text>
             </Pressable>
           );
         })}
         <Pressable
           onPress={() => {
             handleSubmit();
-            console.log('Click');
           }}
           className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
         >

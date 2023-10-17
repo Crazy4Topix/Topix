@@ -48,3 +48,14 @@ export async function signUpWithEmail(email: string, password: string) {
 
   return { error: null, data };
 }
+
+export async function signOut() {
+  const { error } = await supabase.auth.signOut();
+
+  if (error != null) {
+    Alert.alert(error.message);
+    return { error };
+  }
+
+  return { error: null };
+}

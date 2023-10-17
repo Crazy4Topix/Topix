@@ -34,11 +34,11 @@ export default function Login() {
         validationSchema={validationSchema}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-          <View className={'bg-background flex'}>
-            <Text className={'text-primary-text text-lg'}>Email</Text>
+          <View className={'flex bg-background'}>
+            <Text className={'text-lg text-primary-text'}>Email</Text>
             <TextInput
               className={
-                'border-primary font-primary-cond text-primary-text w-full rounded-lg border-2 bg-white px-3 py-2 text-base'
+                'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
               }
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
@@ -54,10 +54,10 @@ export default function Login() {
               </Text>
             </View>
 
-            <Text className={'font-primary-cond-bold  text-primary-text text-lg'}>Password</Text>
+            <Text className={'font-primary-cond-bold  text-lg text-primary-text'}>Password</Text>
             <TextInput
               className={
-                'border-primary font-primary-cond w-full rounded-lg border-2 bg-white px-3 py-2 text-base text-black'
+                'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-black'
               }
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
@@ -76,9 +76,8 @@ export default function Login() {
             <Pressable
               onPress={() => {
                 handleSubmit();
-                console.log('Click');
               }}
-              className={'bg-accent flex h-16 w-32 justify-center rounded-md'}
+              className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >
               <Text className={'self-center text-white'}>Submit</Text>
             </Pressable>

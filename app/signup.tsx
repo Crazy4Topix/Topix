@@ -121,7 +121,6 @@ const Signup: FunctionComponent<Props> = (_: OwnProps) => {
             <Pressable
               onPress={() => {
                 handleSubmit();
-                console.log('Click');
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >

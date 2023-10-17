@@ -2,8 +2,8 @@ import React, { type FunctionComponent, useContext, useState } from 'react';
 import { Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
 import * as yup from 'yup';
 import { supabase } from '../lib/supabase';
-import { styled } from 'nativewind';
-import { Picker } from '@react-native-picker/picker';
+// import { styled } from 'nativewind';
+// import { Picker } from '@react-native-picker/picker';
 import { Formik } from 'formik';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { SupabaseUser } from '../contexts/supabase_user';
@@ -18,10 +18,10 @@ const userInformation: FunctionComponent = () => {
 
   const validationSchema = yup.object({
     name: yup.string().required('name is required'),
-    gender: yup
-      .mixed()
-      .oneOf(['male', 'female', 'other'] as const)
-      .defined(),
+    // gender: yup
+    //   .mixed()
+    //   .oneOf(['male', 'female', 'other'] as const)
+    //   .defined(),
     birthday: yup
       .date()
       .required('Birthday is required')
@@ -35,7 +35,7 @@ const userInformation: FunctionComponent = () => {
         id: user?.id,
         full_name: values.name,
         birthdate: values.birthday,
-        gender: values.gender,
+        // gender: values.gender,
       })
       .select();
 
@@ -51,7 +51,7 @@ const userInformation: FunctionComponent = () => {
   };
 
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const StyledPicker = styled(Picker);
+  // const StyledPicker = styled(Picker);
 
   return (
     <SafeAreaView className={'h-full w-full bg-white px-5 pt-12'}>
@@ -65,7 +65,7 @@ const userInformation: FunctionComponent = () => {
             <Text className={'text-lg text-primary-text'}>Full name</Text>
             <TextInput
               className={
-                'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-Poppins_regular text-base text-primary-text'
+                'font-Poppins_regular w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
               }
               onChangeText={handleChange('name')}
               onBlur={handleBlur('name')}
@@ -80,30 +80,30 @@ const userInformation: FunctionComponent = () => {
               </Text>
             </View>
 
-            <Text className={'text-lg text-primary-text'}>Gender</Text>
-            <StyledPicker
-              mode="dropdown"
-              prompt={'Gender'}
-              itemStyle={{ backgroundColor: 'grey' }}
-              className={
-                'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
-              }
-              selectedValue={values.gender}
-              onValueChange={(itemValue, _) => {
-                setFieldValue('gender', itemValue).catch((err: any) => {
-                  console.log(err);
-                });
-              }}
-            >
-              <Picker.Item value={'male'} label={'Male'}></Picker.Item>
-              <Picker.Item value={'female'} label={'Female'}></Picker.Item>
-              <Picker.Item value={'other'} label={'Other'}></Picker.Item>
-            </StyledPicker>
-            <View className={'flex shrink'}>
-              <Text className={'text-lg text-red-600'}>
-                {errors.gender != null && touched.gender === true && errors.gender}
-              </Text>
-            </View>
+            {/* <Text className={'text-lg text-primary-text'}>Gender</Text> */}
+            {/* <StyledPicker */}
+            {/*  mode="dropdown" */}
+            {/*  prompt={'Gender'} */}
+            {/*  itemStyle={{ backgroundColor: 'grey' }} */}
+            {/*  className={ */}
+            {/*    'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text' */}
+            {/*  } */}
+            {/*  selectedValue={values.gender} */}
+            {/*  onValueChange={(itemValue, _) => { */}
+            {/*    setFieldValue('gender', itemValue).catch((err: any) => { */}
+            {/*      console.log(err); */}
+            {/*    }); */}
+            {/*  }} */}
+            {/* > */}
+            {/*  <Picker.Item value={'male'} label={'Male'}></Picker.Item> */}
+            {/*  <Picker.Item value={'female'} label={'Female'}></Picker.Item> */}
+            {/*  <Picker.Item value={'other'} label={'Other'}></Picker.Item> */}
+            {/* </StyledPicker> */}
+            {/* <View className={'flex shrink'}> */}
+            {/*  <Text className={'text-lg text-red-600'}>  */}
+            {/*    {errors.gender != null && touched.gender === true && errors.gender} */}
+            {/*  </Text> */}
+            {/* </View> */}
 
             <Text className={'text-lg text-primary-text'}>Birthday</Text>
             <Pressable
