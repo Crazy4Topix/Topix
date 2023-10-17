@@ -18,13 +18,6 @@ export default function TopicSelection() {
 
   return (
     <View className={'mt-12 flex w-full justify-center'}>
-      <Image
-        source={require('../assets/images/Topix_wit.png')}
-        className={' h-24 w-8/12 self-center'}
-      />
-      <View className={'py-5'}>
-        <LoadingBar percentage={50} />
-      </View>
       <Text className={'mx-8 pb-10 text-center font-Poppins_500_medium text-2xl'}>
         <Text>Kies de</Text>
         <Text className={'font-Poppins_700_bold'}> Topix </Text>
