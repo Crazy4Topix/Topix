@@ -17,9 +17,15 @@ export default function Welcome() {
         </Pressable>
       </Link>
 
-      <Link className={'mt-32 self-center'} href={'/topicSelection'} asChild>
+      {/* <Link className={'mt-32 self-center'} href={'/topicSelection'} asChild>
         <Pressable className={'rounded-lg bg-accent p-2'}>
           <Text className={'text-lg text-white'}> Test</Text>
+        </Pressable>
+      </Link> */}
+
+      <Link className={'mt-32 self-center'} href={'/mp3_player2'} asChild>
+        <Pressable className={'rounded-lg bg-accent p-2'}>
+          <Text className={'text-lg text-white'}> audio</Text>
         </Pressable>
       </Link>
     </SafeAreaView>
