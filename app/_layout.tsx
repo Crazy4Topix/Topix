@@ -25,6 +25,8 @@ import {
   Poppins_900Black,
   Poppins_900Black_Italic,
 } from '@expo-google-fonts/poppins';
+import SignUpHeader from '../components/SignUpHeader';
+import { SupabaseUserProvider } from '../contexts/supabase_user';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -34,6 +36,10 @@ export {
 NativeWindStyleSheet.setOutput({
   default: 'native',
 });
+
+export const unstable_settings = {
+  initialRouteName: '(app)',
+};
 
 export default function RootLayout() {
   return <RootLayoutNav />;
@@ -67,16 +73,36 @@ function RootLayoutNav() {
 
   return (
     <SupabaseUserSessionProvider>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name={'welcome'} />
-        <Stack.Screen name={'signup'} />
-        <Stack.Screen name={'login'} />
-        <Stack.Screen name={'topicSelection'} />
-      </Stack>
+      <SupabaseUserProvider>
+        <Stack
+          screenOptions={{
+            header: (props) => <SignUpHeader {...props} />,
+            animation: 'slide_from_right',
+          }}
+        >
+          <Stack.Screen
+            name="(app)"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name={'welcome'}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen name={'signup'} />
+          <Stack.Screen
+            name={'login'}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen name={'userInformation'} />
+          <Stack.Screen name={'topicSelection'} />
+        </Stack>
+      </SupabaseUserProvider>
     </SupabaseUserSessionProvider>
   );
 }
