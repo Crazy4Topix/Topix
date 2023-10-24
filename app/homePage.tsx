@@ -5,6 +5,10 @@ import DateThumbnail from '../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
 
 
+function createDateThumbnails(numDays: number){
+
+}
+
 export default function homePage() {
   return (
     <View className={'flex w-full justify-center'}>
@@ -37,14 +41,14 @@ export default function homePage() {
       </ScrollView>
       <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Terugluisteren</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} >
-        <DateThumbnail coverSource={new Date()} newsTitle={'Radboud bestaat 100 jaar'} newsDuration={"5 seconde"}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-16")} newsTitle={'Radboud bestaat 100 jaar'} newsDuration={"5 seconde"}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-15")} newsTitle={'Radboud bestaat 100 jaar'} newsDuration={"5 seconde"}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-14")} newsTitle={'Radboud bestaat 100 jaar'} newsDuration={"5 seconde"}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-13")} newsTitle={'Radboud bestaat 100 jaar'} newsDuration={"5 seconde"}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-12")} newsTitle={'Radboud bestaat 100 jaar'} newsDuration={"5 seconde"}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-11")} newsTitle={'Radboud bestaat 100 jaar'} newsDuration={"5 seconde"}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-10")} newsTitle={'Radboud bestaat 100 jaar'} newsDuration={"5 seconde"}></DateThumbnail>
+        <DateThumbnail coverSource={new Date()}></DateThumbnail>
+        <DateThumbnail coverSource={new Date("2023-10-16")}></DateThumbnail>
+        <DateThumbnail coverSource={new Date("2023-10-15")}></DateThumbnail>
+        <DateThumbnail coverSource={new Date("2023-10-14")}></DateThumbnail>
+        <DateThumbnail coverSource={new Date("2023-10-13")}></DateThumbnail>
+        <DateThumbnail coverSource={new Date("2023-10-12")}></DateThumbnail>
+        <DateThumbnail coverSource={new Date("2023-10-11")}></DateThumbnail>
+        <DateThumbnail coverSource={new Date("2023-10-10")}></DateThumbnail>
       </ScrollView>
       </ScrollView>
     </View>
