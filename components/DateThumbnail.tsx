@@ -10,8 +10,8 @@ interface Props {
 
 const DateThumbnail: React.FC<Props> = ({ coverSource, newsTitle, newsDuration }) => {
     return (
-        <View className={'flex-start mx-2'}>
-            <View className={'flex justify-center bg-secondary rounded-lg w-32 h-32'}>
+        <View className={'flex-start m-2'}>
+            <View className={'flex justify-center bg-gray-300 rounded-lg w-32 h-32'}>
               <Text className={'text-primary text-center font-extrabold mt-2'}>
                 <Text className={'text-5xl'}>{coverSource.getDate()+"\n"}</Text>
                 <Text className={'text-xl'}>{coverSource.toLocaleDateString('default', {month: 'short'})}</Text>
