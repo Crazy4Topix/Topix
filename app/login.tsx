@@ -1,12 +1,14 @@
 import React, { useContext } from 'react';
-import { Pressable, TextInput, View, Text, SafeAreaView } from 'react-native';
+import { Pressable, TextInput, View, Text, SafeAreaView, Image } from 'react-native';
 import { SupabaseUserSession } from '../contexts/user_session';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { signInWithEmail } from '../lib/supabase';
+import { useNavigation } from 'expo-router';
 
 export default function Login() {
   const { setSession } = useContext(SupabaseUserSession);
+  const navigation = useNavigation();
 
   const validationSchema = yup.object({
     email: yup.string().email('Enter a valid email').required('Email is required'),
@@ -23,11 +25,19 @@ export default function Login() {
 
     if (data?.data != null) {
       setSession(data.data.session);
+      // @ts-expect-error It complains about never but it is there
+      navigation.navigate('(app)');
     }
   };
 
   return (
     <SafeAreaView className={'mx-5 h-full pt-12'}>
+      <View className={'my-12 flex w-full justify-center'}>
+        <Image
+          source={require('../assets/images/Topix_wit.png')}
+          className={' h-24 w-8/12 self-center'}
+        />
+      </View>
       <Formik
         initialValues={{ email: '', password: '' }}
         onSubmit={submitForm}
@@ -79,7 +89,7 @@ export default function Login() {
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >
-              <Text className={'self-center text-white'}>Submit</Text>
+              <Text className={'self-center text-white'}>Login</Text>
             </Pressable>
           </View>
         )}

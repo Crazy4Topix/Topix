@@ -24,7 +24,7 @@ const TopicSelection = () => {
 
     // TODO: Push topics selected to database
     // @ts-expect-error It complains about never but it is there
-    navigation.navigate('home');
+    navigation.navigate('(app)');
   };
 
   return (
