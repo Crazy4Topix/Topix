@@ -23,7 +23,7 @@ export default function Welcome() {
         </Pressable>
       </Link> */}
 
-      <Link className={'mt-32 self-center'} href={'/mp3_player2'} asChild>
+      <Link className={'mt-32 self-center'} href={'/mp3_player'} asChild>
         <Pressable className={'rounded-lg bg-accent p-2'}>
           <Text className={'text-lg text-white'}> audio</Text>
         </Pressable>

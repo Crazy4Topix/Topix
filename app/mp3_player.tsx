@@ -1,40 +1,70 @@
-import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import SoundPlayer from 'react-native-sound-player'
+import React, {useEffect} from 'react';
+import { View, Text, StyleSheet, Button } from 'react-native';
+import TrackPlayer, { type Track }from 'react-native-track-player';
+// import { Capability } from 'react-native-track-player';
 
-export default function Mp3Player() {
-  const playAudio = async () => {
-    // Set up the player
+
+const tracks: Track[] = [
+  {
+    id: 'track1',
+    url: 'https://oeybruqyypqhrcxcgkbw.supabase.co/storage/v1/object/public/audio/sample/morgan.mp3',
+    title: 'Track 1',
+    artist: 'Artist 1',
+  },
+];
+
+  
+
+const AudioPlayer: React.FC = () => {
+  const playTrack = async () => {
     try {
-      SoundPlayer.playUrl('https://oeybruqyypqhrcxcgkbw.supabase.co/storage/v1/object/public/audio/sample/morgan.mp3')
+      await TrackPlayer.reset();
+      await TrackPlayer.add(tracks);
+      console.log("added tracks");
+      await TrackPlayer.play();
+      console.log("playing")
     } catch (e) {
-        console.log(`cannot play the sound file`, e)
+      console.error('Error playing track:', e);
     }
   };
 
+  const pauseTrack = async () => {
+    try {
+      await TrackPlayer.pause();
+    } catch (e) {
+      console.error('Error pausing track:', e);
+    }
+  };
+
+  useEffect(() => {
+    const setupAndAddTracks = async () => {
+      try {
+        await TrackPlayer.setupPlayer();
+        console.log("setup finished");
+      } catch (e) {
+        console.error('Error setting up trackplayer:', e);
+      }
+    };
+  
+    void setupAndAddTracks();
+  }, []);
+
   return (
-    <View style={[styles.verticallySpaced, styles.mt20]}>
-      <Pressable
-        style={{ borderRadius: 10, backgroundColor: 'blue', padding: 10 }}
-        onPress={playAudio as () => void}
-      >
-        <Text style={{ fontSize: 18, color: 'white' }}> Play</Text>
-      </Pressable>
+    <View style={styles.container}>
+      <Text>Audio Player</Text>
+      <Button title="Play Track" onPress={() => {playTrack().catch(e => {console.log(e)})}} />
+      <Button title="Pause Track" onPress={() => {pauseTrack().catch(e => {console.log(e)})}} />
+      
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
-    padding: 12,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: 'stretch',
-  },
-  mt20: {
-    marginTop: 20,
-  },
-})
+});
+
+export default AudioPlayer;

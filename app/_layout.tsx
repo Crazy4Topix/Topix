@@ -25,6 +25,7 @@ import {
   Poppins_900Black,
   Poppins_900Black_Italic,
 } from '@expo-google-fonts/poppins';
+import TrackPlayer from 'react-native-track-player';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -36,6 +37,9 @@ NativeWindStyleSheet.setOutput({
 });
 
 export default function RootLayout() {
+  // AppRegistry.registerComponent(...);
+
+
   return <RootLayoutNav />;
 }
 
@@ -61,6 +65,8 @@ function RootLayoutNav() {
     Poppins_900Black_Italic,
   });
 
+  TrackPlayer.registerPlaybackService(() => require('../lib/service'));
+
   if (!fontsLoaded) {
     return <SplashScreen />;
   }
@@ -76,6 +82,7 @@ function RootLayoutNav() {
         <Stack.Screen name={'signup'} />
         <Stack.Screen name={'login'} />
         <Stack.Screen name={'topicSelection'} />
+        <Stack.Screen name={'mp3_player'} />
       </Stack>
     </SupabaseUserSessionProvider>
   );
