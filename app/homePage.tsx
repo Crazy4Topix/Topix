@@ -3,15 +3,13 @@ import NewsThumbnail from '../components/NewsThumbnail';
 import React from 'react';
 import DateThumbnail from '../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
-import { Color } from 'ansi-fragments/build/fragments/Color';
-import { Colors } from '@expo/config-plugins/build/android';
 
 
 export default function homePage() {
   return (
-    <View className={'mt-12 flex w-full justify-center'}>
+    <View className={'flex w-full justify-center'}>
       <ScrollView>
-        <View className={"bg-primary py-4 px-2"}>
+        <View className={"bg-primary pt-8 pb-4 px-2"}>
           <Text className={'mt-4 mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>Goedemorgen,</Text>
           <Text className={'mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>Stefan</Text>
           <View>
