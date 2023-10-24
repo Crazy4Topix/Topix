@@ -1,10 +1,13 @@
-import { View, Text } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import LottieView from 'lottie-react-native';
 import { styled } from 'nativewind';
+import { signOut, supabase } from '../../lib/supabase';
+import { Link, useNavigation } from 'expo-router';
 
 export default function TabOneScreen() {
   const animation = useRef(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (animation.current != null) {
@@ -24,6 +27,22 @@ export default function TabOneScreen() {
         source={require('../../assets/lottie/talking.json')}
         loop
       />
+      <Pressable
+        onPress={() => {
+          signOut().catch((err) => {
+            console.log(err);
+          });
+          // @ts-expect-error: Type is wrong
+          navigation.navigate('welcome');
+        }}
+      >
+        <Text> sign out</Text>
+      </Pressable>
+      <Link className={'mt-8 self-center'} href={'/homePage'} asChild>
+        <Pressable className={'rounded-lg bg-accent p-2'}>
+          <Text className={'text-lg text-white'}> Homepage </Text>
+        </Pressable>
+      </Link>
     </View>
   );
 }

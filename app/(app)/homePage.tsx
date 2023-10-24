@@ -1,7 +1,7 @@
 import { ScrollView, View, Text, Image } from 'react-native';
-import NewsThumbnail from '../components/NewsThumbnail';
+import NewsThumbnail from '../../components/NewsThumbnail';
 import React from 'react';
-import DateThumbnail from '../components/DateThumbnail';
+import DateThumbnail from '../../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
 
 
@@ -21,7 +21,7 @@ function createNewsThumbnails(amount: number){
   const NewsThumbnailArray = [];
   for (let i=0; i<amount; i++){
     NewsThumbnailArray.push(
-      <NewsThumbnail key={i} coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
+      <NewsThumbnail key={i} coverSource={require("../../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
     );
   }
   return NewsThumbnailArray;
@@ -36,7 +36,7 @@ export default function homePage() {
           <Text className={'mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>Stefan</Text>
           <View>
             <View id={"background"} className={"mx-2 rounded-xl bg-background flex justify-center"}>
-              <Image source={require("../assets/waveform.png")} className={"m-4 h-48 w-10/12 self-center"}></Image>
+              <Image source={require("../../assets/waveform.png")} className={"m-4 h-48 w-10/12 self-center"}></Image>
             </View>
             <View id={"foreground"} className={"absolute left-0 right-0  bottom-0 top-16"}>
               <Icon id={"foreground"}  color={0x00DEADFF} name={"play-circle-outline"} size={100}></Icon>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Pressable, SafeAreaView, View, Text, Image } from 'react-native';
-import LoadingBar from '../components/LoadingBar';
+import { Pressable, SafeAreaView, View, Text } from 'react-native';
+import { useNavigation } from 'expo-router';
 
-export default function TopicSelection() {
+const TopicSelection = () => {
   const [topics, setTopics] = useState([
     { text: 'Art', value: 'art', selected: false },
     { text: 'Books', value: 'books', selected: false },
@@ -16,18 +16,22 @@ export default function TopicSelection() {
     { text: 'Music', value: 'music', selected: false },
   ]);
 
+  const navigation = useNavigation();
+
+  const handleSubmit = () => {
+    const topicsSelected = topics.filter((topic) => topic.selected);
+    console.log(topicsSelected);
+
+    // TODO: Push topics selected to database
+    // @ts-expect-error It complains about never but it is there
+    navigation.navigate('(app)');
+  };
+
   return (
-    <View className={'mt-12 flex w-full justify-center'}>
-      <Image
-        source={require('../assets/images/Topix_wit.png')}
-        className={' h-24 w-8/12 self-center'}
-      />
-      <View className={'py-5'}>
-        <LoadingBar percentage={50} />
-      </View>
-      <Text className={'mx-8 pb-10 text-center font-Poppins_500_medium text-2xl'}>
+    <View className={'flex w-full justify-center bg-white pt-12'}>
+      <Text className={'mx-8 pb-10 text-center font-primary_medium text-2xl'}>
         <Text>Kies de</Text>
-        <Text className={'font-Poppins_700_bold'}> Topix </Text>
+        <Text className={'font-primary_bold'}> Topix </Text>
         <Text>die jij interessant vindt</Text>
       </Text>
       <SafeAreaView className={'flex flex-row flex-wrap justify-center gap-2 self-center'}>
@@ -49,11 +53,21 @@ export default function TopicSelection() {
                 );
               }}
             >
-              <Text className={'text-center font-Poppins_500_medium'}>{topic.text}</Text>
+              <Text className={'text-center font-primary_medium'}>{topic.text}</Text>
             </Pressable>
           );
         })}
+        <Pressable
+          onPress={() => {
+            handleSubmit();
+          }}
+          className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
+        >
+          <Text className={'self-center text-white'}>Next</Text>
+        </Pressable>
       </SafeAreaView>
     </View>
   );
-}
+};
+
+export default TopicSelection;
