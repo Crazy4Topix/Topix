@@ -5,8 +5,26 @@ import DateThumbnail from '../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
 
 
-function createDateThumbnails(numDays: number){
+function createDateThumbnails(amount: number){
+  const DateThumbnailArray = [];
+  const d = new Date();
+  for (let i=0; i<amount; i++){
+    DateThumbnailArray.push(
+      <DateThumbnail key={i} coverSource={new Date(d)}></DateThumbnail>
+    );
+    d.setDate(d.getDate() - 1);
+  }
+  return DateThumbnailArray;
+}
 
+function createNewsThumbnails(amount: number){
+  const NewsThumbnailArray = [];
+  for (let i=0; i<amount; i++){
+    NewsThumbnailArray.push(
+      <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
+    );
+  }
+  return NewsThumbnailArray;
 }
 
 export default function homePage() {
@@ -27,28 +45,11 @@ export default function homePage() {
         </View>
       <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Overige Topix</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} >
-        <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-        <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-        <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-        <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-        <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-        <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-        <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-        <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-        <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-        <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-        <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
+        { createNewsThumbnails(10) }
       </ScrollView>
       <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Terugluisteren</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} >
-        <DateThumbnail coverSource={new Date()}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-16")}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-15")}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-14")}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-13")}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-12")}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-11")}></DateThumbnail>
-        <DateThumbnail coverSource={new Date("2023-10-10")}></DateThumbnail>
+        { createDateThumbnails(10) }
       </ScrollView>
       </ScrollView>
     </View>
