@@ -21,7 +21,7 @@ function createNewsThumbnails(amount: number){
   const NewsThumbnailArray = [];
   for (let i=0; i<amount; i++){
     NewsThumbnailArray.push(
-      <NewsThumbnail coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
+      <NewsThumbnail key={i} coverSource={require("../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
     );
   }
   return NewsThumbnailArray;
