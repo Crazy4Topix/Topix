@@ -25,12 +25,6 @@ export default function TabLayout() {
           title: 'Tab One',
         }}
       />
-      <Tabs.Screen
-        name={'homePage'}
-        options={{
-          headerShown: false,
-        }}
-      />
     </Tabs>
   );
 }
