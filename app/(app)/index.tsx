@@ -1,43 +1,57 @@
-import { View, Text, Pressable } from 'react-native';
-import React, { useEffect, useRef } from 'react';
-import LottieView from 'lottie-react-native';
-import { styled } from 'nativewind';
-import { signOut, supabase } from '../../lib/supabase';
-import { useNavigation } from 'expo-router';
+import { ScrollView, View, Text, Image } from 'react-native';
+import NewsThumbnail from '../../components/NewsThumbnail';
+import React from 'react';
+import DateThumbnail from '../../components/DateThumbnail';
+import { Icon } from 'react-native-elements';
 
-export default function TabOneScreen() {
-  const animation = useRef(null);
-  const navigation = useNavigation();
 
-  useEffect(() => {
-    if (animation.current != null) {
-      // @ts-expect-error: Type is wrong
-      animation.current.play();
-    }
-  }, []);
+function createDateThumbnails(amount: number){
+  const DateThumbnailArray = [];
+  const d = new Date();
+  for (let i=0; i<amount; i++){
+    DateThumbnailArray.push(
+      <DateThumbnail key={i} coverSource={new Date(d)}></DateThumbnail>
+    );
+    d.setDate(d.getDate() - 1);
+  }
+  return DateThumbnailArray;
+}
 
-  const StyledLottieView = styled(LottieView);
+function createNewsThumbnails(amount: number){
+  const NewsThumbnailArray = [];
+  for (let i=0; i<amount; i++){
+    NewsThumbnailArray.push(
+      <NewsThumbnail key={i} coverSource={require("../../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
+    );
+  }
+  return NewsThumbnailArray;
+}
+
+export default function homePage() {
   return (
-    <View className=" flex h-full w-full justify-center bg-amber-800">
-      <Text className="self-center p-3 pt-4 text-2xl text-yellow-300">Hello TOPIX</Text>
-      <StyledLottieView
-        autoPlay
-        ref={animation}
-        className={'w-56 self-center'}
-        source={require('../../assets/lottie/talking.json')}
-        loop
-      />
-      <Pressable
-        onPress={() => {
-          signOut().catch((err) => {
-            console.log(err);
-          });
-          // @ts-expect-error: Type is wrong
-          navigation.navigate('welcome');
-        }}
-      >
-        <Text> sign out</Text>
-      </Pressable>
+    <View className={'flex w-full justify-center'}>
+      <ScrollView>
+        <View className={"bg-primary pt-8 pb-4 px-2"}>
+          <Text className={'mt-4 mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>Goedemorgen,</Text>
+          <Text className={'mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>Stefan</Text>
+          <View>
+            <View id={"background"} className={"mx-2 rounded-xl bg-background flex justify-center"}>
+              <Image source={require("../../assets/waveform.png")} className={"m-4 h-48 w-10/12 self-center"}></Image>
+            </View>
+            <View id={"foreground"} className={"absolute left-0 right-0  bottom-0 top-16"}>
+              <Icon id={"foreground"}  color={0x00DEADFF} name={"play-circle-outline"} size={100}></Icon>
+            </View>
+          </View>
+        </View>
+      <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Overige Topix</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} >
+        { createNewsThumbnails(10) }
+      </ScrollView>
+      <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Terugluisteren</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} >
+        { createDateThumbnails(10) }
+      </ScrollView>
+      </ScrollView>
     </View>
   );
 }

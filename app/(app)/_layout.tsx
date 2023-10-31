@@ -1,4 +1,4 @@
-import { Redirect, SplashScreen, Tabs } from 'expo-router';
+import { Redirect, SplashScreen, Stack, Tabs } from 'expo-router';
 import { useContext } from 'react';
 import { SupabaseUserSession } from '../../contexts/user_session';
 import { supabase } from '../../lib/supabase';
