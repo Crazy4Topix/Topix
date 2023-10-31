@@ -25,7 +25,6 @@ import {
   Poppins_900Black,
   Poppins_900Black_Italic,
 } from '@expo-google-fonts/poppins';
-import TrackPlayer from 'react-native-track-player';
 import SignUpHeader from '../components/SignUpHeader';
 import { SupabaseUserProvider } from '../contexts/supabase_user';
 
@@ -70,8 +69,6 @@ function RootLayoutNav() {
     Poppins_900Black,
     Poppins_900Black_Italic,
   });
-
-  TrackPlayer.registerPlaybackService(() => require('../lib/service'));
 
   if (!fontsLoaded) {
     return <SplashScreen />;
