@@ -1,32 +1,32 @@
-import React, { useContext, useState } from 'react';
+import React, { type FunctionComponent, useContext } from 'react';
 import { Pressable, TextInput, View, Text, SafeAreaView } from 'react-native';
 import { SupabaseUserSession } from '../contexts/user_session';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { Picker } from '@react-native-picker/picker';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
-import { signUpWithEmail, supabase } from '../lib/supabase';
-import { styled } from 'nativewind';
+import { signUpWithEmail } from '../lib/supabase';
+import { type NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useNavigation } from 'expo-router';
+import { SupabaseUser } from '../contexts/supabase_user';
 
-export default function Signup() {
+interface OwnProps extends NativeStackScreenProps<any> {}
+
+type Props = OwnProps;
+
+const Signup: FunctionComponent<Props> = (_: OwnProps) => {
   const { setSession } = useContext(SupabaseUserSession);
+  const { setUser } = useContext(SupabaseUser);
 
+  const navigation = useNavigation();
   const validationSchema = yup.object({
-    name: yup.string().required('name is required'),
-    gender: yup
-      .mixed()
-      .oneOf(['male', 'female', 'other'] as const)
-      .defined(),
-    birthday: yup.date().required('Birthday is required'),
-    // .max(new Date(), 'Cannot be in the future'),
     email: yup.string().email('Enter a valid email').required('Email is required'),
     password: yup.string().required('Password is required'),
+    password2: yup
+      .string()
+      .required('Password (Again) is required')
+      .oneOf([yup.ref('password')], "Passwords don't match"),
   });
 
-  const submitForm = async (
-    values: { name: string; gender: string; birthday: Date; email: string; password: string },
-    { setErrors }: any
-  ) => {
+  const submitForm = async (values: { email: string; password: string }, { setErrors }: any) => {
     const data = await signUpWithEmail(values.email, values.password);
 
     if (data?.error != null) {
@@ -41,117 +41,28 @@ export default function Signup() {
     }
 
     setSession(data.data.session);
+    setUser(data.data.user);
 
-    const { error, status } = await supabase
-      .from('profiles')
-      .upsert({
-        id: data?.data?.user?.id,
-        full_name: values.name,
-        birthdate: values.birthday,
-        gender: values.gender,
-      })
-      .select();
-
-    console.log('Update', status, data?.data?.user, error);
-
-    if (error !== null) {
-      console.log('Error creating profile', error);
+    if (navigation !== null) {
+      // @ts-expect-error It complains about never but it is there
+      navigation.navigate('userInformation');
     }
   };
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const StyledPicker = styled(Picker);
-
   return (
-    <SafeAreaView className={'mx-5 h-full pt-12'}>
+    <SafeAreaView className={'h-full w-full bg-white px-5 pt-12'}>
       <Formik
-        initialValues={{ email: '', password: '', name: '', gender: 'Other', birthday: new Date() }}
+        initialValues={{ email: '', password: '', password2: '' }}
         onSubmit={submitForm}
         validationSchema={validationSchema}
       >
-        {({ handleChange, setFieldValue, handleBlur, handleSubmit, values, errors, touched }) => (
-          <View className={'flex bg-background'}>
-            <Text className={'text-lg text-primary-text'}>Full name</Text>
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          <View className={'flex'}>
+            <Text className={'font-primary_medium text-2xl'}>Create a new account</Text>
+            <Text className={'mt-5 font-primary text-lg text-primary-text'}>Email</Text>
             <TextInput
               className={
-                'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
-              }
-              onChangeText={handleChange('name')}
-              onBlur={handleBlur('name')}
-              value={values.name}
-              placeholder={'Alexander'}
-              placeholderTextColor="gray"
-              autoComplete={'name'}
-            />
-            <View className={'flex shrink'}>
-              <Text className={'text-lg text-red-600'}>
-                {errors.name != null && touched.name === true && errors.name}
-              </Text>
-            </View>
-
-            <Text className={'text-lg text-primary-text'}>Gender</Text>
-            <StyledPicker
-              mode="dropdown"
-              prompt={'Gender'}
-              itemStyle={{ backgroundColor: 'grey' }}
-              className={
-                'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
-              }
-              selectedValue={values.gender}
-              onValueChange={(itemValue, _) => {
-                setFieldValue('gender', itemValue).catch((err: any) => {
-                  console.log(err);
-                });
-              }}
-            >
-              <Picker.Item value={'male'} label={'Male'}></Picker.Item>
-              <Picker.Item value={'female'} label={'Female'}></Picker.Item>
-              <Picker.Item value={'other'} label={'Other'}></Picker.Item>
-            </StyledPicker>
-            <View className={'flex shrink'}>
-              <Text className={'text-lg text-red-600'}>
-                {errors.gender != null && touched.gender === true && errors.gender}
-              </Text>
-            </View>
-
-            <Text className={'text-lg text-primary-text'}>Birthday</Text>
-            <Pressable
-              onPress={() => {
-                setShowDatePicker(true);
-              }}
-            >
-              <TextInput
-                className={
-                  'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
-                }
-                value={values.birthday.toLocaleDateString('nl-NL')}
-                editable={false}
-              />
-            </Pressable>
-            {showDatePicker && (
-              <RNDateTimePicker
-                onChange={(_, date) => {
-                  console.log(date);
-                  setShowDatePicker(false);
-                  if (date != null) {
-                    setFieldValue('birthday', date).catch((err: any) => {
-                      console.log(err);
-                    });
-                  }
-                }}
-                value={new Date()}
-              />
-            )}
-            <View className={'flex shrink'}>
-              <Text className={'text-lg text-red-600'}>
-                {errors.gender != null && touched.gender === true && errors.gender}
-              </Text>
-            </View>
-
-            <Text className={'text-lg text-primary-text'}>Email</Text>
-            <TextInput
-              className={
-                'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
+                'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-primary-text'
               }
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
@@ -167,10 +78,10 @@ export default function Signup() {
               </Text>
             </View>
 
-            <Text className={'font-primary-cond-bold  text-lg text-primary-text'}>Password</Text>
+            <Text className={'font-primary text-lg text-primary-text'}>Password</Text>
             <TextInput
               className={
-                'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-black'
+                'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-black'
               }
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
@@ -188,19 +99,38 @@ export default function Signup() {
                 {errors.password != null && touched.password === true && errors.password}
               </Text>
             </View>
+            <Text className={'font-primary text-lg text-primary-text'}>Password (Again)</Text>
+            <TextInput
+              className={
+                'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-black'
+              }
+              onChangeText={handleChange('password2')}
+              onBlur={handleBlur('password2')}
+              value={values.password2}
+              secureTextEntry={true}
+              placeholder={'Al3xand3r!'}
+              textContentType={'password'}
+              placeholderTextColor="gray"
+            />
+            <View className={'flex shrink'}>
+              <Text className={'text-lg text-red-600'}>
+                {errors.password2 != null && touched.password2 === true && errors.password2}
+              </Text>
+            </View>
 
             <Pressable
               onPress={() => {
                 handleSubmit();
-                console.log('Click');
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >
-              <Text className={'self-center text-white'}>Submit</Text>
+              <Text className={'self-center text-white'}>Next</Text>
             </Pressable>
           </View>
         )}
       </Formik>
     </SafeAreaView>
   );
-}
+};
+
+export default Signup;
