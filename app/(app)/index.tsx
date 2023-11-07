@@ -36,19 +36,16 @@ export default function homePage() {
         <View className={"bg-primary pt-8 pb-4 px-2"}>
           <Text className={'mt-4 mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>Goedemorgen,</Text>
           <Text className={'mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>Stefan</Text>
-          <Link className={'flex h-16 w-10/12 justify-center self-start'} href={'/Mp3_player'} asChild>
-          <Pressable className={'rounded-lg p-2'}>
-            <Text className={'font-primary_semi_bold text-left text-base text-white'}>
-              Go to Audio
-            </Text>
-          </Pressable>
-          </Link>
           <View>
             <View id={"background"} className={"mx-2 rounded-xl bg-background flex justify-center"}>
               <Image source={require("../../assets/waveform.png")} className={"m-4 h-48 w-10/12 self-center"}></Image>
             </View>
             <View id={"foreground"} className={"absolute left-0 right-0  bottom-0 top-16"}>
-              <Icon id={"foreground"}  color={0x00DEADFF} name={"play-circle-outline"} size={100}></Icon>
+              <Link href={'/Mp3_player'} asChild>
+                <Pressable className={'rounded-lg p-2'}>
+                  <Icon id={"foreground"}  color={0x00DEADFF} name={"play-circle-outline"} size={100}></Icon>
+                </Pressable>
+              </Link>
             </View>
           </View>
         </View>
