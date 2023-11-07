@@ -4,6 +4,7 @@ import React from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
 import { Link } from 'expo-router';
+import Mp3_player_minum from '../../components/Mp3_player_minum'
 
 
 function createDateThumbnails(amount: number){
@@ -35,13 +36,13 @@ export default function homePage() {
         <View className={"bg-primary pt-8 pb-4 px-2"}>
           <Text className={'mt-4 mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>Goedemorgen,</Text>
           <Text className={'mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>Stefan</Text>
-          <Link className={'flex h-16 w-10/12 justify-center self-start'} href={'/mp3_player'} asChild>
+          <Link className={'flex h-16 w-10/12 justify-center self-start'} href={'/Mp3_player'} asChild>
           <Pressable className={'rounded-lg p-2'}>
             <Text className={'font-primary_semi_bold text-left text-base text-white'}>
               Go to Audio
             </Text>
           </Pressable>
-        </Link>
+          </Link>
           <View>
             <View id={"background"} className={"mx-2 rounded-xl bg-background flex justify-center"}>
               <Image source={require("../../assets/waveform.png")} className={"m-4 h-48 w-10/12 self-center"}></Image>
@@ -60,6 +61,9 @@ export default function homePage() {
         { createDateThumbnails(10) }
       </ScrollView>
       </ScrollView>
+      <View className='absolute bottom-0 w-full'>
+        <Mp3_player_minum></Mp3_player_minum>
+      </View>
     </View>
   );
 }

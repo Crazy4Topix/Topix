@@ -104,6 +104,12 @@ function RootLayoutNav() {
           />
           <Stack.Screen name={'userInformation'} />
           <Stack.Screen name={'topicSelection'} />
+          <Stack.Screen
+            name={'mp3_player'}
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack>
       </SupabaseUserProvider>
     </SupabaseUserSessionProvider>

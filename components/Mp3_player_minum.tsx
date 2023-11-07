@@ -58,22 +58,21 @@ const AudioPlayer = () => {
     const setupAndAddTracks = async () => {
       try {
         // Fetch the audio link from Supabase
-        const { data, error } = await supabase
-          .from('audio')
-          .select('link')
-          .single();
-
+        const { data: audio, error } = await supabase
+        .from('audio')
+        .select('link')
+        .single()
         if (error !== null) {
           console.error('Error fetching audio link:', error);
-        } else if (data !== null) {
-          const audioUrl = data.link;
+        } else if (audio !== null) {
+          const audioUrl = audio.link;
           setAudioLink(audioUrl); // Set the audio link in the state
 
           // Load and play the audio using the extracted URL
           SoundPlayer.loadUrl(audioUrl);
-          SoundPlayer.play();
+          // SoundPlayer.play();
           getDuration();
-          setIsPlaying(true);
+          // setIsPlaying(true);
         }
       } catch (e) {
         console.error('Error setting up SoundPlayer:', e);
@@ -84,26 +83,30 @@ const AudioPlayer = () => {
   }, []);
 
   return (
-    <View className='flex-1 items-center justify-center bg-accent'>
-      <Image source={{ uri: tracks[0].artwork }} className='h-64 w-64' />
-      <Text className='mt-8 font-bold text-20'>{tracks[0].title}</Text>
-      <Text className='mt-4 text-20'>{tracks[0].artist}</Text>
-      <View className='flex-row m-10'>
-        <TouchableOpacity className='flex rounded-full' onPress={() => { seekTo(0); }}>
-          <Icon name="skip-previous" size={70} color="#00DEAD" />
-        </TouchableOpacity>
-        {isPlaying ? (
-          <TouchableOpacity className='flex rounded-full' onPress={pauseTrack}>
-            <Icon name="pause-circle-outline" size={70} color="#00DEAD" />
+    <View className=' bg-accent'>
+      <View className='flex-row'>
+        <Image source={{ uri: tracks[0].artwork }} className='h-16 w-16 ml-0 mr-4' />
+        <View className='self-center'>
+          <Text className='font-bold text-20'>{tracks[0].title}</Text>
+          <Text className='text-20'>{tracks[0].artist}</Text>
+        </View>
+        <View className='flex-row self-center'>
+          <TouchableOpacity className='flex rounded-full' onPress={() => { seekTo(0); }}>
+            <Icon name="skip-previous" size={40} color="#00DEAD" />
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity className='flex rounded-full' onPress={resumeTrack}>
-            <Icon name="play-circle-outline" size={70} color="#00DEAD" />
+          {isPlaying ? (
+            <TouchableOpacity className='flex rounded-full' onPress={pauseTrack}>
+              <Icon name="pause-circle-outline" size={40} color="#00DEAD" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity className='flex rounded-full' onPress={resumeTrack}>
+              <Icon name="play-circle-outline" size={40} color="#00DEAD" />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity className='flex rounded-full' onPress={() => { seekTo(0.5); }}>
+            <Icon name="skip-next" size={40} color="#00DEAD" />
           </TouchableOpacity>
-        )}
-        <TouchableOpacity className='flex rounded-full' onPress={() => { seekTo(0.5); }}>
-          <Icon name="skip-next" size={70} color="#00DEAD" />
-        </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
