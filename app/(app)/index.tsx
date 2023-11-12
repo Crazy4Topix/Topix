@@ -4,7 +4,7 @@ import React from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
 import { Link } from 'expo-router';
-import Mp3_player_minum from '../../components/Mp3_player_minum'
+import Mp3_player_minum from '../Mp3_player_minum'
 
 
 function createDateThumbnails(amount: number){
