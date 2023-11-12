@@ -27,6 +27,18 @@ export default function TabLayout() {
             title: 'Tab One',
           }}
         />
+        <Tabs.Screen
+          name="Mp3_player"
+          options={{
+            title: 'Tab two',
+          }}
+        />
+        <Tabs.Screen
+          name="Mp3_player_minum"
+          options={{
+            title: 'Tab three',
+          }}
+        />
       </Tabs>
     </AudioPlayerProvider>
   );

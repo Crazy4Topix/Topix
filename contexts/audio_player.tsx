@@ -4,10 +4,10 @@ import { supabase } from '../lib/supabase';
 
 interface Track {
   url: string;
-  title: string;
-  artist: string;
-  artwork: string;
-  duration: number; // Add the duration property
+  // title: string;
+  // artist: string;
+  // artwork: string;
+  track_duration: number; // Add the duration property
 }
 
 interface AudioPlayerState {
@@ -23,7 +23,6 @@ interface AudioPlayerContextProps {
   resumeTrack: () => void;
   seekTo: (percentage: number) => void;
   setupAndAddTracks: () => Promise<void>;
-  testfunc: () => void;
 }
 
 export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
@@ -37,8 +36,6 @@ export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
   resumeTrack: () => {},
   seekTo: () => {},
   setupAndAddTracks: async () => {},
-  testfunc: () => {},
-
 });
 
 
@@ -49,13 +46,24 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     currentTime: 0,
   });
   const [audioLink, setAudioLink] = useState('');
+  const [duration, setDuration] = useState(0);
+
+  const getDuration = async () => {
+    try {
+      const info = await SoundPlayer.getInfo();
+      setDuration(info.duration);
+    } catch (error) {
+      console.error('Error getting duration:', error);
+    }
+  };
+  
 
   const playTrack = (track: Track) => {
     try {
       // Load and play the provided track
       SoundPlayer.loadUrl(track.url);
       SoundPlayer.play();
-      setAudioState({ ...audioState, currentTrack: track, isPlaying: true });
+      setAudioState({ ...audioState, isPlaying: true });
     } catch (e) {
       console.error('Error playing track:', e);
     }
@@ -86,7 +94,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (currentTrack) {
       try {
         // Calculate the target time based on the percentage
-        const targetTime = percentage * currentTrack.duration;
+        const targetTime = percentage * currentTrack.track_duration;
         // Seek to the calculated time
         SoundPlayer.seek(targetTime);
         setAudioState({ ...audioState, currentTime: targetTime });
@@ -99,37 +107,53 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const setupAndAddTracks = async () => {
     try {
       // Fetch the audio link from Supabase
-      console.log("test2")
       const { data: audio, error } = await supabase
         .from('audio')
         .select('link')
         .single();
+  
       if (error !== null) {
         console.error('Error fetching audio link:', error);
-      } else if (audio !== null) {
+        return;
+      }
+  
+      if (audio !== null) {
         const audioUrl = audio.link;
         setAudioLink(audioUrl); // Set the audio link in the state
-
+  
         // Load and play the audio using the extracted URL
         SoundPlayer.loadUrl(audioUrl);
         SoundPlayer.play();
-        seekTo(0); // Use the function from the context
+  
+        // Get the duration and play the track
+        await getDuration(); // Wait for getDuration to complete
+  
+        // Set the currentTrack in the state after getDuration completes
+        const newAudioState = {
+          ...audioState,
+          currentTrack: {
+            url: audioUrl,
+            track_duration: duration,
+          },
+          isPlaying: true,
+        };
+        setAudioState(newAudioState);
+
       }
     } catch (e) {
       console.error('Error setting up SoundPlayer:', e);
     }
   };
+  
+  
+  
 
-  const testfunc = () => {
-    console.log("testfunc")
-  };
-
-  useEffect(() => {
-    // You can add any additional initialization logic here
-  }, []);
+  // useEffect(() => {
+  //   // You can add any additional initialization logic here
+  // }, []);
 
   return (
-    <AudioPlayerContext.Provider value={{ audioState, playTrack, pauseTrack, resumeTrack, seekTo, setupAndAddTracks, testfunc }}>
+    <AudioPlayerContext.Provider value={{ audioState, playTrack, pauseTrack, resumeTrack, seekTo, setupAndAddTracks }}>
       {children}
     </AudioPlayerContext.Provider>
   );

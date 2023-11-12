@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import SoundPlayer from 'react-native-sound-player';
 import { Icon } from 'react-native-elements';
-import { AudioPlayerContext } from '../contexts/audio_player';
+import { AudioPlayerContext } from '../../contexts/audio_player';
 
 const AudioPlayer = () => {
   const audioContext = useContext(AudioPlayerContext);
@@ -18,17 +18,13 @@ const AudioPlayer = () => {
   ];
 
   useEffect(() => {
-    // You can update the track's duration when it's available in the context
-    const currentTrack = audioContext.audioState.currentTrack;
-    if (currentTrack) {
-      tracks[0].duration = currentTrack.duration;
-    }
-  }, [audioContext.audioState.currentTrack]);
+
+  }, [audioContext.audioState.isPlaying]);
 
   // Check if currentTrack is not null before rendering the player
-  // if (!audioContext.audioState.currentTrack) {
-  //   return null; // Don't render anything if currentTrack is null
-  // }
+  if ( !audioContext.audioState.currentTrack) {
+    return null; // Don't render anything if currentTrack is null
+  }
 
   return (
     <View className=' bg-accent'>
@@ -42,7 +38,7 @@ const AudioPlayer = () => {
           <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekTo(0); }}>
             <Icon name="skip-previous" size={40} color="#00DEAD" />
           </TouchableOpacity>
-          {audioContext.audioState.isPlaying ? (
+          {audioContext.audioState && audioContext.audioState.isPlaying ? (
             <TouchableOpacity className='flex rounded-full' onPress={audioContext.pauseTrack}>
               <Icon name="pause-circle-outline" size={40} color="#00DEAD" />
             </TouchableOpacity>

@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import SoundPlayer from 'react-native-sound-player';
 import { Icon } from 'react-native-elements';
-import { AudioPlayerContext } from '../contexts/audio_player';
-import { supabase } from '../lib/supabase';
+import { AudioPlayerContext } from '../../contexts/audio_player';
+import { supabase } from '../../lib/supabase';
 
 const tracks = [
   {
@@ -20,15 +20,17 @@ const AudioPlayer = () => {
   useEffect(() => {
     void (async () => {
       try {
-        console.log("test")
-        console.log(audioContext)
-        audioContext.testfunc()
         await audioContext.setupAndAddTracks();
       } catch (error) {
         console.error('Error setting up and adding tracks:', error);
       }
     })();
-  }, [audioContext]);
+  }, []);
+
+  useEffect(() => {
+    // You can update the track's duration when it's available in the context
+    
+  }, [audioContext.audioState.isPlaying]);
 
   return (
     <View className='flex-1 items-center justify-center bg-accent'>
