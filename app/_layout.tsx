@@ -39,7 +39,7 @@ NativeWindStyleSheet.setOutput({
 });
 
 export const unstable_settings = {
-  initialRouteName: 'welcome',
+  initialRouteName: '(app)',
 };
 
 export default function RootLayout() {

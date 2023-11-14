@@ -20,7 +20,6 @@ const AudioPlayer = () => {
   useEffect(() => {
     void (async () => {
       try {
-        console.log(supabase)
         await audioContext.setupAndAddTracks();
       } catch (error) {
         console.error('Error setting up and adding tracks:', error);
