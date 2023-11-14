@@ -22,6 +22,8 @@ interface AudioPlayerContextProps {
   pauseTrack: () => void;
   resumeTrack: () => void;
   seekTo: (percentage: number) => void;
+  seekForward: () => void;
+  seekBackward: () => void;
   setupAndAddTracks: () => Promise<void>;
 }
 
@@ -35,6 +37,8 @@ export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
   pauseTrack: () => {},
   resumeTrack: () => {},
   seekTo: () => {},
+  seekForward: () => {},
+  seekBackward: () => {},
   setupAndAddTracks: async () => {},
 });
 
@@ -104,6 +108,50 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   };
 
+  const seekForward = async () => {
+    const { currentTrack } = audioState;
+    if (currentTrack) {
+      try {
+        // Calculate the target time based on the percentage
+        const info = await SoundPlayer.getInfo()
+        let targetTime = 0
+        if (info.currentTime < (info.duration + 10)){
+          targetTime = info.currentTime + 10;
+        }
+        else{
+          targetTime = info.duration
+        }
+        // Seek to the calculated time
+        SoundPlayer.seek(targetTime);
+        setAudioState({ ...audioState, currentTime: targetTime });
+      } catch (e) {
+        console.error('Error seeking:', e);
+      }
+    }
+  };
+
+  const seekBackward = async () => {
+    const { currentTrack } = audioState;
+    if (currentTrack) {
+      try {
+        // Calculate the target time based on the percentage
+        const info = await SoundPlayer.getInfo()
+        let targetTime = 0
+        if (info.currentTime > 11){
+          targetTime = info.currentTime - 11;
+        }
+        else{
+          targetTime = 0
+        }
+        // Seek to the calculated time
+        SoundPlayer.seek(targetTime);
+        setAudioState({ ...audioState, currentTime: targetTime });
+      } catch (e) {
+        console.error('Error seeking:', e);
+      }
+    }
+  };
+
   const setupAndAddTracks = async () => {
     try {
       // Fetch the audio link from Supabase
@@ -153,7 +201,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   // }, []);
 
   return (
-    <AudioPlayerContext.Provider value={{ audioState, playTrack, pauseTrack, resumeTrack, seekTo, setupAndAddTracks }}>
+    <AudioPlayerContext.Provider value={{ audioState, playTrack, pauseTrack, resumeTrack, seekTo, setupAndAddTracks, seekForward, seekBackward }}>
       {children}
     </AudioPlayerContext.Provider>
   );
