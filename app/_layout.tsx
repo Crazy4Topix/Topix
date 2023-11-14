@@ -5,6 +5,7 @@ import { Stack, SplashScreen } from 'expo-router';
 import { NativeWindStyleSheet } from 'nativewind';
 import { SupabaseUserSessionProvider } from '../contexts/user_session';
 import { useFonts } from 'expo-font';
+import { AudioPlayerProvider } from '../contexts/audio_player';
 import {
   Poppins_100Thin,
   Poppins_100Thin_Italic,
@@ -42,6 +43,9 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
+  // AppRegistry.registerComponent(...);
+
+
   return <RootLayoutNav />;
 }
 
@@ -101,6 +105,7 @@ function RootLayoutNav() {
           />
           <Stack.Screen name={'userInformation'} />
           <Stack.Screen name={'topicSelection'} />
+          
         </Stack>
       </SupabaseUserProvider>
     </SupabaseUserSessionProvider>

@@ -1,8 +1,10 @@
-import { ScrollView, View, Text, Image } from 'react-native';
+import { ScrollView, View, Text, Image, Pressable } from 'react-native';
 import NewsThumbnail from '../../components/NewsThumbnail';
 import React from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
+import { Link } from 'expo-router';
+import Mp3_player_minum from './Mp3_player_minum'
 
 
 function createDateThumbnails(amount: number){
@@ -39,7 +41,11 @@ export default function homePage() {
               <Image source={require("../../assets/waveform.png")} className={"m-4 h-48 w-10/12 self-center"}></Image>
             </View>
             <View id={"foreground"} className={"absolute left-0 right-0  bottom-0 top-16"}>
-              <Icon id={"foreground"}  color={0x00DEADFF} name={"play-circle-outline"} size={100}></Icon>
+              <Link href={'/Mp3_player'} asChild>
+                <Pressable className={'rounded-lg p-2'}>
+                  <Icon id={"foreground"}  color={0x00DEADFF} name={"play-circle-outline"} size={100}></Icon>
+                </Pressable>
+              </Link>
             </View>
           </View>
         </View>
@@ -52,6 +58,9 @@ export default function homePage() {
         { createDateThumbnails(10) }
       </ScrollView>
       </ScrollView>
+      <View className='absolute bottom-0 w-full'>
+        <Mp3_player_minum></Mp3_player_minum>
+      </View>
     </View>
   );
 }

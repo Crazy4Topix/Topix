@@ -2,6 +2,7 @@ import { Redirect, SplashScreen, Stack, Tabs } from 'expo-router';
 import { useContext } from 'react';
 import { SupabaseUserSession } from '../../contexts/user_session';
 import { supabase } from '../../lib/supabase';
+import { AudioPlayerProvider } from '../../contexts/audio_player';
 
 export default function TabLayout() {
   const { setSession } = useContext(SupabaseUserSession);
@@ -18,13 +19,27 @@ export default function TabLayout() {
   });
 
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Tab One',
-        }}
-      />
-    </Tabs>
+    <AudioPlayerProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name="index"
+          options={{
+            title: 'Tab One',
+          }}
+        />
+        <Stack.Screen
+          name="Mp3_player"
+          options={{
+            title: 'Tab two',
+          }}
+        />
+        <Stack.Screen
+          name="Mp3_player_minum"
+          options={{
+            title: 'Tab three',
+          }}
+        />
+      </Stack>
+    </AudioPlayerProvider>
   );
 }

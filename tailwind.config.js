@@ -12,7 +12,7 @@ module.exports = {
         'primary-text': '#050506',
         background: '#f4f5f6',
         secondary: '#c7ced1',
-        accent: '#3c82c8',
+        accent: '#5d6a6f',
       },
       fontFamily: {
         primary_thin: ['Poppins_100Thin'],
