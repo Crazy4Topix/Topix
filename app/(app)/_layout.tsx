@@ -20,26 +20,26 @@ export default function TabLayout() {
 
   return (
     <AudioPlayerProvider>
-      <Tabs screenOptions={{ headerShown: false }}>
-        <Tabs.Screen
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen
           name="index"
           options={{
             title: 'Tab One',
           }}
         />
-        <Tabs.Screen
+        <Stack.Screen
           name="Mp3_player"
           options={{
             title: 'Tab two',
           }}
         />
-        <Tabs.Screen
+        <Stack.Screen
           name="Mp3_player_minum"
           options={{
             title: 'Tab three',
           }}
         />
-      </Tabs>
+      </Stack>
     </AudioPlayerProvider>
   );
 }

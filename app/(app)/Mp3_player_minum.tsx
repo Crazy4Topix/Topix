@@ -27,7 +27,7 @@ const AudioPlayer = () => {
   }
 
   return (
-    <View className=' bg-accent'>
+    <View className=' bg-secondary'>
       <View className='flex-row'>
         <Image source={{ uri: tracks[0].artwork }} className='h-16 w-16 ml-0 mr-4' />
         <View className='self-center'>

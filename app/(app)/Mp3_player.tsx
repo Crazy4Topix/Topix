@@ -33,7 +33,7 @@ const AudioPlayer = () => {
   }, [audioContext.audioState.isPlaying]);
 
   return (
-    <View className='flex-1 items-center justify-center bg-accent'>
+    <View className='flex-1 items-center justify-center bg-secondary'>
       <Image source={{ uri: tracks[0].artwork }} className='h-64 w-64' />
       <Text className='mt-8 font-bold text-20'>{tracks[0].title}</Text>
       <Text className='mt-4 text-20'>{tracks[0].artist}</Text>
