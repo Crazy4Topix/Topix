@@ -35,7 +35,7 @@ const AudioPlayer = () => {
           <Text className='text-20'>{tracks[0].artist}</Text>
         </View>
         <View className='flex-row self-center'>
-          <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekTo(0); }}>
+          <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekBackward(); }}>
             <Icon name="skip-previous" size={40} color="#00DEAD" />
           </TouchableOpacity>
           {audioContext.audioState && audioContext.audioState.isPlaying ? (
@@ -47,7 +47,7 @@ const AudioPlayer = () => {
               <Icon name="play-circle-outline" size={40} color="#00DEAD" />
             </TouchableOpacity>
           )}
-          <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekTo(0.5); }}>
+          <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekForward(); }}>
             <Icon name="skip-next" size={40} color="#00DEAD" />
           </TouchableOpacity>
         </View>

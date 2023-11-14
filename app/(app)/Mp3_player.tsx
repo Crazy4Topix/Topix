@@ -20,6 +20,7 @@ const AudioPlayer = () => {
   useEffect(() => {
     void (async () => {
       try {
+        console.log(supabase)
         await audioContext.setupAndAddTracks();
       } catch (error) {
         console.error('Error setting up and adding tracks:', error);
@@ -38,7 +39,7 @@ const AudioPlayer = () => {
       <Text className='mt-8 font-bold text-20'>{tracks[0].title}</Text>
       <Text className='mt-4 text-20'>{tracks[0].artist}</Text>
       <View className='flex-row m-10'>
-        <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekTo(0); }}>
+        <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekBackward(); }}>
           <Icon name="skip-previous" size={70} color="#00DEAD" />
         </TouchableOpacity>
         {audioContext.audioState && audioContext.audioState.isPlaying ? (
@@ -50,7 +51,7 @@ const AudioPlayer = () => {
             <Icon name="play-circle-outline" size={70} color="#00DEAD" />
           </TouchableOpacity>
         )}
-        <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekTo(0.5); }}>
+        <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekForward(); }}>
           <Icon name="skip-next" size={70} color="#00DEAD" />
         </TouchableOpacity>
       </View>
