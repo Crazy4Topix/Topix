@@ -32,19 +32,26 @@ export default function TabLayout() {
         <Stack.Screen
           name="index"
           options={{
-            title: 'Tab One',
+            title: 'Main Page',
           }}
         />
         <Stack.Screen
           name="Mp3_player"
           options={{
-            title: 'Tab two',
+            title: 'Full Screen Audio Player',
           }}
         />
         <Stack.Screen
           name="Mp3_player_minum"
           options={{
-            title: 'Tab three',
+            title: 'Minimized Audio Player',
+          }}
+        />
+        <Stack.Screen
+          name="profile"
+          options={{
+            title: 'profile',
+            headerShown: false,
           }}
         />
       </Stack>
