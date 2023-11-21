@@ -53,6 +53,7 @@ export default function Login() {
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
               value={values.email}
+              autoCapitalize='none'
               placeholder={'alexander@pom.show'}
               placeholderTextColor="gray"
               autoComplete={'email'}
@@ -72,6 +73,7 @@ export default function Login() {
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
               value={values.password}
+              autoCapitalize='none'
               secureTextEntry={true}
               placeholder={'Al3xand3r!'}
               textContentType={'password'}
