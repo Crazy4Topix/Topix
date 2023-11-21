@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Pressable, SafeAreaView, View, Text } from 'react-native';
 import { useNavigation } from 'expo-router';
+import { supabase } from '../lib/supabase';
+import { SupabaseUserSession } from '../contexts/user_session';
 
 const TopicSelection = () => {
   const [topics, setTopics] = useState([
@@ -17,12 +19,64 @@ const TopicSelection = () => {
   ]);
 
   const navigation = useNavigation();
+  const userContext = useContext(SupabaseUserSession); // Moved useContext here
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const userId = userContext.session?.user.id; // Replace with the actual user ID from Supabase
+    console.log(supabase)
+
     const topicsSelected = topics.filter((topic) => topic.selected);
     console.log(topicsSelected);
 
-    // TODO: Push topics selected to database
+    const selectedTopicNames = topicsSelected
+      .filter((topic) => topic.selected)
+      .map((topic) => topic.value);
+
+    console.log(selectedTopicNames);
+
+    const { data: topicID, error: topicError } = await supabase
+      .from('topic')
+      .select('id')
+      .in('name', selectedTopicNames);
+
+    console.log(topicID);
+
+    if (topicError !== null) {
+      console.log('error fetching topix id');
+      console.log(topicError);
+    }
+
+    console.log(userId);
+    // Delete all rows
+    const {error: delError } = await supabase
+      .from('topic_preferences')
+      .delete()
+      .eq('user_id', userId);
+    if (delError !== null){
+      console.log("error deleting old topix")
+      console.log(delError)
+    }
+
+
+    // Map each ID to an object with user_id and topic_id
+    const rowsToInsert = topicID?.map((id) => ({
+      user_id: userId,
+      positive: true,
+      topic_id: id.id,
+    }));
+
+    // Insert the rows into the 'topic_preferences' table
+    const { data, error } = await supabase
+      .from('topic_preferences')
+      .insert(rowsToInsert)
+      .select();
+
+    if (error !== null){
+      console.log("error adding new topix")
+      console.log(error)
+    }
+
+    // TODO: Push topics selected to the database
     // @ts-expect-error It complains about never but it is there
     navigation.navigate('(app)');
   };

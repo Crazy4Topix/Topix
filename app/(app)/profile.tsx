@@ -27,11 +27,6 @@ export default function ProfilePage() {
       navigation.goBack(); // Go back to the previous screen
     };
   
-    const handleTopicSelection = () => {
-      // Navigate to the 'topicSelection' screen
-      navigation.navigate('topicSelection');
-    };
-  
     useEffect(() => {
         console.log(userId)
       const fetchFullName = async () => {
@@ -65,12 +60,13 @@ export default function ProfilePage() {
       <Text className="text-xl mb-2">{fullName}</Text>
 
       {/* Topic Selection Button */}
-      <Pressable onPress={handleTopicSelection}>
-        <View className="bg-primary p-2 rounded-md mb-4">
-          <Text className="text-white">Selecteer Topix</Text>
-        </View>
-      </Pressable>
-
+      <View className="bg-primary p-2 rounded-md mb-4">
+        <Link href="/topicSelection" asChild>
+          <Pressable>
+            <Text className="text-white">Selecteer Topix</Text>
+          </Pressable>
+        </Link>
+      </View>
       {/* Logout Button */}
       <Pressable onPress={handleLogout}>
         <View className="bg-primary p-2 rounded-md">
