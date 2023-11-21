@@ -69,7 +69,7 @@ export async function getFullName(userId: string) {
       .single(); // Assuming you want to fetch a single profile
 
     if (error != null) {
-      Alert.alert(error.message);
+      console.log(error.message);
       return { error };
     }
 

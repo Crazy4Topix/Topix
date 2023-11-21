@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { signOut, getFullName } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session'
+import { Icon } from 'react-native-elements';
+import { Link } from 'expo-router';
 
 export default function ProfilePage() {
     const navigation = useNavigation();
@@ -20,6 +22,10 @@ export default function ProfilePage() {
         console.error('Error logging out:', e.message);
       }
     };
+
+    const handleGoBack = () => {
+      navigation.goBack(); // Go back to the previous screen
+    };
   
     const handleTopicSelection = () => {
       // Navigate to the 'topicSelection' screen
@@ -36,12 +42,11 @@ export default function ProfilePage() {
                 setFullName(name);
             } else {
                 // Handle the error or provide a default value
-                Alert.alert('Error fetching full name.');
+                console.log('Error fetching full name.');
             }
           }
         } catch (error) {
           console.error('Error fetching full name:', error.message);
-          Alert.alert('Error fetching full name.');
         }
       };
   
@@ -49,6 +54,11 @@ export default function ProfilePage() {
     }, [userId]);
   return (
     <View className="flex-1 justify-center items-center">
+      <View className="absolute top-8 left-4 z-10">
+        <Pressable onPress={handleGoBack}>
+          <Icon name="keyboard-return" size={36} color="black" />
+        </Pressable>
+      </View>
       <Text className="text-2xl font-semibold mb-4">Profiel Pagina</Text>
 
       {/* Display Name */}

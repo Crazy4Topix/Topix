@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Image, Pressable, Alert } from 'react-native';
+import { ScrollView, View, Text, Image, Pressable } from 'react-native';
 import NewsThumbnail from '../../components/NewsThumbnail';
 import React, { useContext, useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
@@ -45,12 +45,11 @@ export default function homePage() {
             setFullName(name);
           } else {
             // Handle the error or provide a default value
-            Alert.alert('Error fetching full name.');
+            console.log('Error fetching full name.');
           }
         }
       } catch (error) {
         console.error('Error fetching full name:', error.message);
-        Alert.alert('Error fetching full name.');
       }
     };
   
