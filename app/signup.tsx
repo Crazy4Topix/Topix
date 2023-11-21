@@ -67,6 +67,7 @@ const Signup: FunctionComponent<Props> = (_: OwnProps) => {
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
               value={values.email}
+              autoCapitalize='none'
               placeholder={'alexander@pom.show'}
               placeholderTextColor="gray"
               autoComplete={'email'}
@@ -86,6 +87,7 @@ const Signup: FunctionComponent<Props> = (_: OwnProps) => {
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
               value={values.password}
+              autoCapitalize='none'
               secureTextEntry={true}
               placeholder={'Al3xand3r!'}
               textContentType={'password'}
@@ -107,6 +109,7 @@ const Signup: FunctionComponent<Props> = (_: OwnProps) => {
               onChangeText={handleChange('password2')}
               onBlur={handleBlur('password2')}
               value={values.password2}
+              autoCapitalize='none'
               secureTextEntry={true}
               placeholder={'Al3xand3r!'}
               textContentType={'password'}
