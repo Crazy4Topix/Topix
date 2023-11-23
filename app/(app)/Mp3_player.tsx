@@ -24,23 +24,19 @@ const AudioPlayer = () => {
 
   useEffect(() => {
     getPodcast();
-    console.log("got podcast");
   },[]);
 
   useEffect(() =>{
     loadPodcastInAudioPlayer();
-},[podcast])
+  },[podcast])
 
-  useEffect(() => {
-    // You can update the track's duration when it's available in the context
-    
-  }, [audioContext.audioState.isPlaying]);
 
   async function getPodcast(){
     const date = new Date();
     const currentDate = `${padTo2Digits(date.getDate())}-${padTo2Digits(date.getMonth() + 1)}-${date.getFullYear()}`;
+    // TODO: fetch base link from server, don't hardcode it this way.
     const url = `https://topix.site:8000/storage/v1/object/public/audio/podcasts/${userId}/${currentDate}_${userId}.mp3`
-    // TODO: come up with title and artist
+    // TODO: come up with actual title and artist
     const title = "Dagelijkse podcast";
 
     const newPodcast = {
@@ -49,22 +45,17 @@ const AudioPlayer = () => {
         artist: currentDate,
         artwork: 'https://cdn.britannica.com/40/144440-050-DA828627/Morgan-Freeman.jpg'
     }
-    console.log(`new podcastartist: ${newPodcast.artist}`);
     setPodcast(newPodcast);
-    console.log(`artist: ${podcast.artist}`);
-    console.log(`after set podcast: ${podcast}`);
   }
 
   async function loadPodcastInAudioPlayer(){
-    console.log("in load podcast");
     try {
-      await audioContext.setupAndAddTracks();
-      console.log("done setting up audio track");
+      // TODO: remove hardcoded url string
+      await audioContext.setupAndAddPodcast('https://oeybruqyypqhrcxcgkbw.supabase.co/storage/v1/object/public/audio/podcasts/1/07-11-2023_1.mp3')
+      // await audioContext.setupAndAddPodcast(podcast.url);
     } catch (error) {
       console.error('Error setting up and adding tracks:', error);
     }
-    console.log("at end of load podcast");
-
   }
 
   function padTo2Digits(number:number){
@@ -72,30 +63,38 @@ const AudioPlayer = () => {
   }
 
     //TODO check if podcast is null, and use useEffect to change each time podcast changes.
-  return (
-    <View className='flex-1 items-center justify-center bg-secondary'>
-      <Image source={{ uri: podcast.artwork }} className='h-64 w-64' />
-      <Text className='mt-8 font-bold text-20'>{podcast.title}</Text>
-      <Text className='mt-4 text-20'>{podcast.artist}</Text>
-      <View className='flex-row m-10'>
-        <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekBackward(); }}>
-          <Icon name="skip-previous" size={70} color="#00DEAD" />
-        </TouchableOpacity>
-        {audioContext.audioState && audioContext.audioState.isPlaying ? (
-          <TouchableOpacity className='flex rounded-full' onPress={audioContext.pauseTrack}>
-            <Icon name="pause-circle-outline" size={70} color="#00DEAD" />
+  if(podcast.url == ""){
+    return (
+      <Text>Loading...</Text>
+    )
+  } else {
+    return (
+      <View className='flex-1 items-center justify-center bg-secondary'>
+        <Image source={{ uri: podcast.artwork }} className='h-64 w-64' />
+        <Text className='mt-8 font-bold text-20'>{podcast.title}</Text>
+        <Text className='mt-4 text-20'>{podcast.artist}</Text>
+        <View className='flex-row m-10'>
+          <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekBackward(); }}>
+            <Icon name="skip-previous" size={70} color="#00DEAD" />
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity className='flex rounded-full' onPress={audioContext.resumeTrack}>
-            <Icon name="play-circle-outline" size={70} color="#00DEAD" />
+          {audioContext.audioState && audioContext.audioState.isPlaying ? (
+            <TouchableOpacity className='flex rounded-full' onPress={audioContext.pauseTrack}>
+              <Icon name="pause-circle-outline" size={70} color="#00DEAD" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity className='flex rounded-full' onPress={audioContext.resumeTrack}>
+              <Icon name="play-circle-outline" size={70} color="#00DEAD" />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekForward(); }}>
+            <Icon name="skip-next" size={70} color="#00DEAD" />
           </TouchableOpacity>
-        )}
-        <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekForward(); }}>
-          <Icon name="skip-next" size={70} color="#00DEAD" />
-        </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  );
+    );
+  }
+  
+    
 };
 
 export default AudioPlayer;
