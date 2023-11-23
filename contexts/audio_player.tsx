@@ -49,15 +49,14 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     isPlaying: false,
     currentTime: 0,
   });
-  const [audioLink, setAudioLink] = useState('');
   const [duration, setDuration] = useState(0);
 
   const getDuration = async () => {
-    try {
-      const info = await SoundPlayer.getInfo();
+    const info = await SoundPlayer.getInfo();
+    if(info != null){
       setDuration(info.duration);
-    } catch (error) {
-      console.error('Error getting duration:', error);
+    } else {
+      console.error('Error getting duration: media player in react-native-sound-player is null');
     }
   };
   
@@ -155,28 +154,39 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const setupAndAddTracks = async () => {
     try {
       // Fetch the audio link from Supabase
-      const { data: audio, error } = await supabase
-        .from('audio')
-        .select('link')
-        .single();
+      // const { data: audio, error } = await supabase
+      //   .from('audio')
+      //   .select('link')
+      //   .single();
   
-      if (error !== null) {
-        console.error('Error fetching audio link:', error);
-        return;
-      }
+      // if (error !== null) {
+      //   console.error('Error fetching audio link:', error);
+      //   return;
+      // }
+      const audio = "bla";
   
       if (audio !== null) {
-        const audioUrl = audio.link;
-        setAudioLink(audioUrl); // Set the audio link in the state
-  
+        //const audioUrl = audio.link;
+        // const audioUrl = 'https://topix.site:8000/storage/v1/object/public/audio/podcasts/1/14-11-2023_1.mp3'
+        // const audioUrl = 'https://oeybruqyypqhrcxcgkbw.supabase.co/storage/v1/object/public/audio/sample/morgan.mp3'
+        const audioUrl = 'https://topix.site:8000/storage/v1/object/public/audio/background/background.mp3'
         // Load and play the audio using the extracted URL
-        SoundPlayer.loadUrl(audioUrl);
+        console.log("before load url");
+        try{
+          console.log(`audioUrl: ${audioUrl}`);
+          SoundPlayer.loadUrl(audioUrl);
+        } catch (e){
+          console.error(e);
+        }
+        console.log("before play song")
         SoundPlayer.play();
   
         // Get the duration and play the track
+        console.log("before getDuration");
         await getDuration(); // Wait for getDuration to complete
   
         // Set the currentTrack in the state after getDuration completes
+        console.log("before defining new audio state")
         const newAudioState = {
           ...audioState,
           currentTrack: {
@@ -185,20 +195,14 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
           },
           isPlaying: true,
         };
+        console.log("before setting new audio state")
         setAudioState(newAudioState);
 
-      }
+      } 
     } catch (e) {
       console.error('Error setting up SoundPlayer:', e);
     }
   };
-  
-  
-  
-
-  // useEffect(() => {
-  //   // You can add any additional initialization logic here
-  // }, []);
 
   return (
     <AudioPlayerContext.Provider value={{ audioState, playTrack, pauseTrack, resumeTrack, seekTo, setupAndAddTracks, seekForward, seekBackward }}>

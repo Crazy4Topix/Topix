@@ -21,45 +21,51 @@ const AudioPlayer = () => {
   const userContext = useContext(SupabaseUserSession);
   const userId = userContext.session?.user.id;
 
-  useEffect(() => {
-    void (async () => {
-      try {
-        await audioContext.setupAndAddTracks();
-      } catch (error) {
-        console.error('Error setting up and adding tracks:', error);
-      }
-    })();
-  }, []);
 
   useEffect(() => {
-    async function getPodcast(){
-        // check user userid
-        // get current date
-        const date = new Date();
-        const currentDate = `${padTo2Digits(date.getDate())}-${padTo2Digits(date.getMonth() + 1)}-${date.getFullYear()}`;
-        console.log(currentDate);
-        // create url
-        const url = `https://topix.site:8000/storage/v1/object/public/audio/podcasts/${userId}/${currentDate}_${userId}.mp3`
-        console.log(url)
-        // come up with title and artist
-        const title = "Dagelijkse podcast";
+    getPodcast();
+    console.log("got podcast");
+  },[]);
 
-        const newPodcast = {
-            url: 'https://oeybruqyypqhrcxcgkbw.supabase.co/storage/v1/object/public/audio/sample/morgan.mp3',
-            title: title,
-            artist: currentDate,
-            artwork: 'https://cdn.britannica.com/40/144440-050-DA828627/Morgan-Freeman.jpg'
-        }
-        // call setPodcast
-        setPodcast(newPodcast)
-    }
-    getPodcast()
-  },[userContext.session]);
+  useEffect(() =>{
+    loadPodcastInAudioPlayer();
+},[podcast])
 
   useEffect(() => {
     // You can update the track's duration when it's available in the context
     
   }, [audioContext.audioState.isPlaying]);
+
+  async function getPodcast(){
+    const date = new Date();
+    const currentDate = `${padTo2Digits(date.getDate())}-${padTo2Digits(date.getMonth() + 1)}-${date.getFullYear()}`;
+    const url = `https://topix.site:8000/storage/v1/object/public/audio/podcasts/${userId}/${currentDate}_${userId}.mp3`
+    // TODO: come up with title and artist
+    const title = "Dagelijkse podcast";
+
+    const newPodcast = {
+        url: url,
+        title: title,
+        artist: currentDate,
+        artwork: 'https://cdn.britannica.com/40/144440-050-DA828627/Morgan-Freeman.jpg'
+    }
+    console.log(`new podcastartist: ${newPodcast.artist}`);
+    setPodcast(newPodcast);
+    console.log(`artist: ${podcast.artist}`);
+    console.log(`after set podcast: ${podcast}`);
+  }
+
+  async function loadPodcastInAudioPlayer(){
+    console.log("in load podcast");
+    try {
+      await audioContext.setupAndAddTracks();
+      console.log("done setting up audio track");
+    } catch (error) {
+      console.error('Error setting up and adding tracks:', error);
+    }
+    console.log("at end of load podcast");
+
+  }
 
   function padTo2Digits(number:number){
     return number.toString().padStart(2, '0');
