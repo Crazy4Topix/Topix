@@ -22,6 +22,7 @@ const AudioPlayer = () => {
     const date = new Date();
     const currentDate = `${padTo2Digits(date.getDate())}-${padTo2Digits(date.getMonth() + 1)}-${date.getFullYear()}`;
     // TODO: fetch base link from server, don't hardcode it this way.
+    // TODO: check if podcast exist in storage, and handle accordingly.
     const url = `https://topix.site/storage/v1/object/public/audio/podcasts/${userId}/${currentDate}_${userId}.mp3`
     // TODO: come up with actual title and artist
     const title = "Dagelijkse podcast";
