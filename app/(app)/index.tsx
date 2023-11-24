@@ -1,10 +1,11 @@
 import { ScrollView, View, Text, Image, Pressable } from 'react-native';
 import NewsThumbnail from '../../components/NewsThumbnail';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
 import { Link } from 'expo-router';
 import Mp3_player_minum from './Mp3_player_minum'
+import { supabase } from '../../lib/supabase';
 
 
 function createDateThumbnails(amount: number){
@@ -19,7 +20,7 @@ function createDateThumbnails(amount: number){
   return DateThumbnailArray;
 }
 
-function createNewsThumbnails(amount: number){
+/*function createNewsThumbnails(amount: number){
   const NewsThumbnailArray = [];
   for (let i=0; i<amount; i++){
     NewsThumbnailArray.push(
@@ -27,9 +28,68 @@ function createNewsThumbnails(amount: number){
     );
   }
   return NewsThumbnailArray;
+}*/
+
+async function createNewsThumbnails(){
+  let NewsThumbnailArray = [];
+  const d = new Date();  
+  const today = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`
+
+  let { data: items, error } = await supabase
+    .from('audio')
+    .select('news_id, length')
+    //.gte('created_at', today)
+  if(error) {
+    // TODO: proper error handling
+    console.log(error.message)
+  }
+  else {
+    let i = 0
+    for (const item of items) {
+      let itemTitle = ''
+      let itemDuration = ''
+
+      if (item.news_id != null) {
+        let { data: title, error } = await supabase
+          .from('news')
+          .select('title')
+          .eq('id', item.news_id)
+          .single()
+        if(error) {
+          // TODO: proper error handling
+          console.log(error.message)
+        }
+        else {
+          itemTitle = title?.title
+        }
+
+        itemDuration = `${item.length} seconden`
+        NewsThumbnailArray.push(
+          <NewsThumbnail key={i} coverSource={require("../../assets/images/TopixLogo.png")} newsTitle={itemTitle} newsDuration={itemDuration}/>
+        );
+        i++
+      }
+    }
+  }
+  return NewsThumbnailArray;
 }
 
 export default function homePage() {
+  const [newsThumbnails, setNewsThumbnails] = useState(null);
+  useEffect(() => {
+    async function fetchNewsThumbnails() {
+      const array = await createNewsThumbnails()
+      if (!ignore) {
+        setNewsThumbnails(array);
+      }
+    }
+    let ignore = false;
+    fetchNewsThumbnails();
+    return () => {
+      ignore = true;
+    }
+  })
+
   return (
     <View className={'flex w-full justify-center'}>
       <ScrollView>
@@ -50,11 +110,11 @@ export default function homePage() {
           </View>
         </View>
       <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Overige Topix</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} >
-        { createNewsThumbnails(10) }
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        { newsThumbnails }
       </ScrollView>
       <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Terugluisteren</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} >
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         { createDateThumbnails(10) }
       </ScrollView>
       </ScrollView>
