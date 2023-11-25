@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import { signOut, getFullName } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session'
 import { Icon } from 'react-native-elements';
-import { Link } from 'expo-router';
 
 export default function ProfilePage() {
     const navigation = useNavigation();
@@ -12,67 +11,71 @@ export default function ProfilePage() {
     const userContext = useContext(SupabaseUserSession);
     const userId = userContext.session?.user.id; // Replace with the actual user ID from Supabase
     
-  
     const handleLogout = async () => {
-      try {
-        await signOut();
-        // Navigate to the login page or replace 'LoginPage' with the desired screen name
-        navigation.navigate('welcome');
-      } catch (e) {
-        console.error('Error logging out:', e.message);
-      }
+        try {
+            await signOut();
+            // Navigate to the login page or replace 'welcome' with the desired screen name
+            navigation.navigate('welcome');
+        } catch (e) {
+            console.error('Error logging out:', e.message);
+        }
     };
 
     const handleGoBack = () => {
-      navigation.goBack(); // Go back to the previous screen
+        navigation.goBack(); // Go back to the previous screen
     };
-  
+
+    const handleTopicSelection = () => {
+        // Navigate to the 'updateTopics' screen or replace with the desired screen name
+        navigation.navigate('updateTopics');
+    };
+
     useEffect(() => {
         console.log(userId)
-      const fetchFullName = async () => {
-        try {
-          if (userId) { // Check if userId is defined
-            const name = await getFullName(userId);
-            if (name !== null) {
-                setFullName(name);
-            } else {
-                // Handle the error or provide a default value
-                console.log('Error fetching full name.');
+        const fetchFullName = async () => {
+            try {
+                if (userId) { // Check if userId is defined
+                    const name = await getFullName(userId);
+                    if (name !== null) {
+                        setFullName(name);
+                    } else {
+                        // Handle the error or provide a default value
+                        console.log('Error fetching full name.');
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching full name:', error.message);
             }
-          }
-        } catch (error) {
-          console.error('Error fetching full name:', error.message);
-        }
-      };
-  
-      void fetchFullName();
+        };
+
+        void fetchFullName();
     }, [userId]);
-  return (
-    <View className="flex-1 justify-center items-center">
-      <View className="absolute top-8 left-4 z-10">
-        <Pressable onPress={handleGoBack}>
-          <Icon name="keyboard-return" size={36} color="black" />
-        </Pressable>
-      </View>
-      <Text className="text-2xl font-semibold mb-4">Profiel Pagina</Text>
 
-      {/* Display Name */}
-      <Text className="text-xl mb-2">{fullName}</Text>
+    return (
+        <View className="flex-1 justify-center items-center bg-white">
+            <View className="absolute top-8 left-4 z-10">
+                <Pressable onPress={handleGoBack}>
+                    <Icon name="keyboard-return" size={36} color="black" />
+                </Pressable>
+            </View>
+            <Text className="text-2xl font-semibold mb-4">Profiel Pagina</Text>
 
-      {/* Topic Selection Button */}
-      <View className="bg-primary p-2 rounded-md mb-4">
-        <Link href="/topicSelection" asChild>
-          <Pressable>
-            <Text className="text-white">Selecteer Topix</Text>
-          </Pressable>
-        </Link>
-      </View>
-      {/* Logout Button */}
-      <Pressable onPress={handleLogout}>
-        <View className="bg-primary p-2 rounded-md">
-          <Text className="text-white">Uitloggen</Text>
+            {/* Display Name */}
+            <Text className="text-xl mb-2">{fullName}</Text>
+
+            {/* Topic Selection Button */}
+            <View className="bg-primary p-2 rounded-md mb-4">
+                <Pressable onPress={handleTopicSelection}>
+                    <Text className="text-white">Selecteer Topix</Text>
+                </Pressable>
+            </View>
+
+            {/* Logout Button */}
+            <Pressable onPress={handleLogout}>
+                <View className="bg-primary p-2 rounded-md">
+                    <Text className="text-white">Uitloggen</Text>
+                </View>
+            </Pressable>
         </View>
-      </Pressable>
-    </View>
-  );
+    );
 }

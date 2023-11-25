@@ -54,6 +54,13 @@ export default function TabLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="updateTopics"
+          options={{
+            title: 'updateTopics',
+            headerShown: false,
+          }}
+        />
       </Stack>
     </AudioPlayerProvider>
   );
