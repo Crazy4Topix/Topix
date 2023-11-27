@@ -19,7 +19,13 @@ const userInformation: FunctionComponent = () => {
     birthday: yup
       .date()
       .required('Birthday is required')
-      .max(new Date(), 'Cannot be in the future'),
+      .max(new Date(), 'Cannot be in the future')
+      .test('is-at-least-13', 'Must be at least 13 years old', function (value) {
+        const today = new Date();
+        const minimumAgeDate = new Date(today.getFullYear() - 13, today.getMonth(), today.getDate());
+
+        return value != null && value <= minimumAgeDate;
+      }),
   });
 
   const submitForm = async (values: { name: string; birthday: Date }) => {
@@ -96,13 +102,14 @@ const userInformation: FunctionComponent = () => {
             </Pressable>
             <View className={'flex shrink'}>
               <Text className={'text-lg text-red-600'}>
-                {/* {errors.birthday != null && touched.birthday === true && String(errors.birthday)} */}
+                {errors.birthday != null && touched.birthday  && String(errors.birthday)}
               </Text>
             </View>
 
             <Pressable
               onPress={() => {
                 handleSubmit();
+                console.log(errors.birthday)
                 console.log('Click');
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
