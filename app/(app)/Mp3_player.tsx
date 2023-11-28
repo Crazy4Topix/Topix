@@ -21,6 +21,7 @@ const AudioPlayer = () => {
     let url, audioTitle;
     const date = new Date();
     const currentDate = `${padTo2Digits(date.getDate())}-${padTo2Digits(date.getMonth() + 1)}-${date.getFullYear()}`;
+    //TODO remove replacements.
     audioLink = audioLink?.replace("http://127.0.0.1:8000", "https://topix.site");
     audioLink = audioLink?.replace("?","");
     if(audioLink){
