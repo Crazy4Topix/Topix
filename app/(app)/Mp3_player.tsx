@@ -1,72 +1,99 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import SoundPlayer from 'react-native-sound-player';
+import { SupabaseUserSession } from '../../contexts/user_session'
 import { Icon } from 'react-native-elements';
 import { AudioPlayerContext } from '../../contexts/audio_player';
-import { supabase } from '../../lib/supabase';
 import { useLocalSearchParams } from 'expo-router';
 
-const tracks = [
-  {
-    url: 'https://oeybruqyypqhrcxcgkbw.supabase.co/storage/v1/object/public/audio/sample/morgan.mp3',
-    title: 'Morgan Freeman speech',
-    artist: 'NU.nl',
-    artwork: 'https://cdn.britannica.com/40/144440-050-DA828627/Morgan-Freeman.jpg',
-  },
-];
-
 const AudioPlayer = () => {
-  // const params = useLocalSearchParams<{ audio_file?: string, audio_duration?: string }>()
-  // const time: number = +params.audio_duration
-  // console.log('audio file:')
-  // console.log(params.audio_file)
   const audioContext = useContext(AudioPlayerContext);
+  const [audio, setAudio] = useState({url: "", title: "", artist: "", artwork: ""});
+  const userContext = useContext(SupabaseUserSession);
+  const userId = userContext.session?.user.id;
+  const params = useLocalSearchParams<{audioLink?: string, title?: string}>()
 
   useEffect(() => {
-    void (async () => {
-      try {
-        //if (params.audio_file && params.audio_duration) {
-        await audioContext.setupAndAddTracks();
-          //SoundPlayer.playUrl(params.audio_file)
-        //}
-        //else {
-        //  console.error('Error: audio link or duration is undefined')
-        //}
-      } catch (error) {
-        console.error('Error setting up and adding tracks:', error);
-      }
-    })();
-  }, []);
+    getAudio();
+  },[]);
 
-  useEffect(() => {
-    // You can update the track's duration when it's available in the context
-    
-  }, [audioContext.audioState.isPlaying]);
+  useEffect(() =>{
+      loadAudioInPlayer();
+  },[audio])
 
-  return (
-    <View className='flex-1 items-center justify-center bg-secondary'>
-      <Image source={{ uri: tracks[0].artwork }} className='h-64 w-64' />
-      <Text className='mt-8 font-bold text-20'>{tracks[0].title}</Text>
-      <Text className='mt-4 text-20'>{tracks[0].artist}</Text>
-      <View className='flex-row m-10'>
-        <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekBackward(); }}>
-          <Icon name="skip-previous" size={70} color="#00DEAD" />
-        </TouchableOpacity>
-        {audioContext.audioState && audioContext.audioState.isPlaying ? (
-          <TouchableOpacity className='flex rounded-full' onPress={audioContext.pauseTrack}>
-            <Icon name="pause-circle-outline" size={70} color="#00DEAD" />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity className='flex rounded-full' onPress={audioContext.resumeTrack}>
-            <Icon name="play-circle-outline" size={70} color="#00DEAD" />
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekForward(); }}>
-          <Icon name="skip-next" size={70} color="#00DEAD" />
-        </TouchableOpacity>
+  async function getAudio(){
+    let url, title;
+    const date = new Date();
+    const currentDate = `${padTo2Digits(date.getDate())}-${padTo2Digits(date.getMonth() + 1)}-${date.getFullYear()}`;
+    if(params.audioLink){
+      console.log(params.audioLink);
+      url = params.audioLink;
+    } else{
+      console.error("audiolink undefined");
+      return;
+    }
+    if(params.title){
+      title = params.title
+    } else {
+      title ="";
+      console.error("title undefined");
+    }
+    // TODO: get an artwork for the player
+
+    const newAudio = {
+        url: url,
+        title: title,
+        artist: currentDate,
+        artwork: 'https://cdn.britannica.com/40/144440-050-DA828627/Morgan-Freeman.jpg'
+    }
+    if(newAudio.url === audio.url) return;
+    setAudio(newAudio);
+  }
+
+  async function loadAudioInPlayer(){
+    if(audio.url === "") return;
+    try {
+      await audioContext.setupAndAddPodcast(audio.url);
+    } catch (error) {
+      console.error('Error setting up and adding tracks:', error);
+    }
+  }
+
+  function padTo2Digits(number:number){
+    return number.toString().padStart(2, '0');
+  }
+
+  if(audio.url === ""){
+    return (
+      <View className='flex-1 items-center justify-center bg-secondary'>
+        <Text>Loading...</Text>
       </View>
-    </View>
-  );
+    );
+  } else {
+    return (
+      <View className='flex-1 items-center justify-center bg-secondary'>
+        <Image source={{ uri: audio.artwork }} className='h-64 w-64' />
+        <Text className='mt-8 font-bold text-20'>{audio.title}</Text>
+        <Text className='mt-4 text-20'>{audio.artist}</Text>
+        <View className='flex-row m-10'>
+          <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekBackward(); }}>
+            <Icon name="skip-previous" size={70} color="#00DEAD" />
+          </TouchableOpacity>
+          {audioContext.audioState && audioContext.audioState.isPlaying ? (
+            <TouchableOpacity className='flex rounded-full' onPress={audioContext.pauseTrack}>
+              <Icon name="pause-circle-outline" size={70} color="#00DEAD" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity className='flex rounded-full' onPress={audioContext.resumeTrack}>
+              <Icon name="play-circle-outline" size={70} color="#00DEAD" />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekForward(); }}>
+            <Icon name="skip-next" size={70} color="#00DEAD" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }   
 };
 
 export default AudioPlayer;
