@@ -3,7 +3,6 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import SoundPlayer from 'react-native-sound-player';
 import { Icon } from 'react-native-elements';
 import { AudioPlayerContext } from '../../contexts/audio_player';
-import { supabase } from '../../lib/supabase';
 
 const tracks = [
   {
