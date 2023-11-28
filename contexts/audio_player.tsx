@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
 import SoundPlayer from 'react-native-sound-player';
-import { supabase } from '../lib/supabase';
 
 interface Track {
   url: string;
@@ -24,7 +23,7 @@ interface AudioPlayerContextProps {
   seekTo: (percentage: number) => void;
   seekForward: () => void;
   seekBackward: () => void;
-  setupAndAddPodcast: (audioUrl: string) => Promise<void>;
+  setupAndAddAudio: (audioUrl: string) => Promise<void>;
 }
 
 export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
@@ -39,7 +38,7 @@ export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
   seekTo: () => {},
   seekForward: () => {},
   seekBackward: () => {},
-  setupAndAddPodcast: async () => {},
+  setupAndAddAudio: async () => {},
 });
 
 
@@ -150,7 +149,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   };
 
-  const setupAndAddPodcast = async (audioUrl: string) => {
+  const setupAndAddAudio = async (audioUrl: string) => {
     try {
       SoundPlayer.loadUrl(audioUrl);
       SoundPlayer.play();
@@ -172,7 +171,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   };
 
   return (
-    <AudioPlayerContext.Provider value={{ audioState, playTrack, pauseTrack, resumeTrack, seekTo, setupAndAddPodcast: setupAndAddPodcast, seekForward, seekBackward }}>
+    <AudioPlayerContext.Provider value={{ audioState, playTrack, pauseTrack, resumeTrack, seekTo, setupAndAddAudio: setupAndAddAudio, seekForward, seekBackward }}>
       {children}
     </AudioPlayerContext.Provider>
   );

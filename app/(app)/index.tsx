@@ -65,8 +65,9 @@ export default function homePage() {
     }
 
     let NewsThumbnailArray = [];
-    const d = new Date();  
-    const today = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`
+    const d = new Date();
+    const today = `${padTo2Digits(d.getFullYear())}-${padTo2Digits(d.getMonth() + 1)}-${d.getDate()}`;
+    //const today = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`
     
     const playAudio = (link: string, title: string) => {
       router.push({pathname: '/Mp3_player', params: {audioLink: link, title: title}})
@@ -79,7 +80,6 @@ export default function homePage() {
     .eq('user_id', userId)
     .single()
     if(e1) {
-      console.log('error1')
       console.error(e1.message)
     }
   
@@ -89,8 +89,6 @@ export default function homePage() {
       .gte('created_at', today)
       .eq('speaker_id', speakerId?.speaker_id)
     if(e2) {
-      
-      console.log('test')
       console.error(e2.message)
       return;
     }
@@ -107,7 +105,7 @@ export default function homePage() {
             .eq('id', item.news_id)
             .single()
           if(error) {
-            console.log(error.message)
+            console.error(error.message)
             return;
           }
           else {
@@ -138,7 +136,7 @@ export default function homePage() {
             setFullName(name);
           } else {
             // Handle the error or provide a default value
-            console.log('Error fetching full name.');
+            console.error('Error fetching full name.');
           }
         }
       } catch (error: any) {
