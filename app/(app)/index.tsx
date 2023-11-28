@@ -67,7 +67,6 @@ export default function homePage() {
     let NewsThumbnailArray = [];
     const d = new Date();
     const today = `${padTo2Digits(d.getFullYear())}-${padTo2Digits(d.getMonth() + 1)}-${d.getDate()}`;
-    //const today = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`
     
     const playAudio = (link: string, title: string) => {
       router.push({pathname: '/Mp3_player', params: {audioLink: link, title: title}})

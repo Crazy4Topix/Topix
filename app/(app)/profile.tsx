@@ -29,7 +29,6 @@ export default function ProfilePage() {
     };
 
     useEffect(() => {
-        console.log(userId)
         const fetchFullName = async () => {
             try {
                 if (userId) { // Check if userId is defined
@@ -37,7 +36,7 @@ export default function ProfilePage() {
                     if (name !== null) {
                         setFullName(name);
                     } else {
-                        console.log('Error fetching full name.');
+                        console.error('Error fetching full name.');
                     }
                 }
             } catch (error) {
