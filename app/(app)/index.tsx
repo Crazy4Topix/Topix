@@ -23,8 +23,6 @@ export default function homePage() {
     }
     const date = new Date();
     const currentDate = `${padTo2Digits(date.getFullYear())}-${padTo2Digits(date.getMonth() + 1)}-${date.getDate()}`;
-    // TODO: fetch base link from server, don't hardcode it this way.
-    console.log(userId);
     let {data:podcastUrl, error } = await supabase
       .from('podcasts')
       .select('podcast_link')
@@ -33,8 +31,8 @@ export default function homePage() {
       .single()
     if(error){
       console.error(error);
-    } else if(podcastUrl){
-      setAudioLink(podcastUrl.toString());
+    } else if(podcastUrl?.podcast_link){
+      setAudioLink(podcastUrl.podcast_link.toString());
     } else {
       console.error('Podcast link is null')
     }
