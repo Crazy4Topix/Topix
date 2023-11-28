@@ -35,6 +35,7 @@ export default function homePage() {
   const [fullName, setFullName] = useState('');
   const userContext = useContext(SupabaseUserSession);
   const userId = userContext.session?.user.id; 
+  const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
     const fetchFullName = async () => {
@@ -55,6 +56,20 @@ export default function homePage() {
   
     fetchFullName();
   }, [userId]);
+
+  useEffect(() => {
+    // Bepaal het tijdstip van de dag en pas de begroeting aan
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours >= 5 && hours < 12) {
+      setGreeting('Goedemorgen');
+    } else if (hours >= 12 && hours < 18) {
+      setGreeting('Goedemiddag');
+    } else {
+      setGreeting('Goedenavond');
+    }
+  }, []); 
   
 
   return (
@@ -68,9 +83,9 @@ export default function homePage() {
       </View>
       <ScrollView>
         <View className={"bg-primary pt-8 pb-4 px-2"}>
-          <Text className={'mt-4 mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>Goedemorgen,</Text>
+          <Text className={'mt-4 mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>{greeting},</Text>
           <Text className={'mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>
-            {typeof fullName === 'string' ? fullName : 'Loading...'}
+            {typeof fullName === 'string' ? fullName : ''}
           </Text>
           <View>
             <View id={"background"} className={"mx-2 rounded-xl bg-background flex justify-center"}>

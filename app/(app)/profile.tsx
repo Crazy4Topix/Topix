@@ -9,12 +9,11 @@ export default function ProfilePage() {
     const navigation = useNavigation();
     const [fullName, setFullName] = useState('');
     const userContext = useContext(SupabaseUserSession);
-    const userId = userContext.session?.user.id; // Replace with the actual user ID from Supabase
+    const userId = userContext.session?.user.id; 
     
     const handleLogout = async () => {
         try {
             await signOut();
-            // Navigate to the login page or replace 'welcome' with the desired screen name
             navigation.navigate('welcome');
         } catch (e) {
             console.error('Error logging out:', e.message);
@@ -25,8 +24,7 @@ export default function ProfilePage() {
         navigation.goBack(); // Go back to the previous screen
     };
 
-    const handleTopicSelection = () => {
-        // Navigate to the 'updateTopics' screen or replace with the desired screen name
+    const navigateTopicSelection = () => {
         navigation.navigate('updateTopics');
     };
 
@@ -39,7 +37,6 @@ export default function ProfilePage() {
                     if (name !== null) {
                         setFullName(name);
                     } else {
-                        // Handle the error or provide a default value
                         console.log('Error fetching full name.');
                     }
                 }
@@ -65,7 +62,7 @@ export default function ProfilePage() {
 
             {/* Topic Selection Button */}
             <View className="bg-primary p-2 rounded-md mb-4">
-                <Pressable onPress={handleTopicSelection}>
+                <Pressable onPress={navigateTopicSelection}>
                     <Text className="text-white">Selecteer Topix</Text>
                 </Pressable>
             </View>

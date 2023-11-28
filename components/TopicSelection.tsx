@@ -16,16 +16,16 @@ interface Navigation {
 
 const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
   const [topics, setTopics] = useState([
-    { text: 'Art', value: 'art', state: 'neutral' },
-    { text: 'Books', value: 'books', state: 'neutral' },
-    { text: 'Business', value: 'business', state: 'neutral' },
-    { text: 'Comedy', value: 'comedy', state: 'neutral' },
-    { text: 'Education', value: 'education', state: 'neutral' },
-    { text: 'Games & Hobbies', value: 'games-hobbies', state: 'neutral' },
-    { text: 'Government & Organizations', value: 'government-organizations', state: 'neutral' },
-    { text: 'Health', value: 'health', state: 'neutral' },
-    { text: 'Kids & Family', value: 'kids-family', state: 'neutral' },
-    { text: 'Music', value: 'music', state: 'neutral' },
+    { text: 'Boek & Cultuur', value: 'boek-cultuur', state: 'neutral' },
+    { text: 'Klimaat', value: 'klimaat', state: 'neutral' },
+    { text: 'Economie', value: 'economie', state: 'neutral' },
+    { text: 'Komedie', value: 'komedie', state: 'neutral' },
+    { text: 'Educatie', value: 'educatie', state: 'neutral' },
+    { text: 'Sport', value: 'sport', state: 'neutral' },
+    { text: 'Politiek', value: 'politiek', state: 'neutral' },
+    { text: 'Gezondheid', value: 'gezondheid', state: 'neutral' },
+    { text: 'Tech', value: 'tech', state: 'neutral' },
+    { text: 'Kind & Gezin', value: 'kind-gezin', state: 'neutral' },
   ]);
 
   const navigation = useNavigation();
