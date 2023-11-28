@@ -138,7 +138,7 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
           }}
           className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
         >
-          <Text className={'self-center text-white'}>Next</Text>
+          <Text className={'self-center text-white'}>Confirm</Text>
         </Pressable>
       </SafeAreaView>
     </View>
