@@ -167,10 +167,19 @@ export default function homePage() {
 
   return (
     <View className={'flex w-full justify-center'}>
+      <View className="absolute top-8 right-4 z-10">
+        <Link href={'/profile'} asChild>
+          <Pressable>
+            <Icon name="account-circle" size={36} color="black" />
+          </Pressable>
+        </Link>
+      </View>
       <ScrollView>
         <View className={"bg-primary pt-8 pb-4 px-2"}>
           <Text className={'mt-4 mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>{greeting},</Text>
-          <Text className={'mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>{fullName}</Text>
+          <Text className={'mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>
+            {typeof fullName === 'string' ? fullName : ''}
+          </Text>
           <View>
             <View id={"background"} className={"mx-2 rounded-xl bg-background flex justify-center"}>
               <Image source={require("../../assets/waveform.png")} className={"m-4 h-48 w-10/12 self-center"}></Image>

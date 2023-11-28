@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { SupabaseUserSession } from '../../contexts/user_session'
 import { Icon } from 'react-native-elements';
 import { AudioPlayerContext } from '../../contexts/audio_player';
 import { useLocalSearchParams } from 'expo-router';
@@ -8,9 +7,7 @@ import { useLocalSearchParams } from 'expo-router';
 const AudioPlayer = () => {
   const audioContext = useContext(AudioPlayerContext);
   const [audio, setAudio] = useState({url: "", title: "", artist: "", artwork: ""});
-  const userContext = useContext(SupabaseUserSession);
-  const userId = userContext.session?.user.id;
-  const params = useLocalSearchParams<{audioLink?: string, title?: string}>()
+  let {audioLink, title} = useLocalSearchParams<{audioLink?: string; title?: string}>()
 
   useEffect(() => {
     getAudio();
@@ -21,27 +18,29 @@ const AudioPlayer = () => {
   },[audio])
 
   async function getAudio(){
-    let url, title;
+    let url, audioTitle;
     const date = new Date();
     const currentDate = `${padTo2Digits(date.getDate())}-${padTo2Digits(date.getMonth() + 1)}-${date.getFullYear()}`;
-    if(params.audioLink){
-      console.log(params.audioLink);
-      url = params.audioLink;
+    //TODO remove replacements.
+    audioLink = audioLink?.replace("http://127.0.0.1:8000", "https://topix.site");
+    audioLink = audioLink?.replace("?","");
+    if(audioLink){
+      url = audioLink;
     } else{
       console.error("audiolink undefined");
       return;
     }
-    if(params.title){
-      title = params.title
+    if(title){
+      audioTitle = title
     } else {
-      title ="";
+      audioTitle ="";
       console.error("title undefined");
     }
     // TODO: get an artwork for the player
 
     const newAudio = {
         url: url,
-        title: title,
+        title: audioTitle,
         artist: currentDate,
         artwork: 'https://cdn.britannica.com/40/144440-050-DA828627/Morgan-Freeman.jpg'
     }
