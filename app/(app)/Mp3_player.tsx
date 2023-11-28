@@ -4,6 +4,7 @@ import SoundPlayer from 'react-native-sound-player';
 import { Icon } from 'react-native-elements';
 import { AudioPlayerContext } from '../../contexts/audio_player';
 import { supabase } from '../../lib/supabase';
+import { useLocalSearchParams } from 'expo-router';
 
 const tracks = [
   {
@@ -15,12 +16,22 @@ const tracks = [
 ];
 
 const AudioPlayer = () => {
+  // const params = useLocalSearchParams<{ audio_file?: string, audio_duration?: string }>()
+  // const time: number = +params.audio_duration
+  // console.log('audio file:')
+  // console.log(params.audio_file)
   const audioContext = useContext(AudioPlayerContext);
 
   useEffect(() => {
     void (async () => {
       try {
+        //if (params.audio_file && params.audio_duration) {
         await audioContext.setupAndAddTracks();
+          //SoundPlayer.playUrl(params.audio_file)
+        //}
+        //else {
+        //  console.error('Error: audio link or duration is undefined')
+        //}
       } catch (error) {
         console.error('Error setting up and adding tracks:', error);
       }

@@ -3,9 +3,10 @@ import NewsThumbnail from '../../components/NewsThumbnail';
 import React, { useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
-import { Link } from 'expo-router';
+import { Link, router, useNavigation } from 'expo-router';
 import Mp3_player_minum from './Mp3_player_minum'
 import { supabase } from '../../lib/supabase';
+import SoundPlayer from 'react-native-sound-player';
 
 
 function createDateThumbnails(amount: number){
@@ -20,24 +21,19 @@ function createDateThumbnails(amount: number){
   return DateThumbnailArray;
 }
 
-/*function createNewsThumbnails(amount: number){
-  const NewsThumbnailArray = [];
-  for (let i=0; i<amount; i++){
-    NewsThumbnailArray.push(
-      <NewsThumbnail key={i} coverSource={require("../../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-    );
-  }
-  return NewsThumbnailArray;
-}*/
-
 async function createNewsThumbnails(){
   let NewsThumbnailArray = [];
   const d = new Date();  
   const today = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`
+  
+  const playAudio = (link: string, length: string) => {
+    //router.push({pathname: '/Mp3_player', params: {audio_file: link, audio_duration: length}})
+    router.push('/Mp3_player')
+  };
 
   let { data: items, error } = await supabase
     .from('audio')
-    .select('news_id, length')
+    .select('news_id, length, link')
     //.gte('created_at', today)
   if(error) {
     // TODO: proper error handling
@@ -65,7 +61,7 @@ async function createNewsThumbnails(){
 
         itemDuration = `${item.length} seconden`
         NewsThumbnailArray.push(
-          <NewsThumbnail key={i} coverSource={require("../../assets/images/TopixLogo.png")} newsTitle={itemTitle} newsDuration={itemDuration}/>
+          <NewsThumbnail key={i} coverSource={require("../../assets/images/TopixLogo.png")} newsTitle={itemTitle} newsDuration={itemDuration} onPressImage={() => playAudio(item.link, item.length.toString())}/>
         );
         i++
       }
@@ -76,6 +72,7 @@ async function createNewsThumbnails(){
 
 export default function homePage() {
   const [newsThumbnails, setNewsThumbnails] = useState(null);
+  
   useEffect(() => {
     async function fetchNewsThumbnails() {
       const array = await createNewsThumbnails()

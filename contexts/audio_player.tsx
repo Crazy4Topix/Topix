@@ -54,6 +54,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const getDuration = async () => {
     try {
+      // Dit returned niet, geen idee waarom
       const info = await SoundPlayer.getInfo();
       setDuration(info.duration);
     } catch (error) {
@@ -158,6 +159,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const { data: audio, error } = await supabase
         .from('audio')
         .select('link')
+        .limit(1)
         .single();
   
       if (error !== null) {
@@ -166,14 +168,20 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
   
       if (audio !== null) {
-        const audioUrl = audio.link;
-        setAudioLink(audioUrl); // Set the audio link in the state
+      const audioUrl = audio.link;
+      setAudioLink(audioUrl); // Set the audio link in the state
   
         // Load and play the audio using the extracted URL
-        SoundPlayer.loadUrl(audioUrl);
-        SoundPlayer.play();
+      SoundPlayer.loadUrl(audioUrl);
+      SoundPlayer.play();
   
         // Get the duration and play the track
+        // if (time) {
+        //   setDuration(time)
+        // }
+        // else {
+        //   console.error('Error: time is undefined')
+        // }
         await getDuration(); // Wait for getDuration to complete
   
         // Set the currentTrack in the state after getDuration completes
@@ -186,8 +194,10 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
           isPlaying: true,
         };
         setAudioState(newAudioState);
-
       }
+      //else {
+      //  console.error('Error: audio link is undefined')
+      //}
     } catch (e) {
       console.error('Error setting up SoundPlayer:', e);
     }
