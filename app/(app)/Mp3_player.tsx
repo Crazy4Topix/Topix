@@ -3,45 +3,56 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { SupabaseUserSession } from '../../contexts/user_session'
 import { Icon } from 'react-native-elements';
 import { AudioPlayerContext } from '../../contexts/audio_player';
+import { useLocalSearchParams } from 'expo-router';
 
 const AudioPlayer = () => {
   const audioContext = useContext(AudioPlayerContext);
-  const [podcast, setPodcast] = useState({url: "", title: "", artist: "", artwork: ""});
+  const [audio, setAudio] = useState({url: "", title: "", artist: "", artwork: ""});
   const userContext = useContext(SupabaseUserSession);
   const userId = userContext.session?.user.id;
+  const params = useLocalSearchParams<{audioLink?: string, title?: string}>()
 
   useEffect(() => {
-    getPodcast();
+    getAudio();
   },[]);
 
   useEffect(() =>{
-    loadPodcastInAudioPlayer();
-  },[podcast])
+      loadAudioInPlayer();
+  },[audio])
 
-  async function getPodcast(){
+  async function getAudio(){
+    let url, title;
     const date = new Date();
     const currentDate = `${padTo2Digits(date.getDate())}-${padTo2Digits(date.getMonth() + 1)}-${date.getFullYear()}`;
-    // TODO: fetch base link from server, don't hardcode it this way.
-    // TODO: check if podcast exist in storage, and handle accordingly.
-    const url = `https://topix.site/storage/v1/object/public/audio/podcasts/${userId}/${currentDate}_${userId}.mp3`
-    // TODO: come up with actual title and artist
-    const title = "Dagelijkse podcast";
+    if(params.audioLink){
+      console.log(params.audioLink);
+      url = params.audioLink;
+    } else{
+      console.error("audiolink undefined");
+      return;
+    }
+    if(params.title){
+      title = params.title
+    } else {
+      title ="";
+      console.error("title undefined");
+    }
     // TODO: get an artwork for the player
 
-    const newPodcast = {
+    const newAudio = {
         url: url,
         title: title,
         artist: currentDate,
         artwork: 'https://cdn.britannica.com/40/144440-050-DA828627/Morgan-Freeman.jpg'
     }
-    if(newPodcast.url === podcast.url) return;
-    setPodcast(newPodcast);
+    if(newAudio.url === audio.url) return;
+    setAudio(newAudio);
   }
 
-  async function loadPodcastInAudioPlayer(){
-    if(podcast.url === "") return;
+  async function loadAudioInPlayer(){
+    if(audio.url === "") return;
     try {
-      await audioContext.setupAndAddPodcast(podcast.url);
+      await audioContext.setupAndAddPodcast(audio.url);
     } catch (error) {
       console.error('Error setting up and adding tracks:', error);
     }
@@ -51,17 +62,18 @@ const AudioPlayer = () => {
     return number.toString().padStart(2, '0');
   }
 
-    //TODO check if podcast is null, and use useEffect to change each time podcast changes.
-  if(podcast.url === ""){
+  if(audio.url === ""){
     return (
-      <Text>Loading...</Text>
-    )
+      <View className='flex-1 items-center justify-center bg-secondary'>
+        <Text>Loading...</Text>
+      </View>
+    );
   } else {
     return (
       <View className='flex-1 items-center justify-center bg-secondary'>
-        <Image source={{ uri: podcast.artwork }} className='h-64 w-64' />
-        <Text className='mt-8 font-bold text-20'>{podcast.title}</Text>
-        <Text className='mt-4 text-20'>{podcast.artist}</Text>
+        <Image source={{ uri: audio.artwork }} className='h-64 w-64' />
+        <Text className='mt-8 font-bold text-20'>{audio.title}</Text>
+        <Text className='mt-4 text-20'>{audio.artist}</Text>
         <View className='flex-row m-10'>
           <TouchableOpacity className='flex rounded-full' onPress={() => { audioContext.seekBackward(); }}>
             <Icon name="skip-previous" size={70} color="#00DEAD" />
