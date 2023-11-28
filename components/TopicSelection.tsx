@@ -16,16 +16,16 @@ interface Navigation {
 
 const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
   const [topics, setTopics] = useState([
-    { text: 'Boek & Cultuur', value: 'boek-cultuur', state: 'neutral' },
+    { text: 'Cultuur', value: 'cultuur', state: 'neutral' },
     { text: 'Klimaat', value: 'klimaat', state: 'neutral' },
     { text: 'Economie', value: 'economie', state: 'neutral' },
-    { text: 'Komedie', value: 'komedie', state: 'neutral' },
+    { text: 'Opmerkelijk', value: 'opmerkelijk', state: 'neutral' },
     { text: 'Educatie', value: 'educatie', state: 'neutral' },
     { text: 'Sport', value: 'sport', state: 'neutral' },
     { text: 'Politiek', value: 'politiek', state: 'neutral' },
     { text: 'Gezondheid', value: 'gezondheid', state: 'neutral' },
     { text: 'Tech', value: 'tech', state: 'neutral' },
-    { text: 'Kind & Gezin', value: 'kind-gezin', state: 'neutral' },
+    { text: 'Wetenschap', value: 'wetenschap', state: 'neutral' },
   ]);
 
   const navigation = useNavigation();
