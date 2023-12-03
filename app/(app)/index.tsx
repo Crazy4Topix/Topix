@@ -22,25 +22,78 @@ export default function homePage() {
     createNewsThumbnails();
   },[userId])
 
+  useEffect(() =>{
+    console.log(`audio link: ${audioLink}`)
+  },[audioLink])
+
+  useEffect(() => {
+    const fetchFullName = async () => {
+      try {
+        if (userId) {
+          const name = await getFullName(userId);
+          if (name !== null) {
+            setFullName(name);
+          } else {
+            console.error('Error fetching full name.');
+          }
+        }
+      } catch (error: any) {
+        console.error('Error fetching full name:', error.message);
+      }
+    };
+  
+    fetchFullName();
+  }, [userId]);
+
+  useEffect(() => {
+    // Bepaal het tijdstip van de dag en pas de begroeting aan
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours >= 6 && hours < 12) {
+      setGreeting('Goedemorgen');
+    } else if (hours >= 12 && hours < 18) {
+      setGreeting('Goedemiddag');
+    } else if (hours >= 18 && hours < 24) {
+      setGreeting('Goedenavond');
+    } else {
+      setGreeting('Goedenacht');
+    }
+  }, []);
+
   async function getPodcastLink(){
     if(!userId){
       return;
     }
     const date = new Date();
-    const currentDate = `${padTo2Digits(date.getFullYear())}-${padTo2Digits(date.getMonth() + 1)}-${date.getDate()}`;
-    let {data:podcastUrl, error } = await supabase
+    const podcastUrl = await getNewestPodcastUrlFromSupabase(date)
+    if (podcastUrl == null){
+      alert("We hebben geen podcast kunnen vinden, probeer het morgen opnieuw")
+      return;
+    }
+    setAudioLink(podcastUrl.toString().replace("?", ""));
+  }
+
+  async function getNewestPodcastUrlFromSupabase(date: Date){
+    // if date is more than one week (7,5 days is 648000000 miliseconds) ago, return null
+    const today = new Date()
+    if(today.valueOf() - date.valueOf() >  648000000){
+      return null
+    }
+    const fetchDate = `${padTo2Digits(date.getFullYear())}-${padTo2Digits(date.getMonth() + 1)}-${date.getDate()}`;
+    let {data:podcast, error } = await supabase
       .from('podcasts')
       .select('podcast_link')
       .eq('user_id', userId)
-      .gte('created_at', currentDate)
+      .gte('created_at', fetchDate)
       .single()
     if(error){
-      console.error(error);
-    } else if(podcastUrl?.podcast_link){
-      setAudioLink(podcastUrl.podcast_link.toString());
-    } else {
-      console.error('Podcast link is null')
+      //get a day earlier
+      const newDate = new Date(date.valueOf() - 86400000 )
+      return getNewestPodcastUrlFromSupabase(newDate)
     }
+    console.log(`found podcast of ${date}`)
+    return podcast?.podcast_link ?? null
   }
 
   function padTo2Digits(number:number){
@@ -127,40 +180,6 @@ export default function homePage() {
     setNewsThumbnails(NewsThumbnailArray)
   }
 
-  useEffect(() => {
-    const fetchFullName = async () => {
-      try {
-        if (userId) {
-          const name = await getFullName(userId);
-          if (name !== null) {
-            setFullName(name);
-          } else {
-            console.error('Error fetching full name.');
-          }
-        }
-      } catch (error: any) {
-        console.error('Error fetching full name:', error.message);
-      }
-    };
-  
-    fetchFullName();
-  }, [userId]);
-
-  useEffect(() => {
-    // Bepaal het tijdstip van de dag en pas de begroeting aan
-    const now = new Date();
-    const hours = now.getHours();
-
-    if (hours >= 6 && hours < 12) {
-      setGreeting('Goedemorgen');
-    } else if (hours >= 12 && hours < 18) {
-      setGreeting('Goedemiddag');
-    } else if (hours >= 18 && hours < 24) {
-      setGreeting('Goedenavond');
-    } else {
-      setGreeting('Goedenacht');
-    }
-  }, []);
 
   return (
     <View className={'flex w-full justify-center'}>
