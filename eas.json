@@ -4,19 +4,10 @@
   },
   "build": {
     "development": {
-<<<<<<< HEAD
-      "distribution": "internal",
-      "android": {
-        "gradleCommand": ":app:assembleDebug"
-      },
-      "ios": {
-        "buildConfiguration": "Debug"
-=======
       "developmentClient": true,
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_SUPABASE_URL": "https://topix.site"
->>>>>>> 7f7a47afe7ebcd6bf13f58547adaa41c6be751f0
       }
     },
     "preview": {
