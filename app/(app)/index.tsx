@@ -73,55 +73,56 @@ export default function homePage() {
     };
 
     // Get the speaker_id of the preferenced speaker of the user
-    let {data: speakerId, error: e1} = await supabase
+    let {data: speakerId, error: fetchSpeakerError} = await supabase
     .from('audio_preferences')
     .select('speaker_id')
     .eq('user_id', userId)
     .single()
-    if(e1) {
-      console.error(e1.message)
+    if(fetchSpeakerError) {
+      console.error(fetchSpeakerError.message)
     }
   
-    let { data: items, error: e2 } = await supabase
+    let { data: items, error: fetchItemsError } = await supabase
       .from('audio')
       .select('length, link, news_id')
       .gte('created_at', today)
       .eq('speaker_id', speakerId?.speaker_id)
-    if(e2) {
-      console.error(e2.message)
+    if(fetchItemsError) {
+      console.error(fetchItemsError.message)
       return;
     }
-    else if (items) {
-      let i = 0
-      for (const item of items) {
-        let itemTitle = ''
-        let itemDuration = ''
-  
-        if (item.news_id != null) {
-          let { data: title, error } = await supabase
-            .from('news')
-            .select('title')
-            .eq('id', item.news_id)
-            .single()
-          if(error) {
-            console.error(error.message)
-            return;
-          }
-          else {
-            itemTitle = title?.title
-          }
-  
-          itemDuration = `${item.length} seconden`
-          NewsThumbnailArray.push(
-            <NewsThumbnail key={i} coverSource={require("../../assets/images/TopixLogo.png")} newsTitle={itemTitle} newsDuration={itemDuration} onPressImage={() => playAudio(item.link, itemTitle)}/>
-          );
-          i++
-        }
-      }
-    }
-    else {
+
+    if(!items){
       console.error('audio items undefined')
       return;
+    }
+      
+    let i = 0
+    let itemTitle = ''
+    let itemDuration = ''
+
+    for (const item of items) {
+
+      if(item.news_id == null) 
+        continue
+
+      let { data: title, error } = await supabase
+        .from('news')
+        .select('title')
+        .eq('id', item.news_id)
+        .single()
+      if(error) {
+        console.error(error.message)
+        return;
+      }
+      
+      itemTitle = title?.title
+      itemDuration = `${item.length} seconden`
+      NewsThumbnailArray.push(
+        <NewsThumbnail key={i} coverSource={require("../../assets/images/TopixLogo.png")} newsTitle={itemTitle} newsDuration={itemDuration} onPressImage={() => playAudio(item.link, itemTitle)}/>
+      );
+      i++
+      
     }
     setNewsThumbnails(NewsThumbnailArray)
   }
@@ -129,12 +130,11 @@ export default function homePage() {
   useEffect(() => {
     const fetchFullName = async () => {
       try {
-        if (userId) { // Check if userId is defined
+        if (userId) {
           const name = await getFullName(userId);
           if (name !== null) {
             setFullName(name);
           } else {
-            // Handle the error or provide a default value
             console.error('Error fetching full name.');
           }
         }
@@ -188,14 +188,22 @@ export default function homePage() {
             </View>
           </View>
         </View>
-      <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Overige Topix</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} >
-        { newsThumbnails }
-      </ScrollView>
-      <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Terugluisteren</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} >
-        { createDateThumbnails(10) }
-      </ScrollView>
+
+        {newsThumbnails.length > 0 && (
+          <>
+            <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>
+              Overige Topix
+            </Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {newsThumbnails}
+            </ScrollView>
+          </>
+        )}
+
+        <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Terugluisteren</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} >
+          { createDateThumbnails(10) }
+        </ScrollView>
       </ScrollView>
       <View className='absolute bottom-0 w-full'>
         <Mp3_player_minum></Mp3_player_minum>
