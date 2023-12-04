@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Topix",
-    "slug": "Topix",
+    "slug": "topix",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/TopixLogo.png",
@@ -39,7 +39,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "3b556511-1c6f-4d5a-97ab-2eff75ccdddc"
+        "projectId": "e6a8a4e1-af24-45fd-a5a5-35731c31a606"
       }
     }
   }

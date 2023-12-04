@@ -38,6 +38,9 @@ android/
 # typescript
 *.tsbuildinfo
 
+# android studio
+android/
+
 
 
 .idea
