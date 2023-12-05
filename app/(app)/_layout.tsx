@@ -41,12 +41,6 @@ export default function TabLayout() {
             title: 'Full Screen Audio Player',
           }}
         />
-        {/* <Stack.Screen */}
-        {/*  name="Mp3_player_minum" */}
-        {/*  options={{ */}
-        {/*    title: 'Minimized Audio Player', */}
-        {/*  }} */}
-        {/* /> */}
         <Stack.Screen
           name="profile"
           options={{
