@@ -95,9 +95,36 @@ export default function homePage() {
     return number.toString().padStart(2, '0');
   }
 
-  function createDateThumbnails(amount: number){
+  async function createDateThumbnails(amount: number){
+    if (!userId){
+      return;
+    }
+
     const DateThumbnailArray = [];
-    const d = new Date();
+    // const d = new Date();
+    // const today = `${padTo2Digits(d.getFullYear())}-${padTo2Digits(d.getMonth() + 1)}-${d.getDate()}`;
+    // const lw = new Date(d.getDate() - 7);
+
+    // const lastWeek = `${padTo2Digits(lw.getFullYear())}-${padTo2Digits(lw.getMonth() + 1)}-${lw.getDate()}`;
+    // console.log(lastWeek)
+
+    // const playAudio = (link: string, title: string) => {
+    //   router.push({pathname: '/Mp3_player', params: {audioLink: link, title: title}})
+    // };
+
+    // Get all audio links for userID that are at most one week old
+
+    // let { data: podcastUrls, error: fetchPodcastsError } = await supabase
+    //   .from('podcasts')
+    //   .select('podcast_link, created_at')
+    //   .gte('created_at', today)
+    //   .eq('speaker_id', speakerId?.speaker_id)
+    // if(fetchItemsError) {
+    //   console.error(fetchItemsError.message)
+    //   return;
+    // }
+
+
     for (let i=0; i<amount; i++){
       DateThumbnailArray.push(
         <DateThumbnail key={i} coverSource={new Date(d)}></DateThumbnail>
