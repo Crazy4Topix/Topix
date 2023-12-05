@@ -22,7 +22,11 @@ const userInformation: FunctionComponent = () => {
       .max(new Date(), 'Cannot be in the future')
       .test('is-at-least-13', 'Must be at least 13 years old', function (value) {
         const today = new Date();
-        const minimumAgeDate = new Date(today.getFullYear() - 13, today.getMonth(), today.getDate());
+        const minimumAgeDate = new Date(
+          today.getFullYear() - 13,
+          today.getMonth(),
+          today.getDate()
+        );
 
         return value != null && value <= minimumAgeDate;
       }),
@@ -61,7 +65,7 @@ const userInformation: FunctionComponent = () => {
             <Text className={'text-lg text-primary-text'}>Full name</Text>
             <TextInput
               className={
-                'font-Poppins_regular w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
+                'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-primary-text'
               }
               onChangeText={handleChange('name')}
               onBlur={handleBlur('name')}
@@ -102,14 +106,14 @@ const userInformation: FunctionComponent = () => {
             </Pressable>
             <View className={'flex shrink'}>
               <Text className={'text-lg text-red-600'}>
-                {errors.birthday != null && touched.birthday  && String(errors.birthday)}
+                {errors.birthday != null && touched.birthday && String(errors.birthday)}
               </Text>
             </View>
 
             <Pressable
               onPress={() => {
                 handleSubmit();
-                console.log(errors.birthday)
+                console.log(errors.birthday);
                 console.log('Click');
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}

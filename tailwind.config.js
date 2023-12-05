@@ -8,11 +8,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#00DEAD',
+        primary: '#759CFF',
+        secondary: '#5d6a6f',
         'primary-text': '#050506',
-        background: '#f4f5f6',
-        secondary: '#c7ced1',
-        accent: '#5d6a6f',
+        background: '#212121',
+        accent: '#00DEAD',
       },
       fontFamily: {
         primary_thin: ['Poppins_100Thin'],
