@@ -105,15 +105,11 @@ export default function homePage() {
     const DateThumbnailArray: any[] = [];
     const today = new Date();
     today.setDate(today.getDate() - 7);
-
     const lastWeek = `${padTo2Digits(today.getFullYear())}-${padTo2Digits(today.getMonth() + 1)}-${today.getDate()}`;
-    console.log(lastWeek)
 
     const playAudio = (link: string, title: string) => {
       router.push({pathname: '/Mp3_player', params: {audioLink: link, title: title}})
     };
-
-    //Get all audio links for userID that are at most one week old
 
     let { data: podcasts, error: fetchPodcastsError } = await supabase
       .from('podcasts')
@@ -126,14 +122,15 @@ export default function homePage() {
     }
 
     if(!podcasts){
+      console.error("No old podcasts available")
       return;
     }
+
     let key = 0
-    
     podcasts.forEach(podcast => {
       podcast.created_at = podcast.created_at.split("T",1);
       DateThumbnailArray.push(
-        <DateThumbnail key={key} dateString={podcast.created_at} onPressImage={() => console.log("click")}/>
+        <DateThumbnail key={key} dateString={podcast.created_at} onPressImage={() => playAudio(podcast.podcast_link, podcast.created_at)}/>
       );
       key++;
     });
