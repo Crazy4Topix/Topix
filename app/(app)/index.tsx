@@ -102,11 +102,11 @@ export default function homePage() {
       return;
     }
 
-    const DateThumbnailArray: React.SetStateAction<React.JSX.Element[]> = [];
+    const DateThumbnailArray: any[] = [];
     const today = new Date();
-    const d= new Date(today.getDate() - 7);
+    today.setDate(today.getDate() - 7);
 
-    const lastWeek = `${padTo2Digits(d.getFullYear())}-${padTo2Digits(d.getMonth() + 1)}-${d.getDate()}`;
+    const lastWeek = `${padTo2Digits(today.getFullYear())}-${padTo2Digits(today.getMonth() + 1)}-${today.getDate()}`;
     console.log(lastWeek)
 
     const playAudio = (link: string, title: string) => {
@@ -128,12 +128,14 @@ export default function homePage() {
     if(!podcasts){
       return;
     }
+    let key = 0
     
     podcasts.forEach(podcast => {
       podcast.created_at = podcast.created_at.split("T",1);
       DateThumbnailArray.push(
-        <DateThumbnail coverSource={podcast.created_at}></DateThumbnail>
+        <DateThumbnail key={key} dateString={podcast.created_at} onPressImage={() => console.log("click")}/>
       );
+      key++;
     });
 
     setOldPodcastsThumbnails(DateThumbnailArray)
@@ -256,6 +258,7 @@ export default function homePage() {
             </ScrollView>
           </>
         )}  
+        
       </ScrollView>
       <View className='absolute bottom-0 w-full'>
         <Mp3_player_minum></Mp3_player_minum>
