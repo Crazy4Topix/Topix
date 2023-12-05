@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Pressable } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { AudioPlayerContext } from '../../contexts/audio_player';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 
 const AudioPlayer = () => {
   const audioContext = useContext(AudioPlayerContext);
@@ -65,6 +65,8 @@ const AudioPlayer = () => {
     return number.toString().padStart(2, '0');
   }
 
+  const navigation = useNavigation();
+
   if (audio.url === '') {
     return (
       <View className="flex-1 items-center justify-center bg-secondary">
@@ -113,7 +115,8 @@ const AudioPlayer = () => {
               if (router.canGoBack()) {
                 router.back();
               } else {
-                router.replace('index');
+                // @ts-expect-error It complains about never but it is there
+                navigation.navigate({ routeName: '(app)/index' });
               }
             }}
           >

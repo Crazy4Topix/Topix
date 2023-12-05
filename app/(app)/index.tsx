@@ -202,7 +202,7 @@ export default function homePage() {
           </Pressable>
         </Link>
       </View>
-      <ScrollView className={'pb-24'}>
+      <ScrollView>
         <View className={'mb-2 bg-background px-2 pb-5 pt-8'}>
           <Text className={'mx-2 mt-4 text-left font-primary_bold text-3xl text-primary'}>
             {greeting}
@@ -249,9 +249,9 @@ export default function homePage() {
             {createDateThumbnails(10)}
           </ScrollView>
         </View>
+        <View className={'my-2 h-16'} />
       </ScrollView>
-
-      <View className={'absolute bottom-0 w-full'}>
+      <View className={'absolute bottom-0 h-16 w-full'}>
         <AudioPlayerMinimal test={''} />
       </View>
     </View>
