@@ -4,7 +4,7 @@
     "slug": "Topix",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/TopixLogo.png",
+    "icon": "./assets/images/TopixIcon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/TopixLogo.png",
+        "foregroundImage": "./assets/images/TopixIcon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.topix.topix"
