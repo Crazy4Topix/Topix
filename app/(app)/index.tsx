@@ -3,53 +3,41 @@ import NewsThumbnail from '../../components/NewsThumbnail';
 import React, { useContext, useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import Mp3_player_minum from './Mp3_player_minum'
+import { supabase } from '../../lib/supabase' 
+import { SupabaseUserSession } from '../../contexts/user_session';
 import { getFullName } from '../../lib/supabase';
-import { SupabaseUserSession } from '../../contexts/user_session'
-
-
-function createDateThumbnails(amount: number){
-  const DateThumbnailArray = [];
-  const d = new Date();
-  for (let i=0; i<amount; i++){
-    DateThumbnailArray.push(
-      <DateThumbnail key={i} coverSource={new Date(d)}></DateThumbnail>
-    );
-    d.setDate(d.getDate() - 1);
-  }
-  return DateThumbnailArray;
-}
-
-function createNewsThumbnails(amount: number){
-  const NewsThumbnailArray = [];
-  for (let i=0; i<amount; i++){
-    NewsThumbnailArray.push(
-      <NewsThumbnail key={i} coverSource={require("../../assets/images/TopixLogo.png")} newsTitle={'Datalek bij topix'} newsDuration={'42 seconde'}/>
-    );
-  }
-  return NewsThumbnailArray;
-}
 
 export default function homePage() {
-  const [fullName, setFullName] = useState('');
   const userContext = useContext(SupabaseUserSession);
-  const userId = userContext.session?.user.id; 
+  const userId = userContext.session?.user.id;
+  const [audioLink, setAudioLink] = useState("");
+  const [fullName, setFullName] = useState('');
   const [greeting, setGreeting] = useState('');
+  const [newsThumbnails, setNewsThumbnails] = useState<React.JSX.Element[]>([]);
+
+  useEffect(() => {
+    getPodcastLink();
+    createNewsThumbnails();
+  },[userId])
+
+  useEffect(() =>{
+    console.log(`audio link: ${audioLink}`)
+  },[audioLink])
 
   useEffect(() => {
     const fetchFullName = async () => {
       try {
-        if (userId) { // Check if userId is defined
+        if (userId) {
           const name = await getFullName(userId);
           if (name !== null) {
             setFullName(name);
           } else {
-            // Handle the error or provide a default value
-            console.log('Error fetching full name.');
+            console.error('Error fetching full name.');
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching full name:', error.message);
       }
     };
@@ -62,15 +50,136 @@ export default function homePage() {
     const now = new Date();
     const hours = now.getHours();
 
-    if (hours >= 5 && hours < 12) {
+    if (hours >= 6 && hours < 12) {
       setGreeting('Goedemorgen');
     } else if (hours >= 12 && hours < 18) {
       setGreeting('Goedemiddag');
-    } else {
+    } else if (hours >= 18 && hours < 24) {
       setGreeting('Goedenavond');
+    } else {
+      setGreeting('Goedenacht');
     }
-  }, []); 
+  }, []);
+
+  async function getPodcastLink(){
+    if(!userId){
+      return;
+    }
+    const date = new Date();
+    const podcastUrl = await getNewestPodcastUrlFromSupabase(date)
+    if (podcastUrl == null){
+      alert("We hebben geen podcast kunnen vinden, probeer het morgen opnieuw")
+      return;
+    }
+    setAudioLink(podcastUrl.toString().replace("?", ""));
+  }
+
+  async function getNewestPodcastUrlFromSupabase(date: Date){
+    // if date is more than one week (7,5 days is 648000000 miliseconds) ago, return null
+    const today = new Date()
+    if(today.valueOf() - date.valueOf() >  648000000){
+      return null
+    }
+    const fetchDate = `${padTo2Digits(date.getFullYear())}-${padTo2Digits(date.getMonth() + 1)}-${date.getDate()}`;
+    let {data:podcast, error } = await supabase
+      .from('podcasts')
+      .select('podcast_link')
+      .eq('user_id', userId)
+      .gte('created_at', fetchDate)
+      .single()
+    if(error){
+      //get a day earlier
+      const newDate = new Date(date.valueOf() - 86400000 )
+      return getNewestPodcastUrlFromSupabase(newDate)
+    }
+    console.log(`found podcast of ${date}`)
+    return podcast?.podcast_link ?? null
+  }
+
+  function padTo2Digits(number:number){
+    return number.toString().padStart(2, '0');
+  }
+
+  function createDateThumbnails(amount: number){
+    const DateThumbnailArray = [];
+    const d = new Date();
+    for (let i=0; i<amount; i++){
+      DateThumbnailArray.push(
+        <DateThumbnail key={i} coverSource={new Date(d)}></DateThumbnail>
+      );
+      d.setDate(d.getDate() - 1);
+    }
+    return DateThumbnailArray;
+  }
+
+  async function createNewsThumbnails(){
+    if(!userId){
+      return; 
+    }
+
+    let NewsThumbnailArray = [];
+    const d = new Date();
+    const today = `${padTo2Digits(d.getFullYear())}-${padTo2Digits(d.getMonth() + 1)}-${d.getDate()}`;
+    
+    const playAudio = (link: string, title: string) => {
+      router.push({pathname: '/Mp3_player', params: {audioLink: link, title: title}})
+    };
+
+    // Get the speaker_id of the preferenced speaker of the user
+    let {data: speakerId, error: fetchSpeakerError} = await supabase
+    .from('audio_preferences')
+    .select('speaker_id')
+    .eq('user_id', userId)
+    .single()
+    if(fetchSpeakerError) {
+      console.error(fetchSpeakerError.message)
+    }
   
+    let { data: items, error: fetchItemsError } = await supabase
+      .from('audio')
+      .select('length, link, news_id')
+      .gte('created_at', today)
+      .eq('speaker_id', speakerId?.speaker_id)
+    if(fetchItemsError) {
+      console.error(fetchItemsError.message)
+      return;
+    }
+
+    if(!items){
+      console.error('audio items undefined')
+      return;
+    }
+      
+    let i = 0
+    let itemTitle = ''
+    let itemDuration = ''
+
+    for (const item of items) {
+
+      if(item.news_id == null) 
+        continue
+
+      let { data: title, error } = await supabase
+        .from('news')
+        .select('title')
+        .eq('id', item.news_id)
+        .single()
+      if(error) {
+        console.error(error.message)
+        return;
+      }
+      
+      itemTitle = title?.title
+      itemDuration = `${item.length} seconden`
+      NewsThumbnailArray.push(
+        <NewsThumbnail key={i} coverSource={require("../../assets/images/TopixLogo.png")} newsTitle={itemTitle} newsDuration={itemDuration} onPressImage={() => playAudio(item.link, itemTitle)}/>
+      );
+      i++
+      
+    }
+    setNewsThumbnails(NewsThumbnailArray)
+  }
+
 
   return (
     <View className={'flex w-full justify-center'}>
@@ -92,18 +201,24 @@ export default function homePage() {
               <Image source={require("../../assets/waveform.png")} className={"m-4 h-48 w-10/12 self-center"}></Image>
             </View>
             <View id={"foreground"} className={"absolute left-0 right-0  bottom-0 top-16"}>
-              <Link href={'/Mp3_player'} asChild>
-                <Pressable className={'rounded-lg p-2'}>
-                  <Icon id={"foreground"}  color={0x00DEADFF} name={"play-circle-outline"} size={100}></Icon>
-                </Pressable>
-              </Link>
+              <Pressable className={'rounded-lg p-2'} onPress={() => router.push({pathname:'/Mp3_player', params:{audioLink:audioLink, title:"Dagelijkse Podcast"}})}>
+                <Icon id={"foreground"}  color={0x00DEADFF} name={"play-circle-outline"} size={100}></Icon>
+              </Pressable>
             </View>
           </View>
         </View>
-        <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Overige Topix</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} >
-          { createNewsThumbnails(10) }
-        </ScrollView>
+
+        {newsThumbnails.length > 0 && (
+          <>
+            <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>
+              Overige Topix
+            </Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {newsThumbnails}
+            </ScrollView>
+          </>
+        )}
+
         <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Terugluisteren</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} >
           { createDateThumbnails(10) }

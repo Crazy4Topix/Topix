@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Topix",
-    "slug": "Topix",
+    "slug": "topix",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/TopixIcon.png",
@@ -39,8 +39,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "3b556511-1c6f-4d5a-97ab-2eff75ccdddc"
+        "projectId": "fe5892ab-28fd-47b0-b604-ce39046adea3"
       }
-    }
+    },
+    "owner": "crazy-four-topix"
   }
 }

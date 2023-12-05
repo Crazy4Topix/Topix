@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
 import SoundPlayer from 'react-native-sound-player';
-import { supabase } from '../lib/supabase';
 
 interface Track {
   url: string;
@@ -24,7 +23,7 @@ interface AudioPlayerContextProps {
   seekTo: (percentage: number) => void;
   seekForward: () => void;
   seekBackward: () => void;
-  setupAndAddTracks: () => Promise<void>;
+  setupAndAddAudio: (audioUrl: string) => Promise<void>;
 }
 
 export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
@@ -39,7 +38,7 @@ export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
   seekTo: () => {},
   seekForward: () => {},
   seekBackward: () => {},
-  setupAndAddTracks: async () => {},
+  setupAndAddAudio: async () => {},
 });
 
 
@@ -49,19 +48,17 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     isPlaying: false,
     currentTime: 0,
   });
-  const [audioLink, setAudioLink] = useState('');
   const [duration, setDuration] = useState(0);
 
   const getDuration = async () => {
-    try {
-      const info = await SoundPlayer.getInfo();
+    const info = await SoundPlayer.getInfo();
+    if(info != null){
       setDuration(info.duration);
-    } catch (error) {
-      console.error('Error getting duration:', error);
+    } else {
+      console.error('Error getting duration: media player in react-native-sound-player is null');
     }
   };
   
-
   const playTrack = (track: Track) => {
     try {
       // Load and play the provided track
@@ -152,56 +149,29 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   };
 
-  const setupAndAddTracks = async () => {
+  const setupAndAddAudio = async (audioUrl: string) => {
     try {
-      // Fetch the audio link from Supabase
-      const { data: audio, error } = await supabase
-        .from('audio')
-        .select('link')
-        .single();
-  
-      if (error !== null) {
-        console.error('Error fetching audio link:', error);
-        return;
-      }
-  
-      if (audio !== null) {
-        const audioUrl = audio.link;
-        setAudioLink(audioUrl); // Set the audio link in the state
-  
-        // Load and play the audio using the extracted URL
-        SoundPlayer.loadUrl(audioUrl);
-        SoundPlayer.play();
-  
-        // Get the duration and play the track
-        await getDuration(); // Wait for getDuration to complete
-  
-        // Set the currentTrack in the state after getDuration completes
-        const newAudioState = {
-          ...audioState,
-          currentTrack: {
-            url: audioUrl,
-            track_duration: duration,
-          },
-          isPlaying: true,
-        };
-        setAudioState(newAudioState);
+      SoundPlayer.loadUrl(audioUrl);
+      SoundPlayer.play();
 
-      }
+      await getDuration();
+
+      const newAudioState = {
+        ...audioState,
+        currentTrack: {
+          url: audioUrl,
+          track_duration: duration,
+        },
+        isPlaying: true,
+      };
+      setAudioState(newAudioState);
     } catch (e) {
       console.error('Error setting up SoundPlayer:', e);
     }
   };
-  
-  
-  
-
-  // useEffect(() => {
-  //   // You can add any additional initialization logic here
-  // }, []);
 
   return (
-    <AudioPlayerContext.Provider value={{ audioState, playTrack, pauseTrack, resumeTrack, seekTo, setupAndAddTracks, seekForward, seekBackward }}>
+    <AudioPlayerContext.Provider value={{ audioState, playTrack, pauseTrack, resumeTrack, seekTo, setupAndAddAudio: setupAndAddAudio, seekForward, seekBackward }}>
       {children}
     </AudioPlayerContext.Provider>
   );
