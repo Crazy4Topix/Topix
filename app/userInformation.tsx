@@ -62,7 +62,7 @@ const userInformation: FunctionComponent = () => {
       >
         {({ handleChange, setFieldValue, handleBlur, handleSubmit, values, errors, touched }) => (
           <View className={'flex'}>
-            <Text className={'text-lg text-primary-text'}>Full name</Text>
+            <Text className={'font-primary text-lg text-primary-text'}>Full name</Text>
             <TextInput
               className={
                 'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-primary-text'
@@ -75,12 +75,12 @@ const userInformation: FunctionComponent = () => {
               autoComplete={'name'}
             />
             <View className={'flex shrink'}>
-              <Text className={'text-lg text-red-600'}>
+              <Text className={'font-primary text-lg text-red-600'}>
                 {errors.name != null && touched.name === true && errors.name}
               </Text>
             </View>
 
-            <Text className={'text-lg text-primary-text'}>Birthday</Text>
+            <Text className={'font-primary text-lg text-primary-text'}>Birthday</Text>
             <Pressable
               onPress={() => {
                 // setShowDatePicker(true);
@@ -98,14 +98,14 @@ const userInformation: FunctionComponent = () => {
             >
               <TextInput
                 className={
-                  'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
+                  'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-primary-text'
                 }
                 value={values.birthday.toLocaleDateString('nl-NL')}
                 editable={false}
               />
             </Pressable>
             <View className={'flex shrink'}>
-              <Text className={'text-lg text-red-600'}>
+              <Text className={'font-primary text-lg text-red-600'}>
                 {errors.birthday != null && touched.birthday && String(errors.birthday)}
               </Text>
             </View>
@@ -118,7 +118,7 @@ const userInformation: FunctionComponent = () => {
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >
-              <Text className={'self-center text-white'}>Next</Text>
+              <Text className={'self-center font-primary_bold text-white'}>Next</Text>
             </Pressable>
           </View>
         )}

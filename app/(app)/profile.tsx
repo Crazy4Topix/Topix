@@ -52,27 +52,27 @@ export default function ProfilePage() {
 
   return (
     <View className="flex-1 items-center justify-center bg-white">
-      <View className="absolute left-4 top-8 z-10">
+      <View className="absolute left-4 top-10 z-10">
         <Pressable onPress={handleGoBack}>
           <Icon name="keyboard-return" size={36} color="black" />
         </Pressable>
       </View>
-      <Text className="mb-4 text-2xl font-semibold">Profiel Pagina</Text>
+      <Text className="mb-2 font-primary_semi_bold text-2xl">Profiel Pagina</Text>
 
       {/* Display Name */}
-      <Text className="mb-2 text-xl">{fullName}</Text>
+      <Text className="mb-4 font-primary text-xl">{fullName}</Text>
 
       {/* Topic Selection Button */}
       <View className="mb-4 rounded-md bg-primary p-2">
         <Pressable onPress={navigateTopicSelection}>
-          <Text className="text-white">Selecteer Topix</Text>
+          <Text className="font-primary text-white">Selecteer Topix</Text>
         </Pressable>
       </View>
 
       {/* Logout Button */}
       <Pressable onPress={handleLogout}>
         <View className="rounded-md bg-primary p-2">
-          <Text className="text-white">Uitloggen</Text>
+          <Text className="font-primary text-white">Uitloggen</Text>
         </View>
       </Pressable>
     </View>
