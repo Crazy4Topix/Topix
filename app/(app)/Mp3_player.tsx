@@ -1,17 +1,39 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Pressable, Linking } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { AudioPlayerContext } from '../../contexts/audio_player';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { type PodcastInfo } from '../../types/podcast_info';
 
 const AudioPlayer = () => {
   const audioContext = useContext(AudioPlayerContext);
   const [audio, setAudio] = useState({ url: '', title: '', artist: '', artwork: '' });
-  const { audioLink, title } = useLocalSearchParams<{ audioLink?: string; title?: string }>();
+  const { audioLink, title, podcastInfoStr } = useLocalSearchParams<{
+    audioLink?: string;
+    title?: string;
+    podcastInfoStr?: string;
+  }>();
 
   useEffect(() => {
     void getAudio();
   }, []);
+
+  const [currTime, setCurrTime] = useState(0);
+
+  useEffect(() => {
+    if (audioContext.audioState.currentTrack == null) return;
+    if (audioContext.audioState.isPlaying) {
+      const interval = setInterval(() => {
+        void audioContext.getTime().then((time) => {
+          setCurrTime(time);
+        });
+      }, 1000);
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [audioContext]);
 
   useEffect(() => {
     if (audio.url === '') {
@@ -43,7 +65,7 @@ const AudioPlayer = () => {
     // TODO: get an artwork for the player
 
     const newAudio = {
-      url: url,
+      url,
       title: audioTitle,
       artist: currentDate,
       artwork: 'https://picsum.photos/500',
@@ -67,6 +89,42 @@ const AudioPlayer = () => {
 
   const navigation = useNavigation();
 
+  if (podcastInfoStr == null) {
+    console.error('podcastInfoStr undefined');
+    return;
+  }
+  const podcastInfo = JSON.parse(podcastInfoStr) as PodcastInfo[];
+  console.log(podcastInfo);
+  const currentPodcastInfo = (currTimestamp: number) => {
+    for (let i = 0; i < podcastInfo.length; i++) {
+      if (
+        currTimestamp >= podcastInfo[i].timestamp &&
+        (i === podcastInfo.length - 1 || currTimestamp < podcastInfo[i + 1].timestamp)
+      ) {
+        return (
+          <>
+            <Image source={{ uri: audio.artwork }} className="h-64 w-64" />
+            <Text className="text-20 mt-8  text-center font-primary_bold text-2xl text-white">
+              {podcastInfo[i].news}
+            </Text>
+            {i === 0 ? (
+              <Text className="text-20 mt-4 font-primary text-xl text-primary">Welkom</Text>
+            ) : (
+              <Text
+                className="text-20 mt-4 font-primary text-xl text-primary underline"
+                onPress={() => {
+                  void Linking.openURL(podcastInfo[i].source);
+                }}
+              >
+                Lees het orginele artikel
+              </Text>
+            )}
+          </>
+        );
+      }
+    }
+  };
+
   if (audio.url === '') {
     return (
       <View className="flex-1 items-center justify-center bg-secondary">
@@ -76,10 +134,8 @@ const AudioPlayer = () => {
   } else {
     return (
       <>
-        <View className="flex-1 items-center justify-center bg-background">
-          <Image source={{ uri: audio.artwork }} className="h-64 w-64" />
-          <Text className="text-20 mt-8 font-primary_bold text-3xl text-white">{audio.title}</Text>
-          <Text className="text-20 mt-4 font-primary text-xl text-white">{audio.artist}</Text>
+        <View className="flex-1 items-center justify-center bg-background px-2">
+          {currentPodcastInfo(currTime)}
           <View className="m-10 flex-row">
             <TouchableOpacity
               className="flex rounded-full"

@@ -8,11 +8,13 @@ import AudioPlayerMinimal from '../../components/Mp3_player_minum';
 import { supabase, getFullName } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session';
 import NewsThumbnailSkeleton from '../../components/NewsThumbnailSkeleton';
+import { type PodcastInfo } from '../../types/podcast_info';
 
 export default function homePage() {
   const userContext = useContext(SupabaseUserSession);
   const userId = userContext.session?.user.id;
   const [audioLink, setAudioLink] = useState('');
+  const [podcast_info, setPodcast_info] = useState<PodcastInfo[]>([]);
   const [fullName, setFullName] = useState('');
   const [greeting, setGreeting] = useState('');
   const [newsThumbnails, setNewsThumbnails] = useState<React.JSX.Element[]>(
@@ -82,22 +84,72 @@ export default function homePage() {
     if (today.valueOf() - date.valueOf() > 648000000) {
       return null;
     }
+
     const fetchDate = `${padTo2Digits(date.getFullYear())}-${padTo2Digits(
       date.getMonth() + 1
     )}-${date.getDate()}`;
+
     const { data: podcast, error } = await supabase
       .from('podcasts')
-      .select('podcast_link')
+      .select('podcast_link, start_timestamp,  audio_1, audio_2, audio_3')
       .eq('user_id', userId)
       .gte('created_at', fetchDate)
       .single();
     if (error) {
+      console.log(error);
+      // getNewestPodcastUrlFromSupabase;
       // get a day earlier
       const newDate = new Date(date.valueOf() - 86400000);
       return await getNewestPodcastUrlFromSupabase(newDate);
     }
-    console.log(`found podcast of ${date.getUTCDate()}`);
-    return podcast?.podcast_link ?? null;
+
+    if (!podcast) {
+      return null;
+    }
+
+    const newsAndTimestamps = [
+      {
+        timestamp: 0,
+        news: 'Podcast - intro',
+        source: 'Topix',
+      },
+    ];
+
+    const { data: News, error: newsError } = await supabase
+      .from('audio')
+      .select('id, length, news(title, source)')
+      .in('id', [podcast.audio_1, podcast.audio_2, podcast.audio_3]);
+
+    if (newsError) {
+      console.log(newsError);
+      return null;
+    }
+
+    if (!News) {
+      return null;
+    }
+
+    console.log(News);
+
+    let timestampTemp = 5;
+
+    for (let index = 0; index < News.length; index++) {
+      newsAndTimestamps.push({
+        timestamp: timestampTemp,
+        // @ts-expect-error database model may bot be complete
+        news: News[index].news.title,
+        // @ts-expect-error database model may bot be complete
+        source: News[index].news.source[0],
+      });
+
+      console.log('Let goooo', News[index].length, timestampTemp);
+      timestampTemp = timestampTemp + News[index].length + 1;
+    }
+
+    setPodcast_info(newsAndTimestamps);
+
+    console.log(`founfoundd podcast of ${date.getUTCDate()}`);
+    return podcast.podcast_link;
   }
 
   function padTo2Digits(number: number) {
@@ -226,7 +278,11 @@ export default function homePage() {
                 onPress={() => {
                   router.push({
                     pathname: '/Mp3_player',
-                    params: { audioLink, title: 'Dagelijkse Podcast' },
+                    params: {
+                      audioLink,
+                      title: 'Dagelijkse Podcast',
+                      podcastInfoStr: JSON.stringify(podcast_info),
+                    },
                   });
                 }}
               >

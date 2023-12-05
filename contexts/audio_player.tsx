@@ -20,6 +20,7 @@ interface AudioPlayerContextProps {
   playTrack: (track: Track) => void;
   pauseTrack: () => void;
   resumeTrack: () => void;
+  getTime: () => Promise<number>;
   seekTo: (percentage: number) => void;
   seekForward: () => void;
   seekBackward: () => void;
@@ -35,6 +36,7 @@ export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
   playTrack: () => {},
   pauseTrack: () => {},
   resumeTrack: () => {},
+  getTime: async () => 0,
   seekTo: () => {},
   seekForward: () => {},
   seekBackward: () => {},
@@ -86,6 +88,16 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setAudioState({ ...audioState, isPlaying: true });
     } catch (e) {
       console.error('Error resuming track:', e);
+    }
+  };
+
+  const getTime = async () => {
+    const info = await SoundPlayer.getInfo();
+    if (info != null) {
+      return info.currentTime;
+    } else {
+      console.error('Error getting duration: media player in react-native-sound-player is null');
+      return 0;
     }
   };
 
@@ -173,6 +185,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         playTrack,
         pauseTrack,
         resumeTrack,
+        getTime,
         seekTo,
         setupAndAddAudio: setupAndAddAudio,
         seekForward,
