@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Redirect, SplashScreen, Stack, Tabs } from 'expo-router';
+import { Redirect, SplashScreen, Stack } from 'expo-router';
 import { SupabaseUserSession } from '../../contexts/user_session';
 import { supabase } from '../../lib/supabase';
 import { AudioPlayerProvider } from '../../contexts/audio_player';
@@ -39,12 +39,6 @@ export default function TabLayout() {
           name="Mp3_player"
           options={{
             title: 'Full Screen Audio Player',
-          }}
-        />
-        <Stack.Screen
-          name="Mp3_player_minum"
-          options={{
-            title: 'Minimized Audio Player',
           }}
         />
         <Stack.Screen
