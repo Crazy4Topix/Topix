@@ -208,7 +208,7 @@ export default function homePage() {
 
 
   return (
-    <View className={'flex w-full justify-center'}>
+    <View className={'flex w-full h-full justify-center'}>
       <View className="absolute top-8 right-4 z-10">
         <Link href={'/profile'} asChild>
           <Pressable>
