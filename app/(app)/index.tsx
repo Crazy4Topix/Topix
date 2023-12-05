@@ -22,10 +22,6 @@ export default function homePage() {
     createNewsThumbnails();
   },[userId])
 
-  useEffect(() =>{
-    console.log(`audio link: ${audioLink}`)
-  },[audioLink])
-
   useEffect(() => {
     const fetchFullName = async () => {
       try {
@@ -92,7 +88,6 @@ export default function homePage() {
       const newDate = new Date(date.valueOf() - 86400000 )
       return getNewestPodcastUrlFromSupabase(newDate)
     }
-    console.log(`found podcast of ${date}`)
     return podcast?.podcast_link ?? null
   }
 
