@@ -61,12 +61,6 @@ export default function TabLayout() {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="voiceSelection"
-          options={{
-            title: 'voiceSelection',
-          }}
-        />
       </Stack>
     </AudioPlayerProvider>
   );
