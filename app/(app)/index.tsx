@@ -112,12 +112,13 @@ export default function homePage() {
         timestamp: 0,
         news: 'Podcast - intro',
         source: 'Topix',
+        thumbnail: '',
       },
     ];
 
     const { data: News, error: newsError } = await supabase
       .from('audio')
-      .select('id, length, news(title, source)')
+      .select('id, length, news(title, source, thumbnail)')
       .in('id', [podcast.audio_1, podcast.audio_2, podcast.audio_3]);
 
     if (newsError) {
@@ -140,9 +141,10 @@ export default function homePage() {
         news: News[index].news.title,
         // @ts-expect-error database model may bot be complete
         source: News[index].news.source[0],
+        // @ts-expect-error database model may bot be complete
+        thumbnail: News[index].news.thumbnail,
       });
 
-      console.log('Let goooo', News[index].length, timestampTemp);
       timestampTemp = timestampTemp + News[index].length + 1;
     }
 

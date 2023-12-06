@@ -101,9 +101,14 @@ const AudioPlayer = () => {
         currTimestamp >= podcastInfo[i].timestamp &&
         (i === podcastInfo.length - 1 || currTimestamp < podcastInfo[i + 1].timestamp)
       ) {
+        const thumbnail =
+          podcastInfo[i].thumbnail !== ''
+            ? { uri: podcastInfo[i].thumbnail }
+            : require('../../assets/images/Topix_zwart.png');
+
         return (
           <>
-            <Image source={{ uri: audio.artwork }} className="h-64 w-64" />
+            <Image source={thumbnail} className="h-64 w-64" />
             <Text className="text-20 mt-8  text-center font-primary_bold text-2xl text-white">
               {podcastInfo[i].news}
             </Text>
