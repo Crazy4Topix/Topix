@@ -94,7 +94,7 @@ const AudioPlayer = () => {
     return;
   }
   const podcastInfo = JSON.parse(podcastInfoStr) as PodcastInfo[];
-  console.log(podcastInfo);
+
   const currentPodcastInfo = (currTimestamp: number) => {
     for (let i = 0; i < podcastInfo.length; i++) {
       if (
