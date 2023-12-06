@@ -221,7 +221,7 @@ export default function homePage() {
 
       const { data: title, error } = await supabase
         .from('news')
-        .select('title')
+        .select('title, thumbnail')
         .eq('id', item.news_id)
         .single();
       if (error) {
@@ -229,12 +229,22 @@ export default function homePage() {
         return;
       }
 
-      itemTitle = title?.title;
+      if (!title) {
+        continue;
+      }
+
+      itemTitle = title.title;
       itemDuration = `${item.length} seconden`;
+
+      const thumbnail =
+        title.thumbnail !== ''
+          ? { uri: title.thumbnail }
+          : require('../../assets/images/Topix_wit.png');
+
       NewsThumbnailArray.push(
         <NewsThumbnail
           key={i}
-          coverSource={require('../../assets/images/Topix_wit.png')}
+          coverSource={thumbnail}
           newsTitle={itemTitle}
           newsDuration={itemDuration}
           onPressImage={() => {

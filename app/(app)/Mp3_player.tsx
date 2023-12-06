@@ -177,7 +177,7 @@ const AudioPlayer = () => {
                 router.back();
               } else {
                 // @ts-expect-error It complains about never but it is there
-                navigation.navigate({ routeName: '(app)/index' });
+                navigation.navigate({ routeName: '(app)' });
               }
             }}
           >
