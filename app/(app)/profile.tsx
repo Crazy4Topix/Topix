@@ -49,6 +49,31 @@ export default function ProfilePage() {
         console.log(error);
         }
         setVoices(speakers as Voice[] | null);
+
+        
+        let { data: cur_voice, errorCur } = await supabase
+        .from('audio_preferences')
+        .select('speaker_id')
+        .eq("user_id", userId)
+
+        console.log(cur_voice)
+
+        if (cur_voice.length > 0) {
+            const speakerId = cur_voice[0].speaker_id;
+    
+            // Find the corresponding speaker in the speakers data
+            const selectedSpeaker = speakers.find(speaker => speaker.id === speakerId);
+    
+            if (selectedSpeaker) {
+                // Access the display_name of the selected speaker
+                const speakerName = selectedSpeaker.display_name;
+                setSelectedValue(speakerName)
+            } else {
+                console.log('Speaker not found for the given speaker_id.');
+            }
+        } else {
+            console.log('No speaker_id found for the user.');
+        }
     } catch (error) {
         console.error('Error fetching speakers:', error.message);
     }
@@ -86,7 +111,7 @@ export default function ProfilePage() {
                 console.error('Error fetching full name:', error.message);
             }
         };
-
+        
         void fetchFullName();
         void fetchSpeakersName();
     }, [userId]);
@@ -96,6 +121,7 @@ export default function ProfilePage() {
       }
 
     const data = voices.map(voice => ({ label: voice.display_name, value: voice.id }))
+    console.log(selectedValue)
   
     return (
         <View className="flex-1 justify-center content-center bg-white px-20">
@@ -142,7 +168,7 @@ export default function ProfilePage() {
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus ? 'Select item' : '...'}
+                placeholder={!isFocus ? (selectedValue ?? 'Select item') : '...'}
                 value={value}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
