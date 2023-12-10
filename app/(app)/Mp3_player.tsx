@@ -7,7 +7,7 @@ import { useLocalSearchParams } from 'expo-router';
 const AudioPlayer = () => {
   const audioContext = useContext(AudioPlayerContext);
   const [audio, setAudio] = useState({url: "", title: "", artist: "", artwork: ""});
-  let {audioLink, title} = useLocalSearchParams<{audioLink?: string; title?: string}>()
+  let {audioLink, title, firstOpened} = useLocalSearchParams<{audioLink?: string; title?: string; firstOpened?: string}>()
 
   useEffect(() => {
     getAudio();
@@ -47,8 +47,9 @@ const AudioPlayer = () => {
 
   async function loadAudioInPlayer(){
     if(audio.url === "") return;
+    if(firstOpened === 'false') return;
     try {
-      await audioContext.setupAndAddAudio(audio.url);
+      await audioContext.setupAndAddAudio(audio.url, audio.title, audio.artist, audio.artwork);
     } catch (error) {
       console.error('Error setting up and adding tracks:', error);
     }

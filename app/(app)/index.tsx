@@ -8,14 +8,24 @@ import Mp3_player_minum from './Mp3_player_minum'
 import { supabase } from '../../lib/supabase' 
 import { SupabaseUserSession } from '../../contexts/user_session';
 import { getFullName } from '../../lib/supabase';
+import { AudioPlayerContext } from '../../contexts/audio_player';
 
 export default function homePage() {
   const userContext = useContext(SupabaseUserSession);
+  const audioContext = useContext(AudioPlayerContext);
   const userId = userContext.session?.user.id;
   const [audioLink, setAudioLink] = useState("");
   const [fullName, setFullName] = useState('');
   const [greeting, setGreeting] = useState('');
   const [newsThumbnails, setNewsThumbnails] = useState<React.JSX.Element[]>([]);
+
+  let firstOpenedBool = ''
+    if (audioContext.audioState.currentTrack === null || audioContext.audioState.currentTrack.url !== audioLink) {
+      firstOpenedBool = 'true'
+    }
+    else {
+      firstOpenedBool = 'false'
+    }
 
   useEffect(() => {
     getPodcastLink();
@@ -122,7 +132,7 @@ export default function homePage() {
     const today = `${padTo2Digits(d.getFullYear())}-${padTo2Digits(d.getMonth() + 1)}-${d.getDate()}`;
     
     const playAudio = (link: string, title: string) => {
-      router.push({pathname: '/Mp3_player', params: {audioLink: link, title: title}})
+      router.push({pathname: '/Mp3_player', params: {audioLink: link, title: title, firstOpened: firstOpenedBool}})
     };
 
     // Get the speaker_id of the preferenced speaker of the user
@@ -201,7 +211,7 @@ export default function homePage() {
               <Image source={require("../../assets/waveform.png")} className={"m-4 h-48 w-10/12 self-center"}></Image>
             </View>
             <View id={"foreground"} className={"absolute left-0 right-0  bottom-0 top-16"}>
-              <Pressable className={'rounded-lg p-2'} onPress={() => router.push({pathname:'/Mp3_player', params:{audioLink:audioLink, title:"Dagelijkse Podcast"}})}>
+              <Pressable className={'rounded-lg p-2'} onPress={() => router.push({pathname:'/Mp3_player', params:{audioLink:audioLink, title:"Dagelijkse Podcast", firstOpened: firstOpenedBool}})}>
                 <Icon id={"foreground"}  color={0x00DEADFF} name={"play-circle-outline"} size={100}></Icon>
               </Pressable>
             </View>

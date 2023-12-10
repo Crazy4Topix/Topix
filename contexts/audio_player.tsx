@@ -3,7 +3,7 @@ import SoundPlayer from 'react-native-sound-player';
 
 interface Track {
   url: string;
-  // title: string;
+  title: string;
   // artist: string;
   // artwork: string;
   track_duration: number; // Add the duration property
@@ -23,7 +23,7 @@ interface AudioPlayerContextProps {
   seekTo: (percentage: number) => void;
   seekForward: () => void;
   seekBackward: () => void;
-  setupAndAddAudio: (audioUrl: string) => Promise<void>;
+  setupAndAddAudio: (audioUrl: string, audioTitle: string, audioArtist: string, audioArtwork: string) => Promise<void>;
 }
 
 export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
@@ -149,7 +149,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   };
 
-  const setupAndAddAudio = async (audioUrl: string) => {
+  const setupAndAddAudio = async (audioUrl: string, audioTitle: string, audioArtist: string, audioArtwork: string) => {
     try {
       SoundPlayer.loadUrl(audioUrl);
       SoundPlayer.play();
@@ -161,6 +161,9 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         currentTrack: {
           url: audioUrl,
           track_duration: duration,
+          title: audioTitle,
+          artist: audioArtist,
+          artwork: audioArtwork
         },
         isPlaying: true,
       };
