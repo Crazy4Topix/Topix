@@ -1,7 +1,8 @@
 import React, { useContext, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import {View, Text, Image, TouchableOpacity, Pressable} from 'react-native';
 import { Icon } from 'react-native-elements';
 import { AudioPlayerContext } from '../contexts/audio_player';
+import { router } from 'expo-router';
 
 const AudioPlayerMinimal: React.FC = () => {
   const audioContext = useContext(AudioPlayerContext);
@@ -22,6 +23,7 @@ const AudioPlayerMinimal: React.FC = () => {
 
   return (
     <View className="bg-background py-1 px-2">
+      <Pressable onPress={() => {router.push({pathname: '/Mp3_player'})}}>
       <View className="flex-row w-full justify-between">
         <Image source={thumbnail} className="ml-0 h-16 w-16" />
         <View className="pl-2 self-center w-6/12">
@@ -64,6 +66,7 @@ const AudioPlayerMinimal: React.FC = () => {
           </TouchableOpacity>
         </View>
       </View>
+      </Pressable>
     </View>
   );
 };
