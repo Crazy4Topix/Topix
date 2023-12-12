@@ -19,7 +19,7 @@ const userInformation: FunctionComponent = () => {
     birthday: yup
       .date()
       .required('Birthday is required')
-      .max(new Date(), 'Cannot be in the future')
+      .max(new Date(Date.now() + 24 * 60 * 60 * 1000), 'Cannot be in the future')
       .test('is-at-least-13', 'Must be at least 13 years old', function (value) {
         const today = new Date();
         const minimumAgeDate = new Date(
