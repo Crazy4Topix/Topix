@@ -15,12 +15,12 @@ const userInformation: FunctionComponent = () => {
   const navigation = useNavigation();
 
   const validationSchema = yup.object({
-    name: yup.string().required('name is required'),
+    name: yup.string().required('naam is verplicht'),
     birthday: yup
       .date()
-      .required('Birthday is required')
-      .max(new Date(), 'Cannot be in the future')
-      .test('is-at-least-13', 'Must be at least 13 years old', function (value) {
+      .required('Geboortedatum is verplicht')
+      .max(new Date(), 'Mag niet in de toekomst liggen')
+      .test('is-at-least-13', 'Moet minimaal 13 jaar oud zijn.', function (value) {
         const today = new Date();
         const minimumAgeDate = new Date(
           today.getFullYear() - 13,
@@ -62,7 +62,7 @@ const userInformation: FunctionComponent = () => {
       >
         {({ handleChange, setFieldValue, handleBlur, handleSubmit, values, errors, touched }) => (
           <View className={'flex'}>
-            <Text className={'font-primary text-lg text-primary-text'}>Full name</Text>
+            <Text className={'font-primary text-lg text-primary-text'}>Volledige naam</Text>
             <TextInput
               className={
                 'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-primary-text'
@@ -80,7 +80,7 @@ const userInformation: FunctionComponent = () => {
               </Text>
             </View>
 
-            <Text className={'font-primary text-lg text-primary-text'}>Birthday</Text>
+            <Text className={'font-primary text-lg text-primary-text'}>Geboortedatum</Text>
             <Pressable
               onPress={() => {
                 // setShowDatePicker(true);
@@ -118,7 +118,7 @@ const userInformation: FunctionComponent = () => {
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >
-              <Text className={'self-center font-primary_bold text-white'}>Next</Text>
+              <Text className={'self-center font-primary_bold text-white'}>Volgende</Text>
             </Pressable>
           </View>
         )}
