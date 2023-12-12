@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Image, Pressable } from 'react-native';
+import { ScrollView, View, Text, Image, Pressable, ToastAndroid } from 'react-native';
 import NewsThumbnail from '../../components/NewsThumbnail';
 import React, { useContext, useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
@@ -65,10 +65,7 @@ export default function homePage() {
     }
     const date = new Date();
     const podcastUrl = await getNewestPodcastUrlFromSupabase(date);
-    if (podcastUrl == null) {
-      alert('We hebben geen podcast kunnen vinden, probeer het morgen opnieuw');
-      return;
-    }
+    if (!podcastUrl) return;
     setAudioLink(podcastUrl.toString().replace('?', ''));
   }
 
@@ -92,7 +89,7 @@ export default function homePage() {
       const newDate = new Date(date.valueOf() - 86400000);
       return await getNewestPodcastUrlFromSupabase(newDate);
     }
-    return podcast?.podcast_link ?? null
+    return podcast?.podcast_link ?? null;
   }
 
   function padTo2Digits(number: number) {
@@ -158,13 +155,16 @@ export default function homePage() {
     };
 
     // Get the speaker_id of the preferred speaker of the user
+    //TODO make sure to get a default speaker when you create an account
     const { data: speakerId, error: fetchSpeakerError } = await supabase
       .from('audio_preferences')
       .select('speaker_id')
       .eq('user_id', userId)
       .single();
     if (fetchSpeakerError) {
-      console.error(fetchSpeakerError.message);
+      console.error(fetchSpeakerError);
+      //TODO: remove when voiceselection is added/default voice is added
+      return
     }
 
     const { data: items, error: fetchItemsError } = await supabase
@@ -173,7 +173,7 @@ export default function homePage() {
       .gte('created_at', lastWeek)
       .eq('speaker_id', speakerId?.speaker_id);
     if (fetchItemsError) {
-      console.error(fetchItemsError.message);
+      console.error(fetchItemsError);
       return;
     }
 
@@ -248,10 +248,14 @@ export default function homePage() {
               <Pressable
                 className={'rounded-lg p-2'}
                 onPress={() => {
-                  router.push({
-                    pathname: '/Mp3_player',
-                    params: { audioLink, title: 'Dagelijkse Podcast' },
-                  });
+                  if (!audioLink) {
+                    ToastAndroid.show('Geen podcasts gevonden. Probeer het morgen opnieuw', ToastAndroid.LONG);
+                  } else {
+                    router.push({
+                      pathname: '/Mp3_player',
+                      params: { audioLink, title: 'Dagelijkse Podcast' },
+                    });
+                  }
                 }}
               >
                 <Icon color={0xdeadff} name={'play-circle-outline'} size={100}></Icon>
