@@ -34,17 +34,22 @@ export default function homePage() {
   const [newsThumbnails, setNewsThumbnails] = useState<React.JSX.Element[]>(
     [...Array(10).keys()].map((i) => <NewsThumbnailSkeleton key={i} />)
   );
+  const [oldPodcastsThumbnails, setOldPodcastsThumbnails] = useState<React.JSX.Element[]>(
+      [...Array(10).keys()].map((i) => <NewsThumbnailSkeleton key={i} />)
+);
 
   const audioContext = useContext(AudioPlayerContext);
 
   useEffect(() => {
     void getPodcastLink();
     void createNewsThumbnails();
+    void createOldPodcastsThumbnails();
   }, [userId]);
 
   useEffect(() => {
     console.log(`audio link: ${dailyPodcast.podcastLink}`);
   }, [dailyPodcast.podcastLink]);
+
 
   useEffect(() => {
     const fetchFullName = async () => {
@@ -116,7 +121,7 @@ export default function homePage() {
       const newDate = new Date(date.valueOf() - 86400000);
       return await getNewestPodcastUrlFromSupabase(newDate);
     }
-
+      
     if (!podcast) {
       return null;
     }
@@ -175,16 +180,41 @@ export default function homePage() {
     return number.toString().padStart(2, '0');
   }
 
-  function createDateThumbnails(amount: number) {
-    const DateThumbnailArray = [];
-    const d = new Date();
-    for (let i = 0; i < amount; i++) {
-      DateThumbnailArray.push(
-        <DateThumbnail key={i} special={i === 0} thumbnailDate={new Date(d)}></DateThumbnail>
-      );
-      d.setDate(d.getDate() - 1);
+  async function createOldPodcastsThumbnails(){
+    if (!userId){
+      return;
     }
-    return DateThumbnailArray;
+
+    const DateThumbnailArray: any[] = [];
+    const today = new Date();
+    today.setDate(today.getDate() - 7);
+    const lastWeek = `${padTo2Digits(today.getFullYear())}-${padTo2Digits(today.getMonth() + 1)}-${today.getDate()}`;
+
+    let { data: podcasts, error: fetchPodcastsError } = await supabase
+      .from('podcasts')
+      .select('podcast_link, created_at')
+      .gte('created_at', lastWeek)
+      .eq('user_id', userId)
+    if(fetchPodcastsError) {
+      console.error(fetchPodcastsError.message)
+      return;
+    }
+
+    if(!podcasts){
+      console.error("No old podcasts available")
+      return;
+    }
+
+    let key = 0
+    podcasts.forEach(podcast => {
+      podcast.created_at = podcast.created_at.split("T",1);
+      DateThumbnailArray.push(
+        <DateThumbnail key={key} dateString={podcast.created_at} onPressImage={() => playAudio(podcast.podcast_link, podcast.created_at)}/>
+      );
+      key++;
+    });
+
+    setOldPodcastsThumbnails(DateThumbnailArray)
   }
 
   async function createNewsThumbnails() {
@@ -330,13 +360,18 @@ export default function homePage() {
             </ScrollView>
           </View>
         )}
-        <View className={'pl-2'}>
-          <Text className={'m-2 font-primary_bold text-2xl'}>Terugluisteren</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {createDateThumbnails(10)}
-          </ScrollView>
-        </View>
-        <View className={'my-2 h-16'} />
+
+        {oldPodcastsThumbnails.length > 0 && (
+          <>
+            <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>
+              Terugluisteren
+              </Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} >
+              {oldPodcastsThumbnails}
+            </ScrollView>
+          </>
+        )}  
+        
       </ScrollView>
       <View className={'absolute bottom-0 h-16 w-full'}>
         <AudioPlayerMinimal />
