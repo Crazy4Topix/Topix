@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Image, Pressable, ToastAndroid } from 'react-native';
+import { ScrollView, View, Text, Image, Pressable } from 'react-native';
 import NewsThumbnail from '../../components/NewsThumbnail';
 import React, { useContext, useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
@@ -269,15 +269,6 @@ export default function homePage() {
             console.error(fetchItemsError.message);
             return;
         }
-    const { data: items, error: fetchItemsError } = await supabase
-      .from('audio')
-      .select('length, link, news_id')
-      .gte('created_at', lastWeek)
-      .eq('speaker_id', speakerId?.speaker_id);
-    if (fetchItemsError) {
-      console.error(fetchItemsError);
-      return;
-    }
 
         if (!items) {
             console.error('audio items undefined');
