@@ -8,7 +8,7 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/TopixLogo.png",
+      "image": "./assets/images/TopixIcon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -20,8 +20,9 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/TopixIcon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/TopixForeground.png",
+        "backgroundColor": "#000000",
+        "monochromeImage": "./assets/images/TopixForeground.png"
       },
       "package": "com.topix.topix"
     },
