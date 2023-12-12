@@ -1,23 +1,11 @@
 import React, { useContext, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import {View, Text, Image, TouchableOpacity, Pressable} from 'react-native';
 import { Icon } from 'react-native-elements';
 import { AudioPlayerContext } from '../contexts/audio_player';
+import { router } from 'expo-router';
 
-interface Props {
-  test: string;
-}
-const AudioPlayerMinimal: React.FC<Props> = (props) => {
+const AudioPlayerMinimal: React.FC = () => {
   const audioContext = useContext(AudioPlayerContext);
-
-  const tracks = [
-    {
-      url: 'https://oeybruqyypqhrcxcgkbw.supabase.co/storage/v1/object/public/audio/sample/morgan.mp3',
-      title: 'Morgan Freeman speech',
-      artist: 'NU.nl',
-      artwork: 'https://cdn.britannica.com/40/144440-050-DA828627/Morgan-Freeman.jpg',
-      duration: 0, // You should provide the actual duration here
-    },
-  ];
 
   useEffect(() => {}, [audioContext.audioState.isPlaying]);
 
@@ -26,15 +14,31 @@ const AudioPlayerMinimal: React.FC<Props> = (props) => {
     return <></>; // Don't render anything if currentTrack is null
   }
 
+  const thumbnail =
+    audioContext.podcastInfo.length > 0 &&
+    audioContext.podcastInfo[0].thumbnail &&
+    audioContext.podcastInfo[0].thumbnail !== ''
+      ? { uri: audioContext.podcastInfo[0].thumbnail }
+      : require('../assets/images/Topix_zwart.png');
+
   return (
-    <View className="bg-secondary">
-      <View className="flex-row">
-        <Image source={{ uri: tracks[0].artwork }} className="ml-0 mr-4 h-16 w-16" />
-        <View className="self-center">
-          <Text className="mt-1 font-primary_bold text-white">{tracks[0].title}</Text>
-          <Text className="-mt-1 font-primary text-white">{tracks[0].artist}</Text>
+    <View className="bg-background py-1 px-2">
+      <Pressable onPress={() => {router.push({pathname: '/Mp3_player'})}}>
+      <View className="flex-row w-full justify-between">
+        <Image source={thumbnail} className="ml-0 h-16 w-16" />
+        <View className="pl-2 self-center w-6/12">
+          <Text
+            className={'text-20 font-primary_bold text-white'}
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
+            {audioContext.audioState.currentTrack.title}
+          </Text>
+          <Text className="text-20 font-primary text-white">
+            {audioContext.audioState.currentTrack.artist}
+          </Text>
         </View>
-        <View className="mx-2 flex-row self-center">
+        <View className=" flex-row self-center ">
           <TouchableOpacity
             className="flex rounded-full"
             onPress={() => {
@@ -62,6 +66,7 @@ const AudioPlayerMinimal: React.FC<Props> = (props) => {
           </TouchableOpacity>
         </View>
       </View>
+      </Pressable>
     </View>
   );
 };
