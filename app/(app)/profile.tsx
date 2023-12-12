@@ -6,7 +6,10 @@ import { SupabaseUserSession } from '../../contexts/user_session'
 import { supabase } from '../../lib/supabase';
 import { Icon } from 'react-native-elements';
 import { Dropdown } from 'react-native-element-dropdown';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import { styled } from 'nativewind';
+
+const StyledDropdown = styled(Dropdown);
+
 
 export default function ProfilePage() {
     const navigation = useNavigation();
@@ -15,10 +18,9 @@ export default function ProfilePage() {
     const userId = userContext.session?.user.id; 
     const [voices, setVoices] = useState<Voice[] | null>(null);
     const [selectedValue, setSelectedValue] = useState<string | null>(null);
-    const [isDropdownFocus, setIsDropdownFocus] = useState(false);
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
-    
+
     const handleLogout = async () => {
         try {
             await signOut();
@@ -56,7 +58,9 @@ export default function ProfilePage() {
         .select('speaker_id')
         .eq("user_id", userId)
 
-        console.log(cur_voice)
+        if(!cur_voice){
+            return;
+        }
 
         if (cur_voice.length > 0) {
             const speakerId = cur_voice[0].speaker_id;
@@ -81,19 +85,30 @@ export default function ProfilePage() {
 
     const handleVoiceSelection = async (value: string | null) => {
         setSelectedValue(value);
-        // Access the selected voice using voices.find(voice => voice.id === value)
         const selectedVoice = voices ? voices.find(voice => voice.id === value)?.id : null;
-        // Do something with the selected voice...
-        console.log(selectedVoice)
-
-        const { data, error } = await supabase
-        .from('audio_preferences')
-        .update({ speaker_id: selectedVoice })
-        .eq('user_id', userId)
-        .select()
-        console.log(data)
-        console.log(error)
-
+        
+        let { data: audio_preferences, error: userNotExistError } = await supabase
+            .from('audio_preferences')
+            .select('user_id')
+            .eq('user_id', userId)
+        if(userNotExistError || !audio_preferences){
+            const { data, error } = await supabase
+            .from('audio_preferences')
+            .insert({ user_id: userId, speaker_id: selectedVoice, length: "normal"})
+            .select()
+            if(error){
+                console.log(error)
+            }
+        } else {
+            const { data, error } = await supabase
+                .from('audio_preferences')
+                .update({ speaker_id: selectedVoice })
+                .eq('user_id', userId)
+                .select()
+            if(error){
+                console.log(`error: ${error}`)
+            }
+        }
       };
 
     useEffect(() => {
@@ -121,7 +136,6 @@ export default function ProfilePage() {
       }
 
     const data = voices.map(voice => ({ label: voice.display_name, value: voice.id }))
-    console.log(selectedValue)
   
     return (
         <View className="flex-1 justify-center content-center bg-white px-20">
@@ -142,13 +156,6 @@ export default function ProfilePage() {
         </Pressable>
       </View>
 
-            {/* Voice Selection Button */}
-            <View className="bg-primary p-2 rounded-md mb-4">
-                <Pressable onPress={navigateVoiceSelection}>
-                    <Text className="text-white">Selecteer Stem</Text>
-                </Pressable>
-            </View>
-
       {/* Logout Button */}
       <Pressable onPress={handleLogout}>
         <View className="rounded-md bg-primary p-2 mb-4">
@@ -156,76 +163,38 @@ export default function ProfilePage() {
         </View>
       </Pressable>
 
-            {/* Voice Selection */}
-            <View className='bg-white'>
-                <Dropdown
-                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={data}
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                placeholder={!isFocus ? (selectedValue ?? 'Select item') : '...'}
-                value={value}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
-                onChange={item => {
-                    setValue(item.value);
-                    setIsFocus(false);
-                    handleVoiceSelection(item.value);
-                }}
-                renderLeftIcon={() => (
-                    <View className='pr-2'>
-                        <Icon name="record-voice-over" size={24} color="white" />
-                    </View>
-                )}
-                />
-            </View>
+        {/* Voice Selection */}
+        <View className='mb-4 rounded-md bg-primary px-2 py-1'>
+            <StyledDropdown
+            className='bg-primary font-primary text-white'
+            selectedTextStyle={styles.TextStyle}
+            placeholderStyle={styles.TextStyle}
+            data={data}
+            labelField="label"
+            valueField="value"
+            placeholder={!isFocus ? (selectedValue ?? 'Selecteer stem') : '...'}
+            value={value}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={item => {
+                setValue(item.value);
+                setIsFocus(false);
+                handleVoiceSelection(item.value);
+            }}
+            renderLeftIcon={() => (
+                <View className='pr-2'>
+                    <Icon name="record-voice-over" size={24} color="white" />
+                </View>
+            )}
+            />
+        </View>
     </View>
         
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
-      backgroundColor: 'white',
-      paddingTop: 12,
-    },
-    dropdown: {
-      height: 40,
-      borderColor: 'white',
-      backgroundColor: '#00DEAD',
-      borderWidth: 0.5,
-      borderRadius: 8,
-      paddingHorizontal: 8,
-    },
-    label: {
-      position: 'absolute',
-      backgroundColor: 'white',
-      left: 22,
-      top: 8,
-      zIndex: 999,
-      paddingHorizontal: 8,
-      fontSize: 14,
-    },
-    placeholderStyle: {
-      fontSize: 16,
+    TextStyle: {
       color: 'white'
-    },
-    selectedTextStyle: {
-      fontSize: 16,
-      color: 'white'
-      
-    },
-    iconStyle: {
-      width: 20,
-      height: 20,
-    },
-    inputSearchStyle: {
-      height: 40,
-      fontSize: 16,
-    },
+    }
   });
