@@ -11,8 +11,8 @@ export default function Login() {
   const navigation = useNavigation();
 
   const validationSchema = yup.object({
-    email: yup.string().email('Enter a valid email').required('Email is required'),
-    password: yup.string().required('Password is required'),
+    email: yup.string().email('Voer een geldig e-mailadres in').required('E-mail is verplicht'),
+    password: yup.string().required('Wachtwoord is verplicht'),
   });
   const submitForm = async (values: { email: string; password: string }, { setErrors }: any) => {
     const data = await signInWithEmail(values.email, values.password);
@@ -45,7 +45,7 @@ export default function Login() {
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
           <View className={'flex'}>
-            <Text className={'font-primary text-lg text-primary-text'}>Email</Text>
+            <Text className={'font-primary text-lg text-primary-text'}>E-mail</Text>
             <TextInput
               className={
                 'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-primary-text'
@@ -65,7 +65,7 @@ export default function Login() {
               </Text>
             </View>
 
-            <Text className={'font-primary  text-lg text-primary-text'}>Password</Text>
+            <Text className={'font-primary  text-lg text-primary-text'}>Wachtwoord</Text>
             <TextInput
               className={
                 'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-black'
@@ -91,7 +91,7 @@ export default function Login() {
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >
-              <Text className={'self-center font-primary_bold text-white'}>Login</Text>
+              <Text className={'self-center font-primary_bold text-white'}>Inloggen</Text>
             </Pressable>
           </View>
         )}
