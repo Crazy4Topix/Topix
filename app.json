@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/TopixLogo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#0b1412"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -21,7 +21,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/TopixForeground.png",
-        "backgroundColor": "#000000",
+        "backgroundColor": "#0b1412",
         "monochromeImage": "./assets/images/TopixForeground.png"
       },
       "package": "com.topix.topix"
