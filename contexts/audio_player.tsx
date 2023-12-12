@@ -165,10 +165,6 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const setupAndAddAudio = async (url: string, title: string, artist: string) => {
     try {
-      SoundPlayer.loadUrl(url);
-      SoundPlayer.play();
-      await getDuration();
-
       const newAudioState = {
         ...audioState,
         currentTrack: {
@@ -180,6 +176,9 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         isPlaying: true,
       };
       setAudioState(newAudioState);
+      SoundPlayer.loadUrl(url);
+      SoundPlayer.play();
+      await getDuration();
 
     } catch (e) {
       console.error('Error setting up SoundPlayer:', e);
