@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Image, Pressable } from 'react-native';
+import { ScrollView, View, Text, Image, Pressable, ToastAndroid } from 'react-native';
 import NewsThumbnail from '../../components/NewsThumbnail';
 import React, { useContext, useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
@@ -70,7 +70,7 @@ export default function homePage() {
     const date = new Date();
     const podcastUrl = await getNewestPodcastUrlFromSupabase(date);
     if (podcastUrl == null) {
-      alert('We hebben geen podcast kunnen vinden, probeer het morgen opnieuw');
+      ToastAndroid.show('Geen podcasts gevonden. Probeer het morgen opnieuw', ToastAndroid.LONG);
       return;
     }
     setAudioLink(podcastUrl.toString().replace('?', ''));
