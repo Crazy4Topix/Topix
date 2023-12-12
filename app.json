@@ -4,13 +4,13 @@
     "slug": "topix",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/TopixLogo.png",
+    "icon": "./assets/images/TopixIcon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/TopixLogo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0b1412"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,8 +20,9 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/TopixLogo.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/TopixForeground.png",
+        "backgroundColor": "#0b1412",
+        "monochromeImage": "./assets/images/TopixForeground.png"
       },
       "package": "com.topix.topix"
     },
