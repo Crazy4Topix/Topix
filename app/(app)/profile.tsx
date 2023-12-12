@@ -5,7 +5,7 @@ import { signOut, getFullName } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session'
 import { supabase } from '../../lib/supabase';
 import { Icon } from 'react-native-elements';
-import { Dropdown } from 'react-native-element-dropdown'; // Import the Dropdown component
+import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function ProfilePage() {
