@@ -28,9 +28,9 @@ export default function ProfilePage() {
         }
     };
 
-    const handleGoBack = () => {
-        navigation.goBack(); // Go back to the previous screen
-    };
+  const handleGoBack = () => {
+    navigation.goBack(); // Go back to the previous screen
+  };
 
     const navigateTopicSelection = () => {
         navigation.navigate('updateTopics');
@@ -132,15 +132,15 @@ export default function ProfilePage() {
             </View>
             <Text className="text-2xl font-semibold mb-4 text-center">Profiel Pagina</Text>
 
-            {/* Display Name */}
-            <Text className="text-xl mb-2 text-center">{fullName}</Text>
+      {/* Display Name */}
+      <Text className="mb-4 font-primary text-xl">{fullName}</Text>
 
-            {/* Topic Selection Button */}
-            <View className="bg-primary p-2 rounded-md mb-4">
-                <Pressable onPress={navigateTopicSelection}>
-                    <Text className="text-white">Selecteer Topix</Text>
-                </Pressable>
-            </View>
+      {/* Topic Selection Button */}
+      <View className="mb-4 rounded-md bg-primary p-2">
+        <Pressable onPress={navigateTopicSelection}>
+          <Text className="font-primary text-white">Selecteer Topix</Text>
+        </Pressable>
+      </View>
 
             {/* Voice Selection Button */}
             <View className="bg-primary p-2 rounded-md mb-4">
@@ -149,12 +149,12 @@ export default function ProfilePage() {
                 </Pressable>
             </View>
 
-            {/* Logout Button */}
-            <Pressable onPress={handleLogout}>
-                <View className="bg-primary p-2 rounded-md mb-4">
-                    <Text className="text-white">Uitloggen</Text>
-                </View>
-            </Pressable>
+      {/* Logout Button */}
+      <Pressable onPress={handleLogout}>
+        <View className="rounded-md bg-primary p-2 mb-4">
+          <Text className="font-primary text-white">Uitloggen</Text>
+        </View>
+      </Pressable>
 
             {/* Voice Selection */}
             <View className='bg-white'>
@@ -184,9 +184,9 @@ export default function ProfilePage() {
                 )}
                 />
             </View>
-        </View>
+    </View>
         
-    );
+  );
 }
 
 const styles = StyleSheet.create({

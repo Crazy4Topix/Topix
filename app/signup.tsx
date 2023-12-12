@@ -67,7 +67,7 @@ const Signup: FunctionComponent<Props> = (_: OwnProps) => {
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
               value={values.email}
-              autoCapitalize='none'
+              autoCapitalize="none"
               placeholder={'alexander@pom.show'}
               placeholderTextColor="gray"
               autoComplete={'email'}
@@ -87,7 +87,7 @@ const Signup: FunctionComponent<Props> = (_: OwnProps) => {
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
               value={values.password}
-              autoCapitalize='none'
+              autoCapitalize="none"
               secureTextEntry={true}
               placeholder={'Al3xand3r!'}
               textContentType={'password'}
@@ -109,7 +109,7 @@ const Signup: FunctionComponent<Props> = (_: OwnProps) => {
               onChangeText={handleChange('password2')}
               onBlur={handleBlur('password2')}
               value={values.password2}
-              autoCapitalize='none'
+              autoCapitalize="none"
               secureTextEntry={true}
               placeholder={'Al3xand3r!'}
               textContentType={'password'}
@@ -127,7 +127,7 @@ const Signup: FunctionComponent<Props> = (_: OwnProps) => {
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >
-              <Text className={'self-center text-white'}>Next</Text>
+              <Text className={'self-center font-primary_bold text-white'}>Next</Text>
             </Pressable>
           </View>
         )}

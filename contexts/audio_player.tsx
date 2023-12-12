@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useState } from 'react';
 import SoundPlayer from 'react-native-sound-player';
 
 interface Track {
@@ -41,7 +41,6 @@ export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
   setupAndAddAudio: async () => {},
 });
 
-
 export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [audioState, setAudioState] = useState<AudioPlayerState>({
     currentTrack: null,
@@ -52,13 +51,13 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const getDuration = async () => {
     const info = await SoundPlayer.getInfo();
-    if(info != null){
+    if (info != null) {
       setDuration(info.duration);
     } else {
       console.error('Error getting duration: media player in react-native-sound-player is null');
     }
   };
-  
+
   const playTrack = (track: Track) => {
     try {
       // Load and play the provided track
@@ -110,13 +109,12 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (currentTrack) {
       try {
         // Calculate the target time based on the percentage
-        const info = await SoundPlayer.getInfo()
-        let targetTime = 0
-        if (info.currentTime < (info.duration + 10)){
+        const info = await SoundPlayer.getInfo();
+        let targetTime = 0;
+        if (info.currentTime < info.duration + 10) {
           targetTime = info.currentTime + 10;
-        }
-        else{
-          targetTime = info.duration
+        } else {
+          targetTime = info.duration;
         }
         // Seek to the calculated time
         SoundPlayer.seek(targetTime);
@@ -132,13 +130,12 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (currentTrack) {
       try {
         // Calculate the target time based on the percentage
-        const info = await SoundPlayer.getInfo()
-        let targetTime = 0
-        if (info.currentTime > 11){
+        const info = await SoundPlayer.getInfo();
+        let targetTime = 0;
+        if (info.currentTime > 11) {
           targetTime = info.currentTime - 11;
-        }
-        else{
-          targetTime = 0
+        } else {
+          targetTime = 0;
         }
         // Seek to the calculated time
         SoundPlayer.seek(targetTime);
@@ -153,7 +150,6 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     try {
       SoundPlayer.loadUrl(audioUrl);
       SoundPlayer.play();
-
       await getDuration();
 
       const newAudioState = {
@@ -171,7 +167,18 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   };
 
   return (
-    <AudioPlayerContext.Provider value={{ audioState, playTrack, pauseTrack, resumeTrack, seekTo, setupAndAddAudio: setupAndAddAudio, seekForward, seekBackward }}>
+    <AudioPlayerContext.Provider
+      value={{
+        audioState,
+        playTrack,
+        pauseTrack,
+        resumeTrack,
+        seekTo,
+        setupAndAddAudio: setupAndAddAudio,
+        seekForward,
+        seekBackward,
+      }}
+    >
       {children}
     </AudioPlayerContext.Provider>
   );

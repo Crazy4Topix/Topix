@@ -4,27 +4,29 @@ import React, { useContext, useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
 import { Link, router } from 'expo-router';
-import Mp3_player_minum from './Mp3_player_minum'
-import { supabase } from '../../lib/supabase' 
+import AudioPlayerMinimal from '../../components/Mp3_player_minum';
+import { supabase, getFullName } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session';
-import { getFullName } from '../../lib/supabase';
+import NewsThumbnailSkeleton from '../../components/NewsThumbnailSkeleton';
 
 export default function homePage() {
   const userContext = useContext(SupabaseUserSession);
   const userId = userContext.session?.user.id;
-  const [audioLink, setAudioLink] = useState("");
+  const [audioLink, setAudioLink] = useState('');
   const [fullName, setFullName] = useState('');
   const [greeting, setGreeting] = useState('');
-  const [newsThumbnails, setNewsThumbnails] = useState<React.JSX.Element[]>([]);
+  const [newsThumbnails, setNewsThumbnails] = useState<React.JSX.Element[]>(
+    [...Array(10).keys()].map((i) => <NewsThumbnailSkeleton key={i} />)
+  );
 
   useEffect(() => {
-    getPodcastLink();
-    createNewsThumbnails();
-  },[userId])
+    void getPodcastLink();
+    void createNewsThumbnails();
+  }, [userId]);
 
-  useEffect(() =>{
-    console.log(`audio link: ${audioLink}`)
-  },[audioLink])
+  useEffect(() => {
+    console.log(`audio link: ${audioLink}`);
+  }, [audioLink]);
 
   useEffect(() => {
     const fetchFullName = async () => {
@@ -41,8 +43,8 @@ export default function homePage() {
         console.error('Error fetching full name:', error.message);
       }
     };
-  
-    fetchFullName();
+
+    void fetchFullName();
   }, [userId]);
 
   useEffect(() => {
@@ -61,171 +63,196 @@ export default function homePage() {
     }
   }, []);
 
-  async function getPodcastLink(){
-    if(!userId){
+  async function getPodcastLink() {
+    if (!userId) {
       return;
     }
     const date = new Date();
-    const podcastUrl = await getNewestPodcastUrlFromSupabase(date)
-    if (podcastUrl == null){
-      alert("We hebben geen podcast kunnen vinden, probeer het morgen opnieuw")
+    const podcastUrl = await getNewestPodcastUrlFromSupabase(date);
+    if (podcastUrl == null) {
+      alert('We hebben geen podcast kunnen vinden, probeer het morgen opnieuw');
       return;
     }
-    setAudioLink(podcastUrl.toString().replace("?", ""));
+    setAudioLink(podcastUrl.toString().replace('?', ''));
   }
 
-  async function getNewestPodcastUrlFromSupabase(date: Date){
+  async function getNewestPodcastUrlFromSupabase(date: Date) {
     // if date is more than one week (7,5 days is 648000000 miliseconds) ago, return null
-    const today = new Date()
-    if(today.valueOf() - date.valueOf() >  648000000){
-      return null
+    const today = new Date();
+    if (today.valueOf() - date.valueOf() > 648000000) {
+      return null;
     }
-    const fetchDate = `${padTo2Digits(date.getFullYear())}-${padTo2Digits(date.getMonth() + 1)}-${date.getDate()}`;
-    let {data:podcast, error } = await supabase
+    const fetchDate = `${padTo2Digits(date.getFullYear())}-${padTo2Digits(
+      date.getMonth() + 1
+    )}-${date.getDate()}`;
+    const { data: podcast, error } = await supabase
       .from('podcasts')
       .select('podcast_link')
       .eq('user_id', userId)
       .gte('created_at', fetchDate)
-      .single()
-    if(error){
-      //get a day earlier
-      const newDate = new Date(date.valueOf() - 86400000 )
-      return getNewestPodcastUrlFromSupabase(newDate)
+      .single();
+    if (error) {
+      // get a day earlier
+      const newDate = new Date(date.valueOf() - 86400000);
+      return await getNewestPodcastUrlFromSupabase(newDate);
     }
-    console.log(`found podcast of ${date}`)
-    return podcast?.podcast_link ?? null
+    console.log(`found podcast of ${date.getUTCDate()}`);
+    return podcast?.podcast_link ?? null;
   }
 
-  function padTo2Digits(number:number){
+  function padTo2Digits(number: number) {
     return number.toString().padStart(2, '0');
   }
 
-  function createDateThumbnails(amount: number){
+  function createDateThumbnails(amount: number) {
     const DateThumbnailArray = [];
     const d = new Date();
-    for (let i=0; i<amount; i++){
+    for (let i = 0; i < amount; i++) {
       DateThumbnailArray.push(
-        <DateThumbnail key={i} coverSource={new Date(d)}></DateThumbnail>
+        <DateThumbnail key={i} special={i === 0} thumbnailDate={new Date(d)}></DateThumbnail>
       );
       d.setDate(d.getDate() - 1);
     }
     return DateThumbnailArray;
   }
 
-  async function createNewsThumbnails(){
-    if(!userId){
-      return; 
+  async function createNewsThumbnails() {
+    if (!userId) {
+      return;
     }
 
-    let NewsThumbnailArray = [];
-    const d = new Date();
-    const today = `${padTo2Digits(d.getFullYear())}-${padTo2Digits(d.getMonth() + 1)}-${d.getDate()}`;
-    
+    const NewsThumbnailArray = [];
+
+    const lastWeekD = new Date();
+    lastWeekD.setDate(lastWeekD.getDate() - 7);
+    const lastWeek = `${padTo2Digits(lastWeekD.getFullYear())}-${padTo2Digits(
+      lastWeekD.getMonth() + 1
+    )}-${lastWeekD.getDate()}`;
+
     const playAudio = (link: string, title: string) => {
-      router.push({pathname: '/Mp3_player', params: {audioLink: link, title: title}})
+      router.push({ pathname: '/Mp3_player', params: { audioLink: link, title } });
     };
 
-    // Get the speaker_id of the preferenced speaker of the user
-    let {data: speakerId, error: fetchSpeakerError} = await supabase
-    .from('audio_preferences')
-    .select('speaker_id')
-    .eq('user_id', userId)
-    .single()
-    if(fetchSpeakerError) {
-      console.error(fetchSpeakerError.message)
+    // Get the speaker_id of the preferred speaker of the user
+    const { data: speakerId, error: fetchSpeakerError } = await supabase
+      .from('audio_preferences')
+      .select('speaker_id')
+      .eq('user_id', userId)
+      .single();
+    if (fetchSpeakerError) {
+      console.error(fetchSpeakerError.message);
     }
-  
-    let { data: items, error: fetchItemsError } = await supabase
+
+    const { data: items, error: fetchItemsError } = await supabase
       .from('audio')
       .select('length, link, news_id')
-      .gte('created_at', today)
-      .eq('speaker_id', speakerId?.speaker_id)
-    if(fetchItemsError) {
-      console.error(fetchItemsError.message)
+      .gte('created_at', lastWeek)
+      .eq('speaker_id', speakerId?.speaker_id);
+    if (fetchItemsError) {
+      console.error(fetchItemsError.message);
       return;
     }
 
-    if(!items){
-      console.error('audio items undefined')
+    if (!items) {
+      console.error('audio items undefined');
       return;
     }
-      
-    let i = 0
-    let itemTitle = ''
-    let itemDuration = ''
+
+    let i = 0;
+    let itemTitle = '';
+    let itemDuration = '';
 
     for (const item of items) {
+      if (item.news_id == null) continue;
 
-      if(item.news_id == null) 
-        continue
-
-      let { data: title, error } = await supabase
+      const { data: title, error } = await supabase
         .from('news')
         .select('title')
         .eq('id', item.news_id)
-        .single()
-      if(error) {
-        console.error(error.message)
+        .single();
+      if (error) {
+        console.error(error.message);
         return;
       }
-      
-      itemTitle = title?.title
-      itemDuration = `${item.length} seconden`
+
+      itemTitle = title?.title;
+      itemDuration = `${item.length} seconden`;
       NewsThumbnailArray.push(
-        <NewsThumbnail key={i} coverSource={require("../../assets/images/TopixLogo.png")} newsTitle={itemTitle} newsDuration={itemDuration} onPressImage={() => playAudio(item.link, itemTitle)}/>
+        <NewsThumbnail
+          key={i}
+          coverSource={require('../../assets/images/Topix_wit.png')}
+          newsTitle={itemTitle}
+          newsDuration={itemDuration}
+          onPressImage={() => {
+            playAudio(item.link, itemTitle);
+          }}
+        />
       );
-      i++
-      
+      i++;
     }
-    setNewsThumbnails(NewsThumbnailArray)
+    setNewsThumbnails(NewsThumbnailArray);
   }
 
-
   return (
-    <View className={'flex w-full justify-center'}>
-      <View className="absolute top-8 right-4 z-10">
+    <View className={'flex h-full w-full justify-center bg-white'}>
+      <View className={'absolute right-4 top-16 z-10'}>
         <Link href={'/profile'} asChild>
           <Pressable>
-            <Icon name="account-circle" size={36} color="black" />
+            <Icon name="account-circle" size={36} color="white" />
           </Pressable>
         </Link>
       </View>
       <ScrollView>
-        <View className={"bg-primary pt-8 pb-4 px-2"}>
-          <Text className={'mt-4 mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>{greeting},</Text>
-          <Text className={'mx-2 mb-2 text-4xl text-center font-semibold font-Poppins_600_semi_bold'}>
-            {typeof fullName === 'string' ? fullName : ''}
+        <View className={'mb-2 bg-background px-2 pb-5 pt-8'}>
+          <Text className={'mx-2 mt-4 text-left font-primary_bold text-3xl text-primary'}>
+            {greeting}
           </Text>
-          <View>
-            <View id={"background"} className={"mx-2 rounded-xl bg-background flex justify-center"}>
-              <Image source={require("../../assets/waveform.png")} className={"m-4 h-48 w-10/12 self-center"}></Image>
+          <Text className={'mx-2 mb-5 text-left font-primary_semi_bold text-2xl text-white'}>
+            {fullName}
+          </Text>
+          <View className={'mx-2 mb-2'}>
+            <View className={' flex w-full justify-center self-center rounded-xl bg-primary'}>
+              <Image
+                source={{
+                  // TODO: get the first image of the first news item of the day
+                  uri: 'https://media.nu.nl/m/ataxavzazvxs_wd854/1-op-de-3-nederlandse-scholieren-begrijpt-een-tekst-niet.jpg',
+                }}
+                className={'h-48 w-full self-center rounded-lg p-4 opacity-40'}
+              ></Image>
             </View>
-            <View id={"foreground"} className={"absolute left-0 right-0  bottom-0 top-16"}>
-              <Pressable className={'rounded-lg p-2'} onPress={() => router.push({pathname:'/Mp3_player', params:{audioLink:audioLink, title:"Dagelijkse Podcast"}})}>
-                <Icon id={"foreground"}  color={0x00DEADFF} name={"play-circle-outline"} size={100}></Icon>
+            <View className={'absolute bottom-0 left-0 right-0 top-12 z-10'}>
+              <Pressable
+                className={'rounded-lg p-2'}
+                onPress={() => {
+                  router.push({
+                    pathname: '/Mp3_player',
+                    params: { audioLink, title: 'Dagelijkse Podcast' },
+                  });
+                }}
+              >
+                <Icon color={0xdeadff} name={'play-circle-outline'} size={100}></Icon>
               </Pressable>
             </View>
           </View>
         </View>
-
         {newsThumbnails.length > 0 && (
-          <>
-            <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>
-              Overige Topix
-            </Text>
+          <View className={'pl-2'}>
+            <Text className={'m-2 font-primary_bold text-2xl'}>Overige Topix</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {newsThumbnails}
             </ScrollView>
-          </>
+          </View>
         )}
-
-        <Text className={'mt-4 mx-2 text-2xl font-semibold font-Poppins_700_bold'}>Terugluisteren</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} >
-          { createDateThumbnails(10) }
-        </ScrollView>
+        <View className={'pl-2'}>
+          <Text className={'m-2 font-primary_bold text-2xl'}>Terugluisteren</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {createDateThumbnails(10)}
+          </ScrollView>
+        </View>
+        <View className={'my-2 h-16'} />
       </ScrollView>
-      <View className='absolute bottom-0 w-full'>
-        <Mp3_player_minum></Mp3_player_minum>
+      <View className={'absolute bottom-0 h-16 w-full'}>
+        <AudioPlayerMinimal test={''} />
       </View>
     </View>
   );

@@ -12,7 +12,7 @@ const LoadingBar: FunctionComponent<Props> = (props) => {
   return (
     <View className={'h-4 w-1/2 self-center rounded-full bg-gray-500'}>
       <View
-        className={'absolute h-4 rounded-full bg-primary'}
+        className={'absolute h-4 rounded-full bg-accent'}
         style={{ width: `${props.percentage}%` }}
       ></View>
     </View>

@@ -22,7 +22,11 @@ const userInformation: FunctionComponent = () => {
       .max(new Date(), 'Cannot be in the future')
       .test('is-at-least-13', 'Must be at least 13 years old', function (value) {
         const today = new Date();
-        const minimumAgeDate = new Date(today.getFullYear() - 13, today.getMonth(), today.getDate());
+        const minimumAgeDate = new Date(
+          today.getFullYear() - 13,
+          today.getMonth(),
+          today.getDate()
+        );
 
         return value != null && value <= minimumAgeDate;
       }),
@@ -58,10 +62,10 @@ const userInformation: FunctionComponent = () => {
       >
         {({ handleChange, setFieldValue, handleBlur, handleSubmit, values, errors, touched }) => (
           <View className={'flex'}>
-            <Text className={'text-lg text-primary-text'}>Full name</Text>
+            <Text className={'font-primary text-lg text-primary-text'}>Full name</Text>
             <TextInput
               className={
-                'font-Poppins_regular w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
+                'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-primary-text'
               }
               onChangeText={handleChange('name')}
               onBlur={handleBlur('name')}
@@ -71,12 +75,12 @@ const userInformation: FunctionComponent = () => {
               autoComplete={'name'}
             />
             <View className={'flex shrink'}>
-              <Text className={'text-lg text-red-600'}>
+              <Text className={'font-primary text-lg text-red-600'}>
                 {errors.name != null && touched.name === true && errors.name}
               </Text>
             </View>
 
-            <Text className={'text-lg text-primary-text'}>Birthday</Text>
+            <Text className={'font-primary text-lg text-primary-text'}>Birthday</Text>
             <Pressable
               onPress={() => {
                 // setShowDatePicker(true);
@@ -94,27 +98,27 @@ const userInformation: FunctionComponent = () => {
             >
               <TextInput
                 className={
-                  'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
+                  'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-primary-text'
                 }
                 value={values.birthday.toLocaleDateString('nl-NL')}
                 editable={false}
               />
             </Pressable>
             <View className={'flex shrink'}>
-              <Text className={'text-lg text-red-600'}>
-                {errors.birthday != null && touched.birthday  && String(errors.birthday)}
+              <Text className={'font-primary text-lg text-red-600'}>
+                {errors.birthday != null && touched.birthday && String(errors.birthday)}
               </Text>
             </View>
 
             <Pressable
               onPress={() => {
                 handleSubmit();
-                console.log(errors.birthday)
+                console.log(errors.birthday);
                 console.log('Click');
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >
-              <Text className={'self-center text-white'}>Next</Text>
+              <Text className={'self-center font-primary_bold text-white'}>Next</Text>
             </Pressable>
           </View>
         )}
