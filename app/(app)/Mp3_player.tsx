@@ -84,8 +84,8 @@ const AudioPlayer = () => {
         </Pressable>
       </View>
       {!audioContext.audioState.currentTrack || audioContext.audioState.currentTrack.url === '' ? (
-        <View className="flex-1 items-center justify-center bg-secondary font-primary_bold text-2xl text-white ">
-          <Text>Loading...</Text>
+        <View className="flex-1 items-center justify-center bg-secondary  ">
+          <Text className={"font-primary_bold text-2xl text-white"}>Loading...</Text>
         </View>
       ) : (
         <>

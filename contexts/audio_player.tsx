@@ -167,9 +167,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     try {
       SoundPlayer.loadUrl(url);
       SoundPlayer.play();
-      console.log('Pre duration');
       await getDuration();
-      console.log('Post duration');
 
       const newAudioState = {
         ...audioState,
@@ -183,7 +181,6 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       };
       setAudioState(newAudioState);
 
-      console.log(newAudioState);
     } catch (e) {
       console.error('Error setting up SoundPlayer:', e);
     }

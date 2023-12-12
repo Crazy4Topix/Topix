@@ -2630,6 +2630,11 @@
     "@typescript-eslint/types" "6.13.1"
     eslint-visitor-keys "^3.4.1"
 
+"@ungap/structured-clone@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
+  integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
+
 "@urql/core@2.3.6":
   version "2.3.6"
   resolved "https://registry.yarnpkg.com/@urql/core/-/core-2.3.6.tgz#ee0a6f8fde02251e9560c5f17dce5cd90f948552"
@@ -3262,7 +3267,7 @@ braces@^3.0.2, braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
-browserslist@^4.21.9, browserslist@^4.22.1:
+browserslist@^4.21.9, browserslist@^4.22.1, browserslist@^4.22.2:
   version "4.22.2"
   resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.22.2.tgz#704c4943072bd81ea18997f3bd2180e89c77874b"
   integrity sha512-0UgcrvQmBDvZHFGdYUehrCNIazki7/lUP3kkoi/r3YB2amZbFM9J43ZRkJTXBUZK4gmx56+Sqk9+Vs9mwZx9+A==
@@ -3729,12 +3734,12 @@ core-js-compat@^3.31.0:
   dependencies:
     browserslist "^4.22.1"
 
-core-js-compat@^3.32.2:
-  version "3.33.0"
-  resolved "https://registry.npmjs.org/core-js-compat/-/core-js-compat-3.33.0.tgz"
-  integrity sha512-0w4LcLXsVEuNkIqwjjf9rjCoPhK8uqA4tMRh4Ge26vfLtUutshn+aRJU21I9LCJlh2QQHfisNToLjw1XEJLTWw==
+core-js-compat@^3.33.1:
+  version "3.34.0"
+  resolved "https://registry.yarnpkg.com/core-js-compat/-/core-js-compat-3.34.0.tgz#61a4931a13c52f8f08d924522bba65f8c94a5f17"
+  integrity sha512-4ZIyeNbW/Cn1wkMMDy+mvrRUxrwFNjKwbhCfQpDd+eLgYipDqp8oGFGtLmhh18EDPKA0g3VUBYOxQGGwvWLVpA==
   dependencies:
-    browserslist "^4.22.1"
+    browserslist "^4.22.2"
 
 core-util-is@~1.0.0:
   version "1.0.3"
@@ -8242,21 +8247,6 @@ react-native-awesome-slider@^2.4.5:
   version "2.4.5"
   resolved "https://registry.yarnpkg.com/react-native-awesome-slider/-/react-native-awesome-slider-2.4.5.tgz#fabf3aab3de9b41183aea3913bbfd92c8105444b"
   integrity sha512-PA+8YfOi/QXpkKqDaagYZtTiEmvYKwl+jTTIPA53b2K2AjWHy2EUPZn1Jy/2isPTbBSJzNuBnx5j8R/axme0rA==
-
-react-native-bouncy-checkbox-group@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.npmjs.org/react-native-bouncy-checkbox-group/-/react-native-bouncy-checkbox-group-0.1.1.tgz"
-  integrity sha512-mWSkpQid+u7s6yqnKgWP7gr8hyyuGXzD3akqR51aKmHT3LM5MdE1qKgwb4ogDmMZ1YdPoHKCnw7T41Z6SMA4uA==
-
-react-native-bouncy-checkbox@^3.0.7:
-  version "3.0.7"
-  resolved "https://registry.npmjs.org/react-native-bouncy-checkbox/-/react-native-bouncy-checkbox-3.0.7.tgz"
-  integrity sha512-776TgMGt9wTpOQA1TcvFjL5VUn6o945wFYf3Ztqva62/vT2o3JAezLiP7hYh2Svd+PewfWBYSPMs4jeaSoS8Sg==
-
-react-native-dropdown-select-list@^2.0.5:
-  version "2.0.5"
-  resolved "https://registry.npmjs.org/react-native-dropdown-select-list/-/react-native-dropdown-select-list-2.0.5.tgz"
-  integrity sha512-TepbcagQVUMB6nLuIlVU2ghRpQHAECOeZWe8K04ymW6NqbKbxuczZSDFfdCiABiiQ2dFD+8Dz65y4K7/uUEqGg==
 
 react-native-element-dropdown@^2.10.1:
   version "2.10.1"
