@@ -38,10 +38,6 @@ export default function ProfilePage() {
         navigation.navigate('updateTopics');
     };
 
-    const navigateVoiceSelection = () => {
-        navigation.navigate('voiceSelection');
-    };
-
     const fetchSpeakersName = async () => {
     try {
         const { data: speakers, error } = await supabase
