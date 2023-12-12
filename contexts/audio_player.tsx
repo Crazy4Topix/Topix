@@ -1,11 +1,11 @@
 import React, { createContext, useState } from 'react';
 import SoundPlayer from 'react-native-sound-player';
+import { type PodcastInfo } from '../types/podcast_info';
 
 interface Track {
   url: string;
-  // title: string;
-  // artist: string;
-  // artwork: string;
+  title: string;
+  artist: string;
   track_duration: number; // Add the duration property
 }
 
@@ -17,6 +17,8 @@ interface AudioPlayerState {
 
 interface AudioPlayerContextProps {
   audioState: AudioPlayerState;
+  podcastInfo: PodcastInfo[];
+  setPodcastInfo: (podcastInfo: PodcastInfo[]) => void;
   playTrack: (track: Track) => void;
   pauseTrack: () => void;
   resumeTrack: () => void;
@@ -24,7 +26,7 @@ interface AudioPlayerContextProps {
   seekTo: (percentage: number) => void;
   seekForward: () => void;
   seekBackward: () => void;
-  setupAndAddAudio: (audioUrl: string) => Promise<void>;
+  setupAndAddAudio: (audioUrl: string, title: string, artist: string) => Promise<void>;
 }
 
 export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
@@ -33,6 +35,8 @@ export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
     isPlaying: false,
     currentTime: 0,
   },
+  podcastInfo: [],
+  setPodcastInfo: () => {},
   playTrack: () => {},
   pauseTrack: () => {},
   resumeTrack: () => {},
@@ -49,6 +53,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     isPlaying: false,
     currentTime: 0,
   });
+  const [podcastInfo, setPodcastInfo] = useState<PodcastInfo[]>([]);
   const [duration, setDuration] = useState(0);
 
   const getDuration = async () => {
@@ -158,21 +163,27 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   };
 
-  const setupAndAddAudio = async (audioUrl: string) => {
+  const setupAndAddAudio = async (url: string, title: string, artist: string) => {
     try {
-      SoundPlayer.loadUrl(audioUrl);
+      SoundPlayer.loadUrl(url);
       SoundPlayer.play();
+      console.log('Pre duration');
       await getDuration();
+      console.log('Post duration');
 
       const newAudioState = {
         ...audioState,
         currentTrack: {
-          url: audioUrl,
+          url,
+          title,
+          artist,
           track_duration: duration,
         },
         isPlaying: true,
       };
       setAudioState(newAudioState);
+
+      console.log(newAudioState);
     } catch (e) {
       console.error('Error setting up SoundPlayer:', e);
     }
@@ -182,13 +193,17 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     <AudioPlayerContext.Provider
       value={{
         audioState,
+        podcastInfo,
+        setPodcastInfo,
         playTrack,
         pauseTrack,
         resumeTrack,
         getTime,
         seekTo,
-        setupAndAddAudio: setupAndAddAudio,
+        setupAndAddAudio,
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         seekForward,
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         seekBackward,
       }}
     >

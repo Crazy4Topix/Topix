@@ -8,18 +8,34 @@ import AudioPlayerMinimal from '../../components/Mp3_player_minum';
 import { supabase, getFullName } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session';
 import NewsThumbnailSkeleton from '../../components/NewsThumbnailSkeleton';
-import { type PodcastInfo } from '../../types/podcast_info';
+import { AudioPlayerContext } from '../../contexts/audio_player';
+import { type DailyPodcast, type PodcastInfo } from '../../types/podcast_info';
 
 export default function homePage() {
   const userContext = useContext(SupabaseUserSession);
   const userId = userContext.session?.user.id;
-  const [audioLink, setAudioLink] = useState('');
-  const [podcast_info, setPodcast_info] = useState<PodcastInfo[]>([]);
+  const [dailyPodcast, setDailyPodcast] = useState<DailyPodcast>({
+    podcastInfo: [],
+    podcastLink: '',
+  });
+
+  const playAudio = (link: string, title: string, podcastInfo: PodcastInfo[]) => {
+    const date = new Date();
+    const currentDate = `${padTo2Digits(date.getDate())}-${padTo2Digits(
+      date.getMonth() + 1
+    )}-${date.getFullYear()}`;
+    audioContext.setPodcastInfo(podcastInfo);
+    void audioContext.setupAndAddAudio(link, title, currentDate);
+    router.push({ pathname: '/Mp3_player' });
+  };
+
   const [fullName, setFullName] = useState('');
   const [greeting, setGreeting] = useState('');
   const [newsThumbnails, setNewsThumbnails] = useState<React.JSX.Element[]>(
     [...Array(10).keys()].map((i) => <NewsThumbnailSkeleton key={i} />)
   );
+
+  const audioContext = useContext(AudioPlayerContext);
 
   useEffect(() => {
     void getPodcastLink();
@@ -27,8 +43,8 @@ export default function homePage() {
   }, [userId]);
 
   useEffect(() => {
-    console.log(`audio link: ${audioLink}`);
-  }, [audioLink]);
+    console.log(`audio link: ${dailyPodcast.podcastLink}`);
+  }, [dailyPodcast.podcastLink]);
 
   useEffect(() => {
     const fetchFullName = async () => {
@@ -73,9 +89,7 @@ export default function homePage() {
     const podcastUrl = await getNewestPodcastUrlFromSupabase(date);
     if (podcastUrl == null) {
       alert('We hebben geen podcast kunnen vinden, probeer het morgen opnieuw');
-      return;
     }
-    setAudioLink(podcastUrl.toString().replace('?', ''));
   }
 
   async function getNewestPodcastUrlFromSupabase(date: Date) {
@@ -111,7 +125,7 @@ export default function homePage() {
       {
         timestamp: 0,
         news: 'Podcast - intro',
-        source: 'Topix',
+        source: '',
         thumbnail: '',
       },
     ];
@@ -148,9 +162,12 @@ export default function homePage() {
       timestampTemp = timestampTemp + News[index].length + 1;
     }
 
-    setPodcast_info(newsAndTimestamps);
+    setDailyPodcast({
+      podcastInfo: newsAndTimestamps,
+      podcastLink: podcast.podcast_link.toString().replace('?', ''),
+    });
 
-    console.log(`founfoundd podcast of ${date.getUTCDate()}`);
+    console.log(`found podcast of ${date.getUTCDate()}`);
     return podcast.podcast_link;
   }
 
@@ -183,10 +200,6 @@ export default function homePage() {
       lastWeekD.getMonth() + 1
     )}-${lastWeekD.getDate()}`;
 
-    const playAudio = (link: string, title: string) => {
-      router.push({ pathname: '/Mp3_player', params: { audioLink: link, title } });
-    };
-
     // Get the speaker_id of the preferred speaker of the user
     const { data: speakerId, error: fetchSpeakerError } = await supabase
       .from('audio_preferences')
@@ -213,15 +226,13 @@ export default function homePage() {
     }
 
     let i = 0;
-    let itemTitle = '';
-    let itemDuration = '';
 
     for (const item of items) {
       if (item.news_id == null) continue;
 
       const { data: title, error } = await supabase
         .from('news')
-        .select('title, thumbnail')
+        .select('title, thumbnail, source')
         .eq('id', item.news_id)
         .single();
       if (error) {
@@ -233,54 +244,65 @@ export default function homePage() {
         continue;
       }
 
-      itemTitle = title.title;
-      itemDuration = `${item.length} seconden`;
+      const itemTitle = title.title;
+      const itemDuration = `${item.length} seconden`;
 
-      const thumbnail =
-        title.thumbnail !== ''
-          ? { uri: title.thumbnail }
-          : require('../../assets/images/Topix_wit.png');
+      const podcastInfo: PodcastInfo[] = [
+        {
+          timestamp: 0,
+          news: itemTitle,
+          source: title.source[0],
+          thumbnail: title.thumbnail,
+        },
+      ];
 
       NewsThumbnailArray.push(
         <NewsThumbnail
           key={i}
-          coverSource={thumbnail}
+          coverSource={title.thumbnail}
           newsTitle={itemTitle}
           newsDuration={itemDuration}
           onPressImage={() => {
-            playAudio(item.link, itemTitle);
+            playAudio(item.link, itemTitle, podcastInfo);
           }}
         />
       );
       i++;
     }
-    setNewsThumbnails(NewsThumbnailArray);
+    setNewsThumbnails(NewsThumbnailArray.reverse());
   }
 
   return (
     <View className={'flex h-full w-full justify-center bg-white'}>
-      <View className={'absolute right-4 top-16 z-10'}>
-        <Link href={'/profile'} asChild>
-          <Pressable>
-            <Icon name="account-circle" size={36} color="white" />
-          </Pressable>
-        </Link>
-      </View>
       <ScrollView>
         <View className={'mb-2 bg-background px-2 pb-5 pt-8'}>
-          <Text className={'mx-2 mt-4 text-left font-primary_bold text-3xl text-primary'}>
-            {greeting}
-          </Text>
-          <Text className={'mx-2 mb-5 text-left font-primary_semi_bold text-2xl text-white'}>
-            {fullName}
-          </Text>
+          <View className={'mx-2 flex  flex-row justify-between'}>
+            <View>
+              <Text className={'mt-4 text-left font-primary_bold text-3xl text-primary'}>
+                {greeting}
+              </Text>
+              <Text className={'mb-5 text-left font-primary_semi_bold text-2xl text-white'}>
+                {fullName}
+              </Text>
+            </View>
+            <View className={' self-center'}>
+              <Link href={'/profile'} asChild>
+                <Pressable>
+                  <Icon name="account-circle" size={36} color="white" />
+                </Pressable>
+              </Link>
+            </View>
+          </View>
           <View className={'mx-2 mb-2'}>
             <View className={' flex w-full justify-center self-center rounded-xl bg-primary'}>
               <Image
-                source={{
-                  // TODO: get the first image of the first news item of the day
-                  uri: 'https://media.nu.nl/m/ataxavzazvxs_wd854/1-op-de-3-nederlandse-scholieren-begrijpt-een-tekst-niet.jpg',
-                }}
+                source={
+                  dailyPodcast.podcastInfo.length > 0 && dailyPodcast.podcastInfo[1].thumbnail
+                    ? {
+                        uri: dailyPodcast.podcastInfo[1].thumbnail,
+                      }
+                    : require('../../assets/images/Topix_zwart.png')
+                }
                 className={'h-48 w-full self-center rounded-lg p-4 opacity-40'}
               ></Image>
             </View>
@@ -288,14 +310,11 @@ export default function homePage() {
               <Pressable
                 className={'rounded-lg p-2'}
                 onPress={() => {
-                  router.push({
-                    pathname: '/Mp3_player',
-                    params: {
-                      audioLink,
-                      title: 'Dagelijkse Podcast',
-                      podcastInfoStr: JSON.stringify(podcast_info),
-                    },
-                  });
+                  playAudio(
+                    dailyPodcast.podcastLink,
+                    'Dagelijkse Podcast',
+                    dailyPodcast.podcastInfo
+                  );
                 }}
               >
                 <Icon color={0xdeadff} name={'play-circle-outline'} size={100}></Icon>
@@ -320,7 +339,7 @@ export default function homePage() {
         <View className={'my-2 h-16'} />
       </ScrollView>
       <View className={'absolute bottom-0 h-16 w-full'}>
-        <AudioPlayerMinimal test={''} />
+        <AudioPlayerMinimal />
       </View>
     </View>
   );

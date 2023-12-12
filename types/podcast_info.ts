@@ -4,3 +4,8 @@ export interface PodcastInfo {
   source: string;
   thumbnail: string;
 }
+
+export interface DailyPodcast {
+  podcastLink: string;
+  podcastInfo: PodcastInfo[];
+}
