@@ -44,43 +44,43 @@ export default function Login() {
         validationSchema={validationSchema}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-          <View className={'flex bg-background'}>
-            <Text className={'text-lg text-primary-text'}>Email</Text>
+          <View className={'flex'}>
+            <Text className={'font-primary text-lg text-primary-text'}>Email</Text>
             <TextInput
               className={
-                'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-primary-text'
+                'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-primary-text'
               }
               onChangeText={handleChange('email')}
               onBlur={handleBlur('email')}
               value={values.email}
-              autoCapitalize='none'
+              autoCapitalize="none"
               placeholder={'alexander@pom.show'}
               placeholderTextColor="gray"
               autoComplete={'email'}
               keyboardType={'email-address'}
             />
             <View className={'flex shrink'}>
-              <Text className={'text-lg text-red-600'}>
+              <Text className={'font-primary text-lg text-red-600'}>
                 {errors.email != null && touched.email === true && errors.email}
               </Text>
             </View>
 
-            <Text className={'font-primary-cond-bold  text-lg text-primary-text'}>Password</Text>
+            <Text className={'font-primary  text-lg text-primary-text'}>Password</Text>
             <TextInput
               className={
-                'font-primary-cond w-full rounded-lg border-2 border-primary bg-white px-3 py-2 text-base text-black'
+                'w-full rounded-lg border-2 border-primary bg-white px-3 py-2 font-primary text-base text-black'
               }
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
               value={values.password}
-              autoCapitalize='none'
+              autoCapitalize="none"
               secureTextEntry={true}
               placeholder={'Al3xand3r!'}
               textContentType={'password'}
               placeholderTextColor="gray"
             />
             <View className={'flex shrink'}>
-              <Text className={'text-lg text-red-600'}>
+              <Text className={'font-primary text-lg text-red-600'}>
                 {errors.password != null && touched.password === true && errors.password}
               </Text>
             </View>
@@ -91,7 +91,7 @@ export default function Login() {
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >
-              <Text className={'self-center text-white'}>Login</Text>
+              <Text className={'self-center font-primary_bold text-white'}>Login</Text>
             </Pressable>
           </View>
         )}

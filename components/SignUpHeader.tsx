@@ -23,7 +23,7 @@ const SignUpHeader: FunctionComponent<Props> = (props: OwnProps) => {
   }, [props.route.name]);
 
   return (
-    <View className={'mt-12 flex w-full justify-center'}>
+    <View className={'flex w-full justify-center bg-white pt-12'}>
       <Image
         source={require('../assets/images/Topix_wit.png')}
         className={' h-24 w-8/12 self-center'}

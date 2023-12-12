@@ -15,9 +15,9 @@ export default function Welcome() {
         />
       </View>
       <View id={'foreground'} className={'z-10 overflow-visible bg-transparent px-8 pt-12'}>
-        <Text className={'font-primary_extra_bold mt-36 px-2 text-4xl text-white'}>Welcome to</Text>
+        <Text className={'mt-36 px-2 font-primary_extra_bold text-4xl text-white'}>Welcome to</Text>
         <Image source={require('../assets/images/Topix_cyaan.png')} className={'h-32 w-5/6'} />
-        <Text className={'font-primary_extra_bold mt-2 px-2 text-xl text-white'}>
+        <Text className={'mt-2 px-2 font-primary_extra_bold text-xl text-white'}>
           Daily news podcast, custom made for you
         </Text>
         <Link
@@ -25,15 +25,15 @@ export default function Welcome() {
           href={'/signup'}
           asChild
         >
-          <Pressable className={'rounded-lg bg-primary p-2'}>
-            <Text className={'font-primary_semi_bold text-center text-base text-black'}>
+          <Pressable className={'rounded-lg bg-accent p-2'}>
+            <Text className={'text-center font-primary_semi_bold text-base text-black'}>
               Get started
             </Text>
           </Pressable>
         </Link>
         <Link className={'flex h-16 w-10/12 justify-center self-start'} href={'/login'} asChild>
           <Pressable className={'rounded-lg p-2'}>
-            <Text className={'font-primary_semi_bold text-left text-base text-white'}>
+            <Text className={'text-left font-primary_semi_bold text-base text-white'}>
               Already have an account?
             </Text>
           </Pressable>
