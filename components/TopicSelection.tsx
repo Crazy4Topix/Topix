@@ -127,8 +127,6 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
         };
       });
   
-      console.log(mergedList);
-  
       // Set the mergedList directly in the state
       setTopics(mergedList);
   
