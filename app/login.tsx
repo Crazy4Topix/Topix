@@ -26,7 +26,7 @@ export default function Login() {
     if (data?.data != null) {
       setSession(data.data.session);
       // @ts-expect-error It complains about never but it is there
-      navigation.navigate('(app)');
+      navigation.navigate('index');
     }
   };
 
