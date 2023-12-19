@@ -12,8 +12,10 @@ import { AudioPlayerContext } from '../../contexts/audio_player';
 import { type DailyPodcast, type PodcastInfo } from '../../types/podcast_info';
 
 export default function homePage() {
-    const userContext = useContext(SupabaseUserSession);
-    const userId = userContext.session?.user.id;
+    // const userContext = useContext(SupabaseUserSession);
+    // const userId = userContext.session?.user.id;
+    const { user } = useContext(SupabaseUserSession);
+    const userId = user?.id;
     const [dailyPodcast, setDailyPodcast] = useState<DailyPodcast>({
         podcastInfo: [],
         podcastLink: '',
@@ -59,6 +61,7 @@ export default function homePage() {
                         setFullName(name);
                     } else {
                         console.error('Error fetching full name.');
+                        setFullName('');
                     }
                 }
             } catch (error: any) {

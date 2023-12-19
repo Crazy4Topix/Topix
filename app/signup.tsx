@@ -6,7 +6,6 @@ import * as yup from 'yup';
 import { signUpWithEmail } from '../lib/supabase';
 import { type NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useNavigation } from 'expo-router';
-import { SupabaseUser } from '../contexts/supabase_user';
 
 interface OwnProps extends NativeStackScreenProps<any> {}
 
@@ -14,7 +13,7 @@ type Props = OwnProps;
 
 const Signup: FunctionComponent<Props> = (_: OwnProps) => {
   const { setSession } = useContext(SupabaseUserSession);
-  const { setUser } = useContext(SupabaseUser);
+  const { setUser } = useContext(SupabaseUserSession);
 
   const navigation = useNavigation();
   const validationSchema = yup.object({

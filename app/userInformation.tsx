@@ -4,13 +4,11 @@ import * as yup from 'yup';
 import { supabase } from '../lib/supabase';
 import { Formik } from 'formik';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import { SupabaseUser } from '../contexts/supabase_user';
 import { useNavigation } from 'expo-router';
 import { SupabaseUserSession } from '../contexts/user_session';
 
 const userInformation: FunctionComponent = () => {
-  const { user } = useContext(SupabaseUser);
-  const { session } = useContext(SupabaseUserSession);
+  const { session, user } = useContext(SupabaseUserSession);
 
   const navigation = useNavigation();
 

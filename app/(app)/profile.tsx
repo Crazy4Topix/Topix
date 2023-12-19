@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Pressable, StyleSheet} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { signOut, getFullName } from '../../lib/supabase';
+import { signOut, getFullName, supabase } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session'
-import { supabase } from '../../lib/supabase';
 import { Icon } from 'react-native-elements';
 import { Dropdown } from 'react-native-element-dropdown';
 import { styled } from 'nativewind';
@@ -116,18 +115,19 @@ export default function ProfilePage() {
                         setFullName(name);
                     } else {
                         console.log('Error fetching full name.');
+                        setFullName('');
                     }
                 }
             } catch (error) {
                 console.error('Error fetching full name:', error.message);
             }
         };
-        
+
         void fetchFullName();
         void fetchSpeakersName();
     }, [userId]);
 
-    if (!voices || voices === null) {
+    if (!voices) {
         return null; // or a loading component if you prefer
       }
 
@@ -143,7 +143,7 @@ export default function ProfilePage() {
             <Text className="text-2xl font-semibold mb-4 text-center">Profiel Pagina</Text>
 
       {/* Display Name */}
-      <Text className="mb-4 font-primary text-xl">{fullName}</Text>
+      <Text className="mb-4 font-primary text-xl text-center">{fullName}</Text>
 
       {/* Topic Selection Button */}
       <View className="mb-4 rounded-md bg-primary p-2">

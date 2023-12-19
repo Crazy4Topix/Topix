@@ -5,7 +5,6 @@ import { Stack, SplashScreen } from 'expo-router';
 import { NativeWindStyleSheet } from 'nativewind';
 import { SupabaseUserSessionProvider } from '../contexts/user_session';
 import { useFonts } from 'expo-font';
-import { AudioPlayerProvider } from '../contexts/audio_player';
 import {
   Poppins_100Thin,
   Poppins_100Thin_Italic,
@@ -27,7 +26,6 @@ import {
   Poppins_900Black_Italic,
 } from '@expo-google-fonts/poppins';
 import SignUpHeader from '../components/SignUpHeader';
-import { SupabaseUserProvider } from '../contexts/supabase_user';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -77,7 +75,6 @@ function RootLayoutNav() {
 
   return (
     <SupabaseUserSessionProvider>
-      <SupabaseUserProvider>
         <Stack
           screenOptions={{
             header: (props) => <SignUpHeader {...props} />,
@@ -105,9 +102,7 @@ function RootLayoutNav() {
           />
           <Stack.Screen name={'userInformation'} />
           <Stack.Screen name={'topicSelection'} />
-          
         </Stack>
-      </SupabaseUserProvider>
     </SupabaseUserSessionProvider>
   );
 }
