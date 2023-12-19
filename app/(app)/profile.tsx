@@ -42,7 +42,8 @@ export default function ProfilePage() {
     try {
         const { data: speakers, error } = await supabase
         .from('speakers')
-        .select('display_name, id, name');
+        .select('display_name, id, name')
+        .eq("published", true);
         if (error != null) {
         console.log(error);
         }
