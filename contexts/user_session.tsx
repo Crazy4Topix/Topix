@@ -19,7 +19,6 @@ export const SupabaseUserSessionProvider = ({ children }: ProvidersProps) => {
 
   useEffect(() => {
     supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('Session changed', session, _event);
       setSession(session);
     });
   }, []);
