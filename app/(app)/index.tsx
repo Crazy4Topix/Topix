@@ -12,10 +12,8 @@ import { AudioPlayerContext } from '../../contexts/audio_player';
 import { type DailyPodcast, type PodcastInfo } from '../../types/podcast_info';
 
 export default function homePage() {
-    // const userContext = useContext(SupabaseUserSession);
-    // const userId = userContext.session?.user.id;
-    const { user } = useContext(SupabaseUserSession);
-    const userId = user?.id;
+    const { session } = useContext(SupabaseUserSession);
+    const userId = session?.user.id;
     const [dailyPodcast, setDailyPodcast] = useState<DailyPodcast>({
         podcastInfo: [],
         podcastLink: '',
