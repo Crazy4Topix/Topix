@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, Pressable, Linking } from 'react-n
 import { Icon } from 'react-native-elements';
 import { AudioPlayerContext } from '../../contexts/audio_player';
 import { router, useNavigation } from 'expo-router';
+import Seekbar from "../../components/Seekbar";
 
 const AudioPlayer = () => {
   const audioContext = useContext(AudioPlayerContext);
@@ -16,7 +17,7 @@ const AudioPlayer = () => {
         void audioContext.getTime().then((time) => {
           setCurrTime(time);
         });
-      }, 1000);
+      }, 100);
 
       return () => {
         clearInterval(interval);
@@ -121,6 +122,7 @@ const AudioPlayer = () => {
                 <Icon name="skip-next" size={70} color="#00DEAD" />
               </TouchableOpacity>
             </View>
+            <Seekbar percentage={(currTime / audioContext.audioState.currentTrack.track_duration) * 100} className={"bg-red-400"} />
           </View>
         </>
       )}

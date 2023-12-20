@@ -54,14 +54,13 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     currentTime: 0,
   });
   const [podcastInfo, setPodcastInfo] = useState<PodcastInfo[]>([]);
-  const [duration, setDuration] = useState(0);
 
   const getDuration = async () => {
     const info = await SoundPlayer.getInfo();
     if (info != null) {
-      setDuration(info.duration);
+      return info.duration
     } else {
-      console.error('Error getting duration: media player in react-native-sound-player is null');
+      return 0;
     }
   };
 
@@ -111,9 +110,11 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (currentTrack) {
       try {
         // Calculate the target time based on the percentage
-        const targetTime = percentage * currentTrack.track_duration;
+        const targetTime = percentage / 100 * currentTrack.track_duration;
+        console.log('targetTime: ' + targetTime)
         // Seek to the calculated time
         SoundPlayer.seek(targetTime);
+        SoundPlayer.play();
         setAudioState({ ...audioState, currentTime: targetTime });
       } catch (e) {
         console.error('Error seeking:', e);
@@ -165,6 +166,12 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const setupAndAddAudio = async (url: string, title: string, artist: string) => {
     try {
+      SoundPlayer.loadUrl(url);
+      SoundPlayer.play();
+      const duration = await getDuration();
+
+      console.log("duration: " + duration)
+
       const newAudioState = {
         ...audioState,
         currentTrack: {
@@ -176,9 +183,6 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         isPlaying: true,
       };
       setAudioState(newAudioState);
-      SoundPlayer.loadUrl(url);
-      SoundPlayer.play();
-      await getDuration();
 
     } catch (e) {
       console.error('Error setting up SoundPlayer:', e);
