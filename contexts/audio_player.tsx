@@ -169,8 +169,6 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       SoundPlayer.play();
       const duration = await getDuration();
 
-      console.log("duration: " + duration)
-
       const newAudioState = {
         ...audioState,
         currentTrack: {
