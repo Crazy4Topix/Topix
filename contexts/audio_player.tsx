@@ -111,7 +111,6 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       try {
         // Calculate the target time based on the percentage
         const targetTime = percentage / 100 * currentTrack.track_duration;
-        console.log('targetTime: ' + targetTime)
         // Seek to the calculated time
         SoundPlayer.seek(targetTime);
         SoundPlayer.play();
@@ -136,7 +135,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
         // Seek to the calculated time
         SoundPlayer.seek(targetTime);
-        setAudioState({ ...audioState, currentTime: targetTime });
+        setAudioState({ ...audioState, currentTime: targetTime, isPlaying: true });
       } catch (e) {
         console.error('Error seeking:', e);
       }

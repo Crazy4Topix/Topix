@@ -1,52 +1,43 @@
-import React, { type FunctionComponent, useContext, useState } from 'react';
-import { View } from 'react-native';
+import React, { type FunctionComponent, useContext } from 'react';
 import { AudioPlayerContext } from '../contexts/audio_player';
+import { Slider } from 'react-native-elements';
+import { View, Text } from 'react-native';
 
 interface OwnProps {
-    percentage: number;
+  currTime: number;
     className?: string;
 }
 
 type Props = OwnProps;
 
 const Seekbar: FunctionComponent<Props> = (props) => {
-    const [isScrolling, setIsScrolling] = useState(false);
-    const [scrollPercentage, setScrollPercentage] = useState(0);
-    const [totalWidth, setTotalWidth] = useState(0);
-    const audioContext = useContext(AudioPlayerContext);
-    console.log(scrollPercentage);
-    return (
-        <View className={'h-4 w-3/4 self-center rounded-full bg-gray-500'}
+  // const [valueSlider, setValueSlider] = useState(0);
 
-              onLayout={
-                  (e) => {
-                      setTotalWidth(e.nativeEvent.layout.x + e.nativeEvent.layout.width)
-                  }
-              }
-              onTouchStart={
-            (e) => {
-                setIsScrolling(true);
-                setScrollPercentage(e.nativeEvent.locationX / totalWidth * 100);
-            }
-        } onTouchMove={
-            (e) => {
-                if (isScrolling) {
-                    setScrollPercentage(e.nativeEvent.locationX / totalWidth * 100);
-                }
-            }
-        } onTouchEnd={
-            (e) => {
-                setIsScrolling(false);
-                console.log(scrollPercentage)
-                audioContext.seekTo(scrollPercentage);
-                setScrollPercentage(0);
-            }
-        }>
-            <View
-                className={'absolute h-4 rounded-full bg-primary'}
-                style={{ width: `${isScrolling ? scrollPercentage : props.percentage}%` }}
-            ></View>
-        </View>);
+  const audioContext = useContext(AudioPlayerContext);
+
+
+    return (
+      <View className={"w-full flex justify-center"}>
+       <Slider
+        value={audioContext.audioState.currentTrack ? props.currTime / audioContext.audioState.currentTrack.track_duration * 100 : 0}
+        onSlidingStart={() => { audioContext.pauseTrack(); }}
+        onSlidingComplete={(number) => { audioContext.seekTo(number);}}
+        maximumValue={100}
+        step={1}
+        thumbStyle={{ height: 10, width: 10, backgroundColor: 'white' }}
+        thumbTintColor={'#00DEAD'}
+        minimumTrackTintColor={'#00DEAD'}
+        maximumTrackTintColor={'white'}
+        trackStyle={{ height: 2 }}
+        style={{ width: '80%', alignSelf: 'center' }}
+       />
+        <View className={"flex justify-between self-center w-10/12 flex-row -mt-2"}>
+          <Text className={"text-white "}>{audioContext.audioState.currentTrack ? (props.currTime / 60).toFixed(2) : 0}</Text>
+          <Text className={"text-white"}>{audioContext.audioState.currentTrack ? (audioContext.audioState.currentTrack.track_duration / 60).toFixed(2) : 0}</Text>
+        </View>
+      </View>
+
+    )
 };
 
 export default Seekbar;

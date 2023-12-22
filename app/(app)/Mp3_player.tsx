@@ -122,7 +122,7 @@ const AudioPlayer = () => {
                 <Icon name="skip-next" size={70} color="#00DEAD" />
               </TouchableOpacity>
             </View>
-            <Seekbar percentage={(currTime / audioContext.audioState.currentTrack.track_duration) * 100} className={"bg-red-400"} />
+            <Seekbar className={"bg-red-400"} currTime={currTime}/>
           </View>
         </>
       )}
