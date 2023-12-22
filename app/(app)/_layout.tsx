@@ -55,6 +55,13 @@ export default function TabLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="createVoiceClone"
+          options={{
+            title: 'createVoiceClone',
+            headerShown: false,
+          }}
+        />
       </Stack>
     </AudioPlayerProvider>
   );

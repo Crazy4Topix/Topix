@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase';
 import { Icon } from 'react-native-elements';
 import { Dropdown } from 'react-native-element-dropdown';
 import { styled } from 'nativewind';
+import { Voice } from '../../types/supabase_types';
 
 const StyledDropdown = styled(Dropdown);
 
@@ -24,8 +25,9 @@ export default function ProfilePage() {
     const handleLogout = async () => {
         try {
             await signOut();
+            // @ts-expect-error: route is there
             navigation.navigate('welcome');
-        } catch (e) {
+        } catch (e: any) {
             console.error('Error logging out:', e.message);
         }
     };
@@ -35,7 +37,8 @@ export default function ProfilePage() {
   };
 
     const navigateTopicSelection = () => {
-        navigation.navigate('updateTopics');
+      // @ts-expect-error: route is there
+      navigation.navigate('updateTopics');
     };
 
     const fetchSpeakersName = async () => {
@@ -49,12 +52,12 @@ export default function ProfilePage() {
         setVoices(speakers as Voice[] | null);
 
         
-        let { data: cur_voice, errorCur } = await supabase
+        let { data: cur_voice } = await supabase
         .from('audio_preferences')
         .select('speaker_id')
         .eq("user_id", userId)
 
-        if(!cur_voice){
+        if(!cur_voice || !speakers){
             return;
         }
 
@@ -74,7 +77,7 @@ export default function ProfilePage() {
         } else {
             console.log('No speaker_id found for the user.');
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error fetching speakers:', error.message);
     }
     };
@@ -118,7 +121,7 @@ export default function ProfilePage() {
                         console.log('Error fetching full name.');
                     }
                 }
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Error fetching full name:', error.message);
             }
         };
@@ -127,13 +130,14 @@ export default function ProfilePage() {
         void fetchSpeakersName();
     }, [userId]);
 
-    if (!voices || voices === null) {
+    if (!voices) {
         return null; // or a loading component if you prefer
       }
 
     const data = voices.map(voice => ({ label: voice.display_name, value: voice.id }))
   
-    return (
+    // @ts-ignore
+  return (
         <View className="flex-1 justify-center content-center bg-white px-20">
             <View className="absolute top-8 left-4 z-10">
                 <Pressable onPress={handleGoBack}>
@@ -159,6 +163,15 @@ export default function ProfilePage() {
         </View>
       </Pressable>
 
+          <Pressable onPress={() => {
+            // @ts-expect-error: route is there
+            navigation.navigate("createVoiceClone")
+          }}>
+            <View className="rounded-md bg-primary p-2 mb-4">
+              <Text className="font-primary text-white">Clone je stem</Text>
+            </View>
+          </Pressable>
+
         {/* Voice Selection */}
         <View className='mb-4 rounded-md bg-primary px-2 py-1'>
             <StyledDropdown
@@ -166,13 +179,15 @@ export default function ProfilePage() {
             selectedTextStyle={styles.TextStyle}
             placeholderStyle={styles.TextStyle}
             data={data}
+            // @ts-expect-error: labelField and valueField are there
             labelField="label"
+            // @ts-expect-error: labelField and valueField are there
             valueField="value"
             placeholder={!isFocus ? (selectedValue ?? 'Selecteer stem') : '...'}
             value={value}
             onFocus={() => setIsFocus(true)}
             onBlur={() => setIsFocus(false)}
-            onChange={item => {
+            onChange={(item: any) => {
                 setValue(item.value);
                 setIsFocus(false);
                 handleVoiceSelection(item.value);
@@ -181,8 +196,7 @@ export default function ProfilePage() {
                 <View className='pr-2'>
                     <Icon name="record-voice-over" size={24} color="white" />
                 </View>
-            )}
-            />
+            )}></StyledDropdown>
         </View>
     </View>
         
