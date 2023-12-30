@@ -5,7 +5,6 @@ import { Stack, SplashScreen } from 'expo-router';
 import { NativeWindStyleSheet } from 'nativewind';
 import { SupabaseUserSessionProvider } from '../contexts/user_session';
 import { useFonts } from 'expo-font';
-import { AudioPlayerProvider } from '../contexts/audio_player';
 import {
   Poppins_100Thin,
   Poppins_100Thin_Italic,
@@ -105,7 +104,7 @@ function RootLayoutNav() {
           />
           <Stack.Screen name={'userInformation'} />
           <Stack.Screen name={'topicSelection'} />
-          <Stack.Screen name={'VoiceSelection'}/>
+          <Stack.Screen name={'voiceSelection'} />
           
         </Stack>
       </SupabaseUserProvider>

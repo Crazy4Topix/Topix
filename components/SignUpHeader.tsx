@@ -12,11 +12,13 @@ const SignUpHeader: FunctionComponent<Props> = (props: OwnProps) => {
 
   useEffect(() => {
     if (props.route.name === 'signup') {
-      setPercentage(25);
+      setPercentage(20);
     } else if (props.route.name === 'userInformation') {
-      setPercentage(50);
+      setPercentage(40);
     } else if (props.route.name === 'topicSelection') {
-      setPercentage(75);
+      setPercentage(60);
+    } else if (props.route.name === 'voiceSelection') {
+      setPercentage(80);
     } else {
       setPercentage(0);
     }
