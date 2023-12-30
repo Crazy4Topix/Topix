@@ -42,10 +42,8 @@ const userInformation: FunctionComponent = () => {
       })
       .select();
 
-    console.log('Update', status, user, error);
-
     if (error !== null) {
-      console.log('Error creating profile', error, user, session);
+      console.error('Error creating profile', error, user, session);
       return;
     }
 
@@ -89,7 +87,7 @@ const userInformation: FunctionComponent = () => {
                   onChange: (event, date) => {
                     if (date != null && event.type !== 'dismissed') {
                       setFieldValue('birthday', date).catch((err: any) => {
-                        console.log(err);
+                        console.error(err);
                       });
                     }
                   },
@@ -113,8 +111,6 @@ const userInformation: FunctionComponent = () => {
             <Pressable
               onPress={() => {
                 handleSubmit();
-                console.log(errors.birthday);
-                console.log('Click');
               }}
               className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
             >
