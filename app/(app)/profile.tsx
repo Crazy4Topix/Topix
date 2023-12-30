@@ -17,9 +17,73 @@ export default function ProfilePage() {
     const userContext = useContext(SupabaseUserSession);
     const userId = userContext.session?.user.id; 
     const [voices, setVoices] = useState<Voice[] | null>(null);
-    const [selectedValue, setSelectedValue] = useState<string | null>(null);
-    const [value, setValue] = useState(null);
+    const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
     const [isFocus, setIsFocus] = useState(false);
+
+    useEffect(() => {
+        
+        void fetchFullName();
+        // void fetchCurrentSpeaker();
+        void fetchSpeakersName();
+    }, [userId]);
+
+
+    const fetchFullName = async () => {
+        try {
+            if (userId) { // Check if userId is defined
+                const name = await getFullName(userId);
+                if (name !== null) {
+                    setFullName(name);
+                } else {
+                    console.log('Error fetching full name.');
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching full name:', error.message);
+        }
+    };
+
+    const fetchSpeakersName = async () => {
+        try {
+            const { data: speakers, error } = await supabase
+                .from('speakers')
+                .select('display_name, id, name')
+                .eq("published", true);
+            if (error) {
+                console.log(error);
+            }
+            if (!speakers){
+                return
+            }
+            setVoices(speakers as Voice[] | null);
+    
+            
+            let { data: cur_voice, error: errorCur } = await supabase
+                .from('audio_preferences')
+                .select('speaker_id')
+                .eq("user_id", userId)
+                .single()
+            if(errorCur){
+                console.error(errorCur)
+                return
+            }
+    
+            if(!cur_voice){
+                return;
+            }
+    
+            const speakerId = cur_voice.speaker_id;
+            const selectedSpeaker = speakers.find(speaker => speaker.id === speakerId);
+    
+            if (selectedSpeaker) {
+                setSelectedVoice(selectedSpeaker.id)
+            } else {
+                console.log('Speaker not found for the given speaker_id.');
+            }
+        } catch (error) {
+            console.error('Error fetching speakers:', error.message);
+        }
+        };
 
     const handleLogout = async () => {
         try {
@@ -30,64 +94,24 @@ export default function ProfilePage() {
         }
     };
 
-  const handleGoBack = () => {
-    navigation.goBack(); // Go back to the previous screen
-  };
+    const handleGoBack = () => {
+        navigation.goBack(); // Go back to the previous screen
+    };
 
     const navigateTopicSelection = () => {
         navigation.navigate('updateTopics');
     };
 
-    const fetchSpeakersName = async () => {
-    try {
-        const { data: speakers, error } = await supabase
-        .from('speakers')
-        .select('display_name, id, name')
-        .eq("published", true);
-        if (error != null) {
-        console.log(error);
-        }
-        setVoices(speakers as Voice[] | null);
-
-        
-        let { data: cur_voice, errorCur } = await supabase
-        .from('audio_preferences')
-        .select('speaker_id')
-        .eq("user_id", userId)
-
-        if(!cur_voice){
-            return;
-        }
-
-        if (cur_voice.length > 0) {
-            const speakerId = cur_voice[0].speaker_id;
-    
-            // Find the corresponding speaker in the speakers data
-            const selectedSpeaker = speakers.find(speaker => speaker.id === speakerId);
-    
-            if (selectedSpeaker) {
-                // Access the display_name of the selected speaker
-                const speakerName = selectedSpeaker.display_name;
-                setSelectedValue(speakerName)
-            } else {
-                console.log('Speaker not found for the given speaker_id.');
-            }
-        } else {
-            console.log('No speaker_id found for the user.');
-        }
-    } catch (error) {
-        console.error('Error fetching speakers:', error.message);
-    }
-    };
-
     const handleVoiceSelection = async (value: string | null) => {
-        setSelectedValue(value);
+        setSelectedVoice(value);
         const selectedVoice = voices ? voices.find(voice => voice.id === value)?.id : null;
         
         let { data: audio_preferences, error: userNotExistError } = await supabase
             .from('audio_preferences')
             .select('user_id')
             .eq('user_id', userId)
+            .single()
+        
         if(userNotExistError || !audio_preferences){
             const { data, error } = await supabase
             .from('audio_preferences')
@@ -106,27 +130,7 @@ export default function ProfilePage() {
                 console.log(`error: ${error}`)
             }
         }
-      };
-
-    useEffect(() => {
-        const fetchFullName = async () => {
-            try {
-                if (userId) { // Check if userId is defined
-                    const name = await getFullName(userId);
-                    if (name !== null) {
-                        setFullName(name);
-                    } else {
-                        console.log('Error fetching full name.');
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching full name:', error.message);
-            }
-        };
-        
-        void fetchFullName();
-        void fetchSpeakersName();
-    }, [userId]);
+    };
 
     if (!voices || voices === null) {
         return null; // or a loading component if you prefer
@@ -169,12 +173,11 @@ export default function ProfilePage() {
             data={data}
             labelField="label"
             valueField="value"
-            placeholder={!isFocus ? (selectedValue ?? 'Selecteer stem') : '...'}
-            value={value}
+            placeholder={!isFocus ? (selectedVoice ?? 'Selecteer stem') : '...'}
+            value={selectedVoice}
             onFocus={() => setIsFocus(true)}
             onBlur={() => setIsFocus(false)}
             onChange={item => {
-                setValue(item.value);
                 setIsFocus(false);
                 handleVoiceSelection(item.value);
             }}

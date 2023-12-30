@@ -105,6 +105,7 @@ function RootLayoutNav() {
           />
           <Stack.Screen name={'userInformation'} />
           <Stack.Screen name={'topicSelection'} />
+          <Stack.Screen name={'VoiceSelection'}/>
           
         </Stack>
       </SupabaseUserProvider>
