@@ -8,7 +8,6 @@ interface Voice {
     id: string;
     name: string;
     display_name: string;
-    elevenlabs_id: string;
 }
 
 interface Navigation {
@@ -26,17 +25,8 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
         void loadVoices();
     }, []);
 
-    const handlePress = (voice: Voice) => {
-        setSelectedVoice(voice);
-    };
-
     const getBackgroundColor = (voice: Voice): string => {
-        if (voice === selectedVoice) {
-            return 'bg-primary';
-        }
-        else {
-        return 'bg-gray-300';
-        }
+        return voice === selectedVoice ? 'bg-primary' : 'bg-gray-300'
     };
 
     const handleSubmit = async () => {
@@ -91,7 +81,7 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
                         className={`${getBackgroundColor(voice)} flex h-20 w-5/12 justify-center rounded-lg`}
                         key={'voice-' + voice.name}
                         onPress={() => {
-                            handlePress(voice);
+                            setSelectedVoice(voice);
                         }}
                         >
                         <Text className={'text-center font-primary_medium'}>{voice.display_name}</Text>
