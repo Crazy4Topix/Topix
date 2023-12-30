@@ -28,7 +28,6 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
           t.state =
             t.state === 'neutral' ? 'positive' : t.state === 'positive' ? 'negative' : 'neutral';
         }
-        console.log(t);
         return t;
       })
     );
@@ -46,7 +45,6 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
 
   const handleSubmit = async () => {
     const userId = userContext.session?.user.id;
-    console.log(supabase);
 
     const topicsSelected = topics.filter(
       (topic) => topic.state === 'positive' || topic.state === 'negative'
@@ -58,8 +56,7 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
       .in('name', selectedTopicNames);
 
     if (topicError !== null) {
-      console.log('error fetching topix id');
-      console.log(topicError);
+      console.error(topicError);
     }
 
     // Delete all rows
@@ -68,8 +65,7 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
       .delete()
       .eq('user_id', userId);
     if (delError !== null) {
-      console.log('error deleting old topix');
-      console.log(delError);
+      console.error(delError);
     }
 
     // Map each ID to an object with user_id and topic_id
@@ -83,8 +79,7 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
     const { data, error } = await supabase.from('topic_preferences').insert(rowsToInsert).select();
 
     if (error !== null) {
-      console.log('error adding new topix');
-      console.log(error);
+      console.error(error);
     }
 
     // @ts-expect-error It complains about never but it is there
@@ -102,7 +97,7 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
         .eq('user_id', userId);
   
       if (fetchError !== null) {
-        console.log('Error getting current topics:', fetchError);
+        console.error('Error getting current topics:', fetchError);
         return;
       }
   
@@ -112,7 +107,7 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
       const { data: allTopics, error: allTopicsError } = allTopicsQuery;
   
       if (allTopicsError !== null) {
-        console.log('Error fetching all topics:', allTopicsError);
+        console.error('Error fetching all topics:', allTopicsError);
         return;
       }
   
@@ -129,7 +124,7 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
       setTopics(mergedList);
   
     } catch (error) {
-      console.log('Error in loadCurrentTopics:', error);
+      console.error('Error in loadCurrentTopics:', error);
     }
   };
   

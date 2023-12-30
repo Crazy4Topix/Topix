@@ -33,8 +33,6 @@ export default function ProfilePage() {
                 const name = await getFullName(userId);
                 if (name !== null) {
                     setFullName(name);
-                } else {
-                    console.log('Error fetching full name.');
                 }
             }
         } catch (error) {
@@ -49,7 +47,7 @@ export default function ProfilePage() {
                 .select('display_name, id, name')
                 .eq("published", true);
             if (error) {
-                console.log(error);
+                console.error(error);
             }
             if (!speakers){
                 return
@@ -77,7 +75,7 @@ export default function ProfilePage() {
             if (selectedSpeaker) {
                 setSelectedVoice(selectedSpeaker.id)
             } else {
-                console.log('Speaker not found for the given speaker_id.');
+                console.error(`Speaker not found for id: ${cur_voice.speaker_id}`);
             }
         } catch (error) {
             console.error('Error fetching speakers:', error.message);
@@ -117,7 +115,7 @@ export default function ProfilePage() {
             .insert({ user_id: userId, speaker_id: selectedVoice, length: "normal"})
             .select()
             if(error){
-                console.log(error)
+                console.error(error)
             }
         } else {
             const { data, error } = await supabase
@@ -126,7 +124,7 @@ export default function ProfilePage() {
                 .eq('user_id', userId)
                 .select()
             if(error){
-                console.log(`error: ${error}`)
+                console.error(error)
             }
         }
     };
