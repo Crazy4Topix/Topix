@@ -23,14 +23,13 @@ export default function ProfilePage() {
     useEffect(() => {
         
         void fetchFullName();
-        // void fetchCurrentSpeaker();
         void fetchSpeakersName();
     }, [userId]);
 
 
     const fetchFullName = async () => {
         try {
-            if (userId) { // Check if userId is defined
+            if (userId) {
                 const name = await getFullName(userId);
                 if (name !== null) {
                     setFullName(name);
@@ -95,7 +94,7 @@ export default function ProfilePage() {
     };
 
     const handleGoBack = () => {
-        navigation.goBack(); // Go back to the previous screen
+        navigation.goBack();
     };
 
     const navigateTopicSelection = () => {
@@ -133,8 +132,8 @@ export default function ProfilePage() {
     };
 
     if (!voices || voices === null) {
-        return null; // or a loading component if you prefer
-      }
+        return null;
+    }
 
     const data = voices.map(voice => ({ label: voice.display_name, value: voice.id }))
   
