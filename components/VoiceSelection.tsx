@@ -65,45 +65,44 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
     
     return (
         <View className={'flex-centering h-full w-full bg-white pb-4'}>
-        <ScrollView className={'bg-white'}>
-            <View className={'flex h-full w-full justify-center  pt-12'}>
-            <Text className={'mx-8 pb-10 text-center font-primary_medium text-2xl'}>
-                <Text>Kies de</Text>
-                <Text className={'font-primary_bold'}> stem </Text>
-                <Text>die jij het{'\n'}</Text>
-                <Text className={'font-primary_bold'}> mooist </Text>
-                <Text>vindt{'\n'}</Text>
-            </Text>
-            <SafeAreaView className={'flex flex-row flex-wrap justify-center gap-2 self-center'}>
-                {voices && (voices.map((voice) => {
-                    return (
-                        <Pressable
-                        className={`${getBackgroundColor(voice)} flex h-20 w-5/12 justify-center rounded-lg`}
-                        key={'voice-' + voice.name}
-                        onPress={() => {
-                            setSelectedVoice(voice);
-                        }}
-                        >
-                        <Text className={'text-center font-primary_medium'}>{voice.display_name}</Text>
-                        </Pressable>
-                    );
-                })
-            )}
-                
-            </SafeAreaView>
+            <ScrollView className={'bg-white'}>
+                <View className={'flex h-full w-full justify-center  pt-12'}>
+                    <Text className={'mx-8 pb-10 text-center font-primary_medium text-2xl'}>
+                        <Text>Kies de</Text>
+                        <Text className={'font-primary_bold'}> stem </Text>
+                        <Text>die jij het{'\n'}</Text>
+                        <Text className={'font-primary_bold'}> mooist </Text>
+                        <Text>vindt{'\n'}</Text>
+                    </Text>
+                    <SafeAreaView className={'flex flex-row flex-wrap justify-center gap-2 self-center'}>
+                        {voices && (voices.map((voice) => {
+                            return (
+                                <Pressable
+                                className={`${getBackgroundColor(voice)} flex h-20 w-5/12 justify-center rounded-lg`}
+                                key={'voice-' + voice.name}
+                                onPress={() => {
+                                    setSelectedVoice(voice);
+                                }}
+                                >
+                                <Text className={'text-center font-primary_medium'}>{voice.display_name}</Text>
+                                </Pressable>
+                            );
+                        })
+                    )}
+                    </SafeAreaView>
+                </View>
+            </ScrollView>
+            <View className='justify-center self-center pt-4'>
+                <Pressable
+                    disabled={!selectedVoice}
+                    onPress={() => {
+                        void handleSubmit();
+                    }}
+                    className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
+                >
+                    <Text className={'self-center font-primary_bold text-white'}>Bevestig</Text>
+                </Pressable>
             </View>
-        </ScrollView>
-        <View className='justify-center self-center pt-4'>
-            <Pressable
-                disabled={!selectedVoice}
-                onPress={() => {
-                    void handleSubmit();
-                }}
-                className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
-            >
-                <Text className={'self-center font-primary_bold text-white'}>Bevestig</Text>
-            </Pressable>
-        </View>
         </View>
     );
 };

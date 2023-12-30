@@ -15,10 +15,10 @@ interface Navigation {
 }
 
 const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
-  const [topics, setTopics] = useState([]);
+  const [topics, setTopics] = useState<Topic[]>();
 
   const navigation = useNavigation();
-  const userContext = useContext(SupabaseUserSession); // Moved useContext here
+  const userContext = useContext(SupabaseUserSession);
 
   const handlePress = (topic: Topic) => {
     setTopics((prevTopics) =>
@@ -35,19 +35,17 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
   };
 
   const getBackgroundColor = (state: string): string => {
-    if (state === 'neutral') {
-      return 'bg-gray-300';
-    } else if (state === 'positive') {
+    if (state === 'positive') {
       return 'bg-primary';
     } else if (state === 'negative') {
       return 'bg-red-400';
     } else {
-      return 'secondary';
+      return 'bg-gray-300';
     }
   };
 
   const handleSubmit = async () => {
-    const userId = userContext.session?.user.id; // Replace with the actual user ID from Supabase
+    const userId = userContext.session?.user.id;
     console.log(supabase);
 
     const topicsSelected = topics.filter(

@@ -119,15 +119,6 @@ export default function homePage() {
             return await getNewestPodcastUrlFromSupabase(newDate);
         }
 
-        // const { data: podcast, error } = await supabase
-        //     .from('podcasts')
-        //     .select('podcast_link, start_timestamp,  audio_1, audio_2, audio_3')
-        //     .eq('user_id', "feb91792-94e4-4e40-8f2e-640e366343aa")
-        //     .single();
-        // if (error) {
-        //     console.log(error);
-        // }
-
         if (!podcast) {
             return null;
         }
