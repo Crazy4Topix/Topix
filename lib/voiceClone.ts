@@ -1,4 +1,35 @@
-export const testScript = "we beginnen met opmerkelijk nieuws over onze harige vrienden. " +
+import { type Recording } from 'expo-av/build/Audio/Recording';
+import { Session } from '@supabase/supabase-js';
+
+export const cloneVoice = async (recording: Recording, name: string, session: Session) => {
+  const formData = new FormData();
+  // @ts-expect-error: Types are wrong
+  formData.append('file', {
+    uri: recording.getURI(),
+    name: 'audio.wav',
+    type: 'audio/wav'
+  });
+  formData.append('name', name);
+  formData.append('access_token', session.access_token)
+  formData.append('refresh_token', session.refresh_token)
+
+  const res = await fetch("http://192.168.2.20:1337/api/v1/createVoiceClone?keys=" + process.env.TOPIX_API_KEY, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    body: formData,
+  }).catch((e) => {
+    console.log(e)
+  })
+
+  console.log(res)
+
+  return res;
+}
+
+
+export const voiceClone = "we beginnen met opmerkelijk nieuws over onze harige vrienden. " +
   "In een gewaagde zet zijn alle dieren ontsnapt uit de plaatselijke dierentuin en genieten nu van een leven vol vrijheid en blijheid. " +
   "Van brullende leeuwen tot kwetterende papegaaien, de dieren hebben de kans gegrepen om hun natuurlijke gedrag te herontdekken. " +
   "Bewoners in de buurt hebben gemeld dat ze zelfs een groep pinguïns hebben gespot die zich op avontuurlijke wijze een weg banen door de straten. " +

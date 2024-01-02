@@ -1,20 +1,21 @@
-import React, { type FunctionComponent, useState } from 'react';
+import React, { type FunctionComponent, useContext, useState } from 'react';
 import { ScrollView, View, Text, Pressable } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { styled } from 'nativewind';
-import {testScript} from '../../lib/testScript';
+import { cloneVoice, voiceClone } from '../../lib/voiceClone';
 import { Audio } from 'expo-av';
+import { SupabaseUserSession } from '../../contexts/user_session';
 
 
 const ScrollTextSection = (maxLineLength: number) => {
   const res = [];
 
-  const words = testScript.split(' ');
+  const words = voiceClone.split(' ');
 
   let line = "";
   for (let i = 0; i < words.length; i++) {
     if (line.length >= maxLineLength) {
-      res.push(<Text className={"text-black text-xl text-center font-primary_bold my-1"}>{line}</Text>);
+      res.push(<Text key={i} className={"text-black text-xl text-center font-primary_bold my-1"}>{line}</Text>);
       line = "";
     }
 
@@ -27,6 +28,7 @@ const ScrollTextSection = (maxLineLength: number) => {
 const createVoiceClone: FunctionComponent = () => {
   const StyledIcon = styled(Icon);
   const [recording, setRecording] = useState<null | Audio.Recording>(null);
+  const userContext = useContext(SupabaseUserSession);
 
   async function startRecording() {
     try {
@@ -61,6 +63,15 @@ const createVoiceClone: FunctionComponent = () => {
         allowsRecordingIOS: false,
       }
     );
+
+    if(!userContext.session){
+      console.error("User not logged in");
+      return;
+    }
+
+    const resp = await cloneVoice(recording, userContext.session.user?.id , userContext.session);
+    console.log(resp);
+
     const uri = recording.getURI();
     console.log('Recording stopped and stored at', uri);
   }
@@ -71,12 +82,12 @@ const createVoiceClone: FunctionComponent = () => {
         {ScrollTextSection(25)}
       </ScrollView>
       <View className={"flex h-32 justify-center"}>
-        {isRecording ? (
-          <Pressable className={'w-16 h-16 rounded-full bg-primary flex justify-center self-center'} onPress={() => {void onStopRecord();}}>
+        {recording ? (
+          <Pressable className={'w-16 h-16 rounded-full bg-primary flex justify-center self-center'} onPress={() => {void stopRecording();}}>
             <StyledIcon name={'stop'} className={'self-center'} color={'white'} size={45}/>
           </Pressable>
           ) : (
-        <Pressable className={'w-16 h-16 rounded-full bg-accent flex justify-center self-center'} onPress={() => {void onStartRecord();}}>
+        <Pressable className={'w-16 h-16 rounded-full bg-accent flex justify-center self-center'} onPress={() => {void startRecording();}}>
           <StyledIcon name={'mic'} className={'self-center'} color={'white'} size={45}/>
         </Pressable>
           )}
