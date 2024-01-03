@@ -2,7 +2,7 @@ import { type Recording } from 'expo-av/build/Audio/Recording';
 import { type Session } from '@supabase/supabase-js';
 
 
-export async function fetchWithTimeout(url: string, options: any, timeout = 5000) {
+export async function fetchWithTimeout(url: string, options: any, timeout = 10000) {
   return await Promise.race([
     fetch(url, options),
     // eslint-disable-next-line promise/param-names
@@ -22,7 +22,7 @@ export const cloneVoice = async (recording: Recording, name: string, session: Se
   formData.append('access_token', session.access_token)
   formData.append('refresh_token', session.refresh_token)
 
-  const res = await fetchWithTimeout(`http://192.168.2.20:1337/api/v1/createVoiceClone?keys=${process.env.TOPIX_API_KEY}`, {
+  const res = await fetchWithTimeout(`https://api.topix.site/api/v1/createVoiceClone?keys=${process.env.EXPO_PUBLIC_TOPIX_API_KEY}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',

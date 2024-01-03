@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { SupabaseUserSession } from '../../../contexts/user_session';
 import { Redirect, SplashScreen, Stack } from 'expo-router';
 import { supabase } from '../../../lib/supabase';
-import { AudioPlayerProvider } from '../../../contexts/audio_player';
 
 export default function TabLayout() {
   const { setSession } = useContext(SupabaseUserSession);
@@ -27,7 +26,6 @@ export default function TabLayout() {
   }
 
   return (
-    <AudioPlayerProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen
           name="Introduction"
@@ -51,6 +49,5 @@ export default function TabLayout() {
           }}
         />
       </Stack>
-    </AudioPlayerProvider>
   );
 }

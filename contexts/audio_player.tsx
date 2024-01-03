@@ -36,15 +36,23 @@ export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
     currentTime: 0,
   },
   podcastInfo: [],
-  setPodcastInfo: () => {},
-  playTrack: () => {},
-  pauseTrack: () => {},
-  resumeTrack: () => {},
+  setPodcastInfo: () => {
+  },
+  playTrack: () => {
+  },
+  pauseTrack: () => {
+  },
+  resumeTrack: () => {
+  },
   getTime: async () => 0,
-  seekTo: () => {},
-  seekForward: () => {},
-  seekBackward: () => {},
-  setupAndAddAudio: async () => {},
+  seekTo: () => {
+  },
+  seekForward: () => {
+  },
+  seekBackward: () => {
+  },
+  setupAndAddAudio: async () => {
+  },
 });
 
 export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -58,7 +66,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const getDuration = async () => {
     const info = await SoundPlayer.getInfo();
     if (info != null) {
-      return info.duration
+      return info.duration;
     } else {
       return 0;
     }
@@ -96,7 +104,16 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   };
 
   const getTime = async () => {
-    const info = await SoundPlayer.getInfo();
+    const timeout = 100;
+    let info = null;
+    await Promise.race([
+      info = await SoundPlayer.getInfo(),
+      // eslint-disable-next-line promise/param-names
+      new Promise((_, reject) => setTimeout(() => {
+        reject(new Error('timeout'));
+      }, timeout)),
+    ]);
+
     if (info != null) {
       return info.currentTime;
     } else {

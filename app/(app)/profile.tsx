@@ -163,7 +163,8 @@ export default function ProfilePage() {
 
           <Pressable onPress={() => {
             // @ts-expect-error: route is there
-            navigation.navigate("(clone)")
+            navigation.navigate('(clone)', { error: (false).toString()});
+            // navigation.navigate("(clone)")
           }}>
             <View className="rounded-md bg-primary p-2 mb-4">
               <Text className="font-primary text-white">Clone je stem</Text>

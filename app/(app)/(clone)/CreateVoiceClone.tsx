@@ -1,6 +1,6 @@
 import React, { type FunctionComponent, useContext, useState } from 'react';
 import { ScrollView, View, Text, Pressable } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Icon } from '@rneui/themed';
 import { styled } from 'nativewind';
 import { cloneVoice, voiceClone } from '../../../lib/voiceClone';
 import { Audio } from 'expo-av';
@@ -27,6 +27,7 @@ const ScrollTextSection = (maxLineLength: number) => {
 }
 
 const CreateVoiceClone: FunctionComponent = () => {
+  // @ts-expect-error: mismatch of types
   const StyledIcon = styled(Icon);
   const [recording, setRecording] = useState<null | Audio.Recording>(null);
   const userContext = useContext(SupabaseUserSession);
@@ -71,15 +72,17 @@ const CreateVoiceClone: FunctionComponent = () => {
       console.error("User not logged in");
       return;
     }
+
     console.log("Sending recording to server");
-    // const resp = await cloneVoice(recording, userContext.session.user?.id , userContext.session);
-    // console.log(resp);
+    const resp = await cloneVoice(recording, userContext.session.user?.id , userContext.session);
+    console.log(resp);
 
     const uri = recording.getURI();
     console.log('Recording stopped and stored at', uri);
 
+
     // @ts-expect-error: route is there
-    navigation.navigate('Sample');
+    navigation.navigate('Sample', { error: (resp.status !== 200).toString()});
   }
 
   return (
