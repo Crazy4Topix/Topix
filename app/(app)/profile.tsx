@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { signOut, getFullName, supabase } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session'
-import { Icon } from 'react-native-elements';
+import { Icon } from '@rneui/themed';
 import { Dropdown } from 'react-native-element-dropdown';
 import { styled } from 'nativewind';
 import { type Voice } from '../../types/supabase_types';
