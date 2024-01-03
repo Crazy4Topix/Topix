@@ -43,5 +43,8 @@ android/
 android/
 
 
+# apk builds
+*.apk
+
 
 .idea
