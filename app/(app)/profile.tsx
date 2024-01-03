@@ -43,7 +43,7 @@ export default function ProfilePage() {
         .from('speakers')
         .select('display_name, id, name');
         if (error != null) {
-        console.log(error);
+            console.error(error);
         }
         setVoices(speakers as Voice[] | null);
 
@@ -68,10 +68,10 @@ export default function ProfilePage() {
                 const speakerName = selectedSpeaker.display_name;
                 setSelectedValue(speakerName)
             } else {
-                console.log('Speaker not found for the given speaker_id.');
+                console.error('Speaker not found for the given speaker_id.');
             }
         } else {
-            console.log('No speaker_id found for the user.');
+            console.error('No speaker_id found for the user.');
         }
     } catch (error) {
         console.error('Error fetching speakers:', error.message);
@@ -92,7 +92,7 @@ export default function ProfilePage() {
             .insert({ user_id: userId, speaker_id: selectedVoice, length: "normal"})
             .select()
             if(error){
-                console.log(error)
+                console.error(error)
             }
         } else {
             const { data, error } = await supabase
@@ -101,7 +101,7 @@ export default function ProfilePage() {
                 .eq('user_id', userId)
                 .select()
             if(error){
-                console.log(`error: ${error}`)
+                console.error(error)
             }
         }
       };
@@ -114,12 +114,12 @@ export default function ProfilePage() {
                     if (name !== null) {
                         setFullName(name);
                     } else {
-                        console.log('Error fetching full name.');
+                        console.error('Error fetching full name.');
                         setFullName('');
                     }
                 }
             } catch (error) {
-                console.error('Error fetching full name:', error.message);
+                console.error('Error fetching full name:', error);
             }
         };
 

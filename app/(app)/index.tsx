@@ -47,10 +47,6 @@ export default function homePage() {
     }, [userId]);
 
     useEffect(() => {
-        console.log(`audio link: ${dailyPodcast.podcastLink}`);
-    }, [dailyPodcast.podcastLink]);
-
-    useEffect(() => {
         const fetchFullName = async () => {
             try {
                 if (userId) {
@@ -115,8 +111,6 @@ export default function homePage() {
             .gte('created_at', fetchDate)
             .single();
         if (error) {
-            console.log(error);
-            // getNewestPodcastUrlFromSupabase;
             // get a day earlier
             const newDate = new Date(date.valueOf() - 86400000);
             return await getNewestPodcastUrlFromSupabase(newDate);
@@ -141,8 +135,6 @@ export default function homePage() {
             podcastInfo: newsAndTimestamps,
             podcastLink: podcast.podcast_link.toString().replace('?', ''),
         });
-
-        console.log(`found podcast of ${date.getUTCDate()}`);
         return podcast.podcast_link;
     }
 
@@ -166,15 +158,13 @@ export default function homePage() {
             .in('id', [audio1, audio2, audio3]);
 
         if (newsError) {
-            console.log(newsError);
+            console.error(newsError);
             return [];
         }
 
         if (!News) {
             return [];
         }
-
-        console.log(News);
 
         let timestampTemp = startTimestamp;
 

@@ -34,15 +34,13 @@ export async function signInWithEmail(email: string, password: string) {
 }
 
 export async function signUpWithEmail(email: string, password: string) {
-  console.log('signUpWithEmail', email, password);
   const { error, data } = await supabase.auth.signUp({
     email,
     password,
   });
 
   if (error != null) {
-    console.log(error);
-    Alert.alert(error.message);
+    console.error(error);
     return { error, data: null };
   }
 
@@ -69,7 +67,7 @@ export async function getFullName(userId: string) {
       .single(); // Assuming you want to fetch a single profile
 
     if (error != null) {
-      console.log(error.message);
+      console.error(error.message);
       return { error };
     }
 
