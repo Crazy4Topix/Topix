@@ -147,21 +147,25 @@ useEffect(() => {
             <Text className={'text-sm'}>niet wil zien</Text>
           </Text>
           <SafeAreaView className={'flex flex-row flex-wrap justify-center gap-2 self-center'}>
-            {topics.map((topic) => {
-              return (
-                <Pressable
-                  className={`${getBackgroundColor(
-                    topic.state
-                  )} flex h-20 w-5/12 justify-center rounded-lg`}
-                  key={'topic-' + topic.text}
-                  onPress={() => {
-                    handlePress(topic);
-                  }}
-                >
-                  <Text className={'text-center font-primary_medium'}>{topic.text}</Text>
-                </Pressable>
-              );
-            })}
+            {topics && (
+              <>
+              {topics.map((topic) => {
+                return (
+                  <Pressable
+                    className={`${getBackgroundColor(
+                      topic.state
+                    )} flex h-20 w-5/12 justify-center rounded-lg`}
+                    key={'topic-' + topic.text}
+                    onPress={() => {
+                      handlePress(topic);
+                    }}
+                  >
+                    <Text className={'text-center font-primary_medium'}>{topic.text}</Text>
+                  </Pressable>
+                );
+              })}
+              </>
+            )}
             
           </SafeAreaView>
         </View>
