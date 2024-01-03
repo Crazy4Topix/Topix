@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Image, Pressable } from 'react-native';
+import { ScrollView, View, Text, Image, Pressable, ToastAndroid } from 'react-native';
 import NewsThumbnail from '../../components/NewsThumbnail';
 import React, { useContext, useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
@@ -47,10 +47,6 @@ export default function homePage() {
     }, [userId]);
 
     useEffect(() => {
-        console.log(`audio link: ${dailyPodcast.podcastLink}`);
-    }, [dailyPodcast.podcastLink]);
-
-    useEffect(() => {
         const fetchFullName = async () => {
             try {
                 if (userId) {
@@ -91,9 +87,11 @@ export default function homePage() {
         }
         const date = new Date();
         const podcastUrl = await getNewestPodcastUrlFromSupabase(date);
-        if (podcastUrl == null) {
-            alert('We hebben geen podcast kunnen vinden, probeer het morgen opnieuw');
-        }
+        if (podcastUrl == null) return 
+        setDailyPodcast({
+            podcastInfo: dailyPodcast.podcastInfo,
+            podcastLink: podcastUrl
+        });
     }
 
     async function getNewestPodcastUrlFromSupabase(date: Date) {
@@ -114,8 +112,6 @@ export default function homePage() {
             .gte('created_at', fetchDate)
             .single();
         if (error) {
-            console.log(error);
-            // getNewestPodcastUrlFromSupabase;
             // get a day earlier
             const newDate = new Date(date.valueOf() - 86400000);
             return await getNewestPodcastUrlFromSupabase(newDate);
@@ -140,8 +136,6 @@ export default function homePage() {
             podcastInfo: newsAndTimestamps,
             podcastLink: podcast.podcast_link.toString().replace('?', ''),
         });
-
-        console.log(`found podcast of ${date.getUTCDate()}`);
         return podcast.podcast_link;
     }
 
@@ -165,15 +159,13 @@ export default function homePage() {
             .in('id', [audio1, audio2, audio3]);
 
         if (newsError) {
-            console.log(newsError);
+            console.error(newsError);
             return [];
         }
 
         if (!News) {
             return [];
         }
-
-        console.log(News);
 
         let timestampTemp = startTimestamp;
 
@@ -360,11 +352,15 @@ export default function homePage() {
                             <Pressable
                                 className={'rounded-lg p-2'}
                                 onPress={() => {
-                                    playAudio(
-                                        dailyPodcast.podcastLink,
-                                        'Dagelijkse Podcast',
-                                        dailyPodcast.podcastInfo
-                                    );
+                                    if (!dailyPodcast.podcastLink){
+                                        ToastAndroid.show('Geen podcasts gevonden. Probeer het morgen opnieuw', ToastAndroid.LONG);
+                                    } else {
+                                        playAudio(
+                                            dailyPodcast.podcastLink,
+                                            'Dagelijkse Podcast',
+                                            dailyPodcast.podcastInfo
+                                        );
+                                    }
                                 }}
                             >
                                 <Icon color={0xdeadff} name={'play-circle-outline'} size={100}></Icon>
