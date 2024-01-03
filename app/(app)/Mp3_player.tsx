@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Pressable, Linking } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Icon } from '@rneui/themed';
 import { AudioPlayerContext } from '../../contexts/audio_player';
 import { router, useNavigation } from 'expo-router';
 import Seekbar from "../../components/Seekbar";
