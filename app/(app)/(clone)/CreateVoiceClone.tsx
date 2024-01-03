@@ -2,9 +2,10 @@ import React, { type FunctionComponent, useContext, useState } from 'react';
 import { ScrollView, View, Text, Pressable } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { styled } from 'nativewind';
-import { cloneVoice, voiceClone } from '../../lib/voiceClone';
+import { cloneVoice, voiceClone } from '../../../lib/voiceClone';
 import { Audio } from 'expo-av';
-import { SupabaseUserSession } from '../../contexts/user_session';
+import { SupabaseUserSession } from '../../../contexts/user_session';
+import { useNavigation } from '@react-navigation/native';
 
 
 const ScrollTextSection = (maxLineLength: number) => {
@@ -25,10 +26,12 @@ const ScrollTextSection = (maxLineLength: number) => {
   return res;
 }
 
-const createVoiceClone: FunctionComponent = () => {
+const CreateVoiceClone: FunctionComponent = () => {
   const StyledIcon = styled(Icon);
   const [recording, setRecording] = useState<null | Audio.Recording>(null);
   const userContext = useContext(SupabaseUserSession);
+
+  const navigation = useNavigation();
 
   async function startRecording() {
     try {
@@ -68,12 +71,15 @@ const createVoiceClone: FunctionComponent = () => {
       console.error("User not logged in");
       return;
     }
-
-    const resp = await cloneVoice(recording, userContext.session.user?.id , userContext.session);
-    console.log(resp);
+    console.log("Sending recording to server");
+    // const resp = await cloneVoice(recording, userContext.session.user?.id , userContext.session);
+    // console.log(resp);
 
     const uri = recording.getURI();
     console.log('Recording stopped and stored at', uri);
+
+    // @ts-expect-error: route is there
+    navigation.navigate('Sample');
   }
 
   return (
@@ -96,4 +102,4 @@ const createVoiceClone: FunctionComponent = () => {
   );
 };
 
-export default createVoiceClone;
+export default CreateVoiceClone;

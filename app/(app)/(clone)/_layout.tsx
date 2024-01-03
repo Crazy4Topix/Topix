@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { SupabaseUserSession } from '../../../contexts/user_session';
 import { Redirect, SplashScreen, Stack } from 'expo-router';
-import { SupabaseUserSession } from '../../contexts/user_session';
-import { supabase } from '../../lib/supabase';
-import { AudioPlayerProvider } from '../../contexts/audio_player';
+import { supabase } from '../../../lib/supabase';
+import { AudioPlayerProvider } from '../../../contexts/audio_player';
 
 export default function TabLayout() {
   const { setSession } = useContext(SupabaseUserSession);
@@ -30,34 +30,23 @@ export default function TabLayout() {
     <AudioPlayerProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen
-          name="index"
+          name="Introduction"
           options={{
-            title: 'Main Page',
-          }}
-        />
-        <Stack.Screen
-          name="Mp3_player"
-          options={{
-            title: 'Full Screen Audio Player',
-          }}
-        />
-        <Stack.Screen
-          name="profile"
-          options={{
-            title: 'profile',
+            title: 'Introduction',
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="updateTopics"
+          name="CreateVoiceClone"
           options={{
-            title: 'updateTopics',
+            title: 'CreateVoiceClone',
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="(clone)"
+          name="Sample"
           options={{
+            title: 'Sample',
             headerShown: false,
           }}
         />

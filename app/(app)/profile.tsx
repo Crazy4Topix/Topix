@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Pressable, StyleSheet} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { signOut, getFullName } from '../../lib/supabase';
+import { signOut, getFullName, supabase } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session'
-import { supabase } from '../../lib/supabase';
 import { Icon } from 'react-native-elements';
 import { Dropdown } from 'react-native-element-dropdown';
 import { styled } from 'nativewind';
-import { Voice } from '../../types/supabase_types';
+import { type Voice } from '../../types/supabase_types';
 
 const StyledDropdown = styled(Dropdown);
 
@@ -52,17 +51,17 @@ export default function ProfilePage() {
         setVoices(speakers as Voice[] | null);
 
         
-        let { data: cur_voice } = await supabase
+        const { data: curVoice } = await supabase
         .from('audio_preferences')
         .select('speaker_id')
         .eq("user_id", userId)
 
-        if(!cur_voice || !speakers){
+        if(!curVoice || !speakers){
             return;
         }
 
-        if (cur_voice.length > 0) {
-            const speakerId = cur_voice[0].speaker_id;
+        if (curVoice.length > 0) {
+            const speakerId = curVoice[0].speaker_id;
     
             // Find the corresponding speaker in the speakers data
             const selectedSpeaker = speakers.find(speaker => speaker.id === speakerId);
@@ -86,12 +85,12 @@ export default function ProfilePage() {
         setSelectedValue(value);
         const selectedVoice = voices ? voices.find(voice => voice.id === value)?.id : null;
         
-        let { data: audio_preferences, error: userNotExistError } = await supabase
+        const { data: audioPreferences, error: userNotExistError } = await supabase
             .from('audio_preferences')
             .select('user_id')
             .eq('user_id', userId)
-        if(userNotExistError || !audio_preferences){
-            const { data, error } = await supabase
+        if(userNotExistError ?? !audioPreferences){
+            const {  error } = await supabase
             .from('audio_preferences')
             .insert({ user_id: userId, speaker_id: selectedVoice, length: "normal"})
             .select()
@@ -99,13 +98,13 @@ export default function ProfilePage() {
                 console.log(error)
             }
         } else {
-            const { data, error } = await supabase
+            const {  error } = await supabase
                 .from('audio_preferences')
                 .update({ speaker_id: selectedVoice })
                 .eq('user_id', userId)
                 .select()
             if(error){
-                console.log(`error: ${error}`)
+                console.log(`error: ${error.message} - ${error.code}`)
             }
         }
       };
@@ -136,7 +135,6 @@ export default function ProfilePage() {
 
     const data = voices.map(voice => ({ label: voice.display_name, value: voice.id }))
   
-    // @ts-ignore
   return (
         <View className="flex-1 justify-center content-center bg-white px-20">
             <View className="absolute top-8 left-4 z-10">
@@ -157,7 +155,7 @@ export default function ProfilePage() {
       </View>
 
       {/* Logout Button */}
-      <Pressable onPress={handleLogout}>
+      <Pressable onPress={() => {void handleLogout}}>
         <View className="rounded-md bg-primary p-2 mb-4">
           <Text className="font-primary text-white">Uitloggen</Text>
         </View>
@@ -165,7 +163,7 @@ export default function ProfilePage() {
 
           <Pressable onPress={() => {
             // @ts-expect-error: route is there
-            navigation.navigate("createVoiceClone")
+            navigation.navigate("(clone)")
           }}>
             <View className="rounded-md bg-primary p-2 mb-4">
               <Text className="font-primary text-white">Clone je stem</Text>
@@ -185,12 +183,12 @@ export default function ProfilePage() {
             valueField="value"
             placeholder={!isFocus ? (selectedValue ?? 'Selecteer stem') : '...'}
             value={value}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
+            onFocus={() => { setIsFocus(true); }}
+            onBlur={() => { setIsFocus(false); }}
             onChange={(item: any) => {
                 setValue(item.value);
                 setIsFocus(false);
-                handleVoiceSelection(item.value);
+                void handleVoiceSelection(item.value);
             }}
             renderLeftIcon={() => (
                 <View className='pr-2'>
