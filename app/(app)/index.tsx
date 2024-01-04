@@ -44,11 +44,7 @@ export default function homePage() {
         const fetchFullName = async () => {
             if (!userId) return
             const name = await getFullName(userId);
-            if (name !== null) {
-                setFullName(name);
-            } else {
-                setFullName(null);
-            }
+            setFullName(name)
         };
 
         void fetchFullName();
