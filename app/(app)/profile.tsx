@@ -109,17 +109,13 @@ export default function ProfilePage() {
 
     useEffect(() => {
         const fetchFullName = async () => {
-            try {
-                if (userId) { // Check if userId is defined
-                    const name = await getFullName(userId);
-                    if (name !== null) {
-                        setFullName(name);
-                    } else {
-                        console.error('Error fetching full name.');
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching full name:', error);
+            if (!userId) return
+            
+            const name = await getFullName(userId);
+            if (name !== null) {
+                setFullName(name);
+            } else {
+                console.error('Could not fetch full name');
             }
         };
         
