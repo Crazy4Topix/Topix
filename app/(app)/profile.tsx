@@ -85,12 +85,12 @@ export default function ProfilePage() {
             navigation.navigate('(clone)', { error: (false).toString()});
             }}>
             <View className="rounded-md bg-primary p-2 mb-4">
-                <Text className="font-primary text-white">creëer je stem</Text>
+                <Text className="font-primary text-white">Creëer je stem</Text>
             </View>
             </Pressable>
 
             {/* Logout Button */}
-            <Pressable onPress={() => {void handleLogout}}>
+            <Pressable onPress={handleLogout}>
                 <View className="rounded-md bg-primary p-2 mb-4">
                 <Text className="font-primary text-white">Uitloggen</Text>
                 </View>
