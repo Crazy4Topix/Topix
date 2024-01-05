@@ -3,7 +3,7 @@ import NewsThumbnail from '../../components/NewsThumbnail';
 import React, { useContext, useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
 import { Icon } from 'react-native-elements';
-import { Link, router } from 'expo-router';
+import { Link, router, Redirect } from 'expo-router';
 import AudioPlayerMinimal from '../../components/Mp3_player_minum';
 import { supabase, getFullName } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session';
@@ -29,7 +29,7 @@ export default function homePage() {
         router.push({ pathname: '/Mp3_player' });
     };
 
-    const [fullName, setFullName] = useState('');
+    const [fullName, setFullName] = useState<String|null>('');
     const [greeting, setGreeting] = useState('');
     const [newsThumbnails, setNewsThumbnails] = useState<React.JSX.Element[]>(
         [...Array(10).keys()].map((i) => <NewsThumbnailSkeleton key={i} />)
@@ -41,28 +41,19 @@ export default function homePage() {
     const audioContext = useContext(AudioPlayerContext);
 
     useEffect(() => {
-        void getPodcastLink();
-        void createNewsThumbnails();
-        void createOldPodcastsThumbnails();
-    }, [userId]);
-
-    useEffect(() => {
         const fetchFullName = async () => {
-            try {
-                if (userId) {
-                    const name = await getFullName(userId);
-                    if (name !== null) {
-                        setFullName(name);
-                    } else {
-                        console.error('Error fetching full name.');
-                    }
-                }
-            } catch (error: any) {
-                console.error('Error fetching full name:', error.message);
-            }
+            if (!userId) return
+            const name = await getFullName(userId);
+            setFullName(name)
         };
 
         void fetchFullName();
+    }, [userId]);
+
+    useEffect(() => {
+        void getPodcastLink();
+        void createNewsThumbnails();
+        void createOldPodcastsThumbnails();
     }, [userId]);
 
     useEffect(() => {
@@ -310,7 +301,13 @@ export default function homePage() {
             );
             i++;
         }
+        
         setNewsThumbnails(NewsThumbnailArray.reverse());
+    }
+
+    if (fullName === null){
+        ToastAndroid.show('Account is niet compleet, neem contact op met Crazy4.', ToastAndroid.LONG);
+        return <Redirect href="/login" />;
     }
 
     return (
