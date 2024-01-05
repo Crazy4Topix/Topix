@@ -103,7 +103,6 @@ export default function homePage() {
             .gte('created_at', fetchDate)
             .single();
         if (error) {
-            // get a day earlier
             const newDate = new Date(date.valueOf() - 86400000);
             return await getNewestPodcastUrlFromSupabase(newDate);
         }

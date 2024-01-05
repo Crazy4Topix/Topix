@@ -26,7 +26,6 @@ export default function TabLayout() {
   }
 
   return (
-    <AudioPlayerProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen
           name="index"
@@ -61,6 +60,5 @@ export default function TabLayout() {
           }}
         />
       </Stack>
-    </AudioPlayerProvider>
   );
 }

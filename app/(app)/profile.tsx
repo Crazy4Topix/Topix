@@ -1,114 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Pressable, StyleSheet, ToastAndroid} from 'react-native';
+import { View, Text, Pressable, ToastAndroid} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { signOut, getFullName, supabase } from '../../lib/supabase';
+import { signOut, getFullName } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session'
 import { Icon } from '@rneui/themed';
-import { Dropdown } from 'react-native-element-dropdown';
-import { styled } from 'nativewind';
-import { type Voice } from '../../types/supabase_types';
 import { Redirect } from 'expo-router';
-
-const StyledDropdown = styled(Dropdown);
-
 
 export default function ProfilePage() {
     const navigation = useNavigation();
     const [fullName, setFullName] = useState('');
     const userContext = useContext(SupabaseUserSession);
-    const userId = userContext.session?.user.id; 
-    const [voices, setVoices] = useState<Voice[] | null>(null);
-    const [selectedValue, setSelectedValue] = useState<string | null>(null);
-    const [value, setValue] = useState(null);
-    const [isFocus, setIsFocus] = useState(false);
-
-    const handleLogout = async () => {
-        try {
-            await signOut();
-            // @ts-expect-error: route is there
-            navigation.navigate('welcome');
-        } catch (e: any) {
-            console.error('Error logging out:', e.message);
-        }
-    };
-
-  const handleGoBack = () => {
-    navigation.goBack(); // Go back to the previous screen
-  };
-
-    const navigateTopicSelection = () => {
-      // @ts-expect-error: route is there
-      navigation.navigate('updateTopics');
-    };
-
-    const fetchSpeakersName = async () => {
-    try {
-        const { data: speakers, error } = await supabase
-        .from('speakers')
-        .select('display_name, id, name');
-        if (error != null) {
-            console.error(error);
-        }
-        setVoices(speakers as Voice[] | null);
-
-        
-        const { data: curVoice } = await supabase
-        .from('audio_preferences')
-        .select('speaker_id')
-        .eq("user_id", userId)
-
-        if(!curVoice || !speakers){
-            return;
-        }
-
-        if (curVoice.length > 0) {
-            const speakerId = curVoice[0].speaker_id;
-    
-            // Find the corresponding speaker in the speakers data
-            const selectedSpeaker = speakers.find(speaker => speaker.id === speakerId);
-    
-            if (selectedSpeaker) {
-                // Access the display_name of the selected speaker
-                const speakerName = selectedSpeaker.display_name;
-                setSelectedValue(speakerName)
-            } else {
-                console.error('Speaker not found for the given speaker_id.');
-            }
-        } else {
-            console.error('No speaker_id found for the user.');
-        }
-    } catch (error: any) {
-        console.error('Error fetching speakers:', error.message);
-    }
-    };
-
-    const handleVoiceSelection = async (value: string | null) => {
-        setSelectedValue(value);
-        const selectedVoice = voices ? voices.find(voice => voice.id === value)?.id : null;
-        
-        const { data: audioPreferences, error: userNotExistError } = await supabase
-            .from('audio_preferences')
-            .select('user_id')
-            .eq('user_id', userId)
-        if(userNotExistError ?? !audioPreferences){
-            const {  error } = await supabase
-            .from('audio_preferences')
-            .insert({ user_id: userId, speaker_id: selectedVoice, length: "normal"})
-            .select()
-            if(error){
-                console.error(error)
-            }
-        } else {
-            const {  error } = await supabase
-                .from('audio_preferences')
-                .update({ speaker_id: selectedVoice })
-                .eq('user_id', userId)
-                .select()
-            if(error){
-                console.log(`error: ${error.message} - ${error.code}`)
-            }
-        }
-      };
+    const userId = userContext.session?.user.id;
 
     useEffect(() => {
         const fetchFullName = async () => {
@@ -127,14 +29,28 @@ export default function ProfilePage() {
         };
         
         void fetchFullName();
-        void fetchSpeakersName();
     }, [userId]);
 
-    if (!voices) {
-        return null; // or a loading component if you prefer
-      }
+    const handleLogout = async () => {
+        try {
+            await signOut();
+            navigation.navigate('welcome');
+        } catch (e) {
+            console.error('Error logging out:', e.message);
+        }
+    };
 
-    const data = voices.map(voice => ({ label: voice.display_name, value: voice.id }))
+    const handleGoBack = () => {
+        navigation.goBack();
+    };
+
+    const navigateTopicSelection = () => {
+        navigation.navigate('updateTopics');
+    };
+
+    const navigateVoiceSelection = () => {
+        navigation.navigate('updateVoice')
+    }
 
     if (fullName === null){
         ToastAndroid.show('Account is niet compleet, neem contact op met Crazy4.', ToastAndroid.LONG);
@@ -150,66 +66,35 @@ export default function ProfilePage() {
             </View>
             <Text className="text-2xl font-semibold mb-4 text-center">Profiel Pagina</Text>
 
-      {/* Display Name */}
-      <Text className="mb-4 font-primary text-xl">{fullName}</Text>
+            <Text className="mb-4 font-primary text-xl">{fullName}</Text>
 
-      {/* Topic Selection Button */}
-      <View className="mb-4 rounded-md bg-primary p-2">
-        <Pressable onPress={navigateTopicSelection}>
-          <Text className="font-primary text-white">Selecteer Topix</Text>
-        </Pressable>
-      </View>
+            <View className="mb-4 rounded-md bg-primary p-2">
+                <Pressable onPress={navigateTopicSelection}>
+                <Text className="font-primary text-white">Selecteer Topix</Text>
+                </Pressable>
+            </View>
 
-      {/* Logout Button */}
-      <Pressable onPress={() => {void handleLogout}}>
-        <View className="rounded-md bg-primary p-2 mb-4">
-          <Text className="font-primary text-white">Uitloggen</Text>
-        </View>
-      </Pressable>
+            <View className="mb-4 rounded-md bg-primary p-2">
+                <Pressable onPress={navigateVoiceSelection}>
+                <Text className="font-primary text-white">Selecteer stem</Text>
+                </Pressable>
+            </View>
 
-          <Pressable onPress={() => {
+            <Pressable onPress={() => {
             // @ts-expect-error: route is there
             navigation.navigate('(clone)', { error: (false).toString()});
-            // navigation.navigate("(clone)")
-          }}>
+            }}>
             <View className="rounded-md bg-primary p-2 mb-4">
-              <Text className="font-primary text-white">Clone je stem</Text>
+                <Text className="font-primary text-white">creëer je stem</Text>
             </View>
-          </Pressable>
+            </Pressable>
 
-        {/* Voice Selection */}
-        <View className='mb-4 rounded-md bg-primary px-2 py-1'>
-            <StyledDropdown
-            className='bg-primary font-primary text-white'
-            selectedTextStyle={styles.TextStyle}
-            placeholderStyle={styles.TextStyle}
-            data={data}
-            // @ts-expect-error: labelField and valueField are there
-            labelField="label"
-            // @ts-expect-error: labelField and valueField are there
-            valueField="value"
-            placeholder={!isFocus ? (selectedValue ?? 'Selecteer stem') : '...'}
-            value={value}
-            onFocus={() => { setIsFocus(true); }}
-            onBlur={() => { setIsFocus(false); }}
-            onChange={(item: any) => {
-                setValue(item.value);
-                setIsFocus(false);
-                void handleVoiceSelection(item.value);
-            }}
-            renderLeftIcon={() => (
-                <View className='pr-2'>
-                    <Icon name="record-voice-over" size={24} color="white" />
+            {/* Logout Button */}
+            <Pressable onPress={() => {void handleLogout}}>
+                <View className="rounded-md bg-primary p-2 mb-4">
+                <Text className="font-primary text-white">Uitloggen</Text>
                 </View>
-            )}></StyledDropdown>
-        </View>
-    </View>
-        
-  );
+            </Pressable>
+        </View>  
+    );
 }
-
-const styles = StyleSheet.create({
-    TextStyle: {
-      color: 'white'
-    }
-  });

@@ -73,6 +73,20 @@ export async function getFullName(userId: string) {
   return profile?.full_name || null;
 }
 
+export async function getSampleBySpeakerId(speakerId: string) {
+  try {
+    const { data } = supabase
+      .storage
+      .from('audio')
+      .getPublicUrl(`samples/${speakerId}/sample.mp3`)
+
+    return data.publicUrl;
+  } catch (error) {
+    console.error('Error fetching sample:', (error as Error));
+    return null;
+  }
+}
+
 export async function getSample(userId: string) {
   try {
     console.log('getSample', userId);
@@ -100,5 +114,4 @@ export async function getSample(userId: string) {
     console.error('Error fetching full name:', (error as Error).message);
     return null;
   }
-
 }

@@ -15,10 +15,10 @@ interface Navigation {
 }
 
 const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
-  const [topics, setTopics] = useState([]);
+  const [topics, setTopics] = useState<Topic[]>();
 
   const navigation = useNavigation();
-  const userContext = useContext(SupabaseUserSession); // Moved useContext here
+  const userContext = useContext(SupabaseUserSession);
 
   const handlePress = (topic: Topic) => {
     setTopics((prevTopics) =>
@@ -34,14 +34,12 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
   };
 
   const getBackgroundColor = (state: string): string => {
-    if (state === 'neutral') {
-      return 'bg-gray-300';
-    } else if (state === 'positive') {
+    if (state === 'positive') {
       return 'bg-primary';
     } else if (state === 'negative') {
       return 'bg-red-400';
     } else {
-      return 'secondary';
+      return 'bg-gray-300';
     }
   };
 
@@ -149,21 +147,25 @@ useEffect(() => {
             <Text className={'text-sm'}>niet wil zien</Text>
           </Text>
           <SafeAreaView className={'flex flex-row flex-wrap justify-center gap-2 self-center'}>
-            {topics.map((topic) => {
-              return (
-                <Pressable
-                  className={`${getBackgroundColor(
-                    topic.state
-                  )} flex h-20 w-5/12 justify-center rounded-lg`}
-                  key={'topic-' + topic.text}
-                  onPress={() => {
-                    handlePress(topic);
-                  }}
-                >
-                  <Text className={'text-center font-primary_medium'}>{topic.text}</Text>
-                </Pressable>
-              );
-            })}
+            {topics && (
+              <>
+              {topics.map((topic) => {
+                return (
+                  <Pressable
+                    className={`${getBackgroundColor(
+                      topic.state
+                    )} flex h-20 w-5/12 justify-center rounded-lg`}
+                    key={'topic-' + topic.text}
+                    onPress={() => {
+                      handlePress(topic);
+                    }}
+                  >
+                    <Text className={'text-center font-primary_medium'}>{topic.text}</Text>
+                  </Pressable>
+                );
+              })}
+              </>
+            )}
             
           </SafeAreaView>
         </View>

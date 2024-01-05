@@ -6,7 +6,7 @@ import TopicSelection from '../components/TopicSelection';
 const TopicSetup = () => {
   return (
     <View>
-      <TopicSelection navigationDest={'(app)'}/>
+      <TopicSelection navigationDest={'voiceSelection'}/>
     </View>
   )
 }

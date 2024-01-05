@@ -5,7 +5,6 @@ import { Stack, SplashScreen } from 'expo-router';
 import { NativeWindStyleSheet } from 'nativewind';
 import { SupabaseUserSessionProvider } from '../contexts/user_session';
 import { useFonts } from 'expo-font';
-import { AudioPlayerProvider } from '../contexts/audio_player';
 import {
   Poppins_100Thin,
   Poppins_100Thin_Italic,
@@ -28,6 +27,7 @@ import {
 } from '@expo-google-fonts/poppins';
 import SignUpHeader from '../components/SignUpHeader';
 import { SupabaseUserProvider } from '../contexts/supabase_user';
+import { AudioPlayerProvider } from '../contexts/audio_player';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -78,35 +78,39 @@ function RootLayoutNav() {
   return (
     <SupabaseUserSessionProvider>
       <SupabaseUserProvider>
-        <Stack
-          screenOptions={{
-            header: (props) => <SignUpHeader {...props} />,
-            animation: 'slide_from_right',
-          }}
-        >
-          <Stack.Screen
-            name="(app)"
-            options={{
-              headerShown: false,
+        <AudioPlayerProvider>
+
+          <Stack
+            screenOptions={{
+              header: (props) => <SignUpHeader {...props} />,
+              animation: 'slide_from_right',
             }}
-          />
-          <Stack.Screen
-            name={'welcome'}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen name={'signup'} />
-          <Stack.Screen
-            name={'login'}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen name={'userInformation'} />
-          <Stack.Screen name={'topicSelection'} />
-          
-        </Stack>
+          >
+            <Stack.Screen
+              name="(app)"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name={'welcome'}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen name={'signup'} />
+            <Stack.Screen
+              name={'login'}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen name={'userInformation'} />
+            <Stack.Screen name={'topicSelection'} />
+            <Stack.Screen name={'voiceSelection'} />
+            
+          </Stack>
+        </AudioPlayerProvider>
       </SupabaseUserProvider>
     </SupabaseUserSessionProvider>
   );
