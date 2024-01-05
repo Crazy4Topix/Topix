@@ -85,7 +85,7 @@ export default function ProfilePage() {
             navigation.navigate('(clone)', { error: (false).toString()});
             }}>
             <View className="rounded-md bg-primary p-2 mb-4">
-                <Text className="font-primary text-white">Clone je stem</Text>
+                <Text className="font-primary text-white">creëer je stem</Text>
             </View>
             </Pressable>
 
