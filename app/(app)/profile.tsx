@@ -105,23 +105,23 @@ export default function ProfilePage() {
         </Pressable>
       </View>
 
-      <Pressable onPress={() => {
-        // @ts-expect-error: route is there
-        navigation.navigate('(clone)', { error: (false).toString() });
-      }}>
-        <View className="rounded-md bg-primary p-2 mb-4">
-          <Text className="font-primary text-white">creëer je stem</Text>
-        </View>
-      </Pressable>
+            <Pressable onPress={() => {
+            // @ts-expect-error: route is there
+            navigation.navigate('(clone)');
+            }}>
+            <View className="rounded-md bg-primary p-2 mb-4">
+                <Text className="font-primary text-white">Creëer je stem</Text>
+            </View>
+            </Pressable>
 
-      {/* Logout Button */}
-      <Pressable onPress={() => {
-        void handleLogout;
-      }}>
-        <View className="rounded-md bg-primary p-2 mb-4">
-          <Text className="font-primary text-white">Uitloggen</Text>
-        </View>
-      </Pressable>
-    </View>
-  );
+            {/* Logout Button */}
+            <Pressable onPress={() => {
+              void handleLogout();
+            }}>
+                <View className="rounded-md bg-primary p-2 mb-4">
+                <Text className="font-primary text-white">Uitloggen</Text>
+                </View>
+            </Pressable>
+        </View>  
+    );
 }
