@@ -45,3 +45,5 @@ android/
 
 
 .idea
+*.apk
+*.keystore
