@@ -77,11 +77,12 @@ export default function homePage() {
             return;
         }
         const date = new Date();
-        const podcastUrl = await getNewestPodcastUrlFromSupabase(date);
-        if (podcastUrl == null) return 
+        const ret = await getNewestPodcastUrlFromSupabase(date);
+        if (!ret) return
+        const {podcastLink, podcastInfo} = ret;
         setDailyPodcast({
-            podcastInfo: dailyPodcast.podcastInfo,
-            podcastLink: podcastUrl
+            podcastInfo,
+            podcastLink
         });
     }
 
@@ -111,6 +112,7 @@ export default function homePage() {
             return null;
         }
 
+
         const newsAndTimestamps = await getPodcastInfo(
             podcast.start_timestamp,
             podcast.audio_1,
@@ -118,15 +120,7 @@ export default function homePage() {
             podcast.audio_3
         );
 
-        if (newsAndTimestamps == null) {
-            return [];
-        }
-
-        setDailyPodcast({
-            podcastInfo: newsAndTimestamps,
-            podcastLink: podcast.podcast_link.toString().replace('?', ''),
-        });
-        return podcast.podcast_link;
+        return {"podcastLink": podcast.podcast_link, "podcastInfo": newsAndTimestamps};
     }
 
     function padTo2Digits(number: number) {
