@@ -1,9 +1,9 @@
-import { ScrollView, View, Text, Image, Pressable } from 'react-native';
+import { ScrollView, View, Text, Image, Pressable, ToastAndroid } from 'react-native';
 import NewsThumbnail from '../../components/NewsThumbnail';
 import React, { useContext, useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
 import { Icon } from '@rneui/themed';
-import { Link, router } from 'expo-router';
+import { Link, router, Redirect } from 'expo-router';
 import AudioPlayerMinimal from '../../components/Mp3_player_minum';
 import { supabase, getFullName } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session';
@@ -29,7 +29,7 @@ export default function homePage() {
         router.push({ pathname: '/Mp3_player' });
     };
 
-    const [fullName, setFullName] = useState('');
+    const [fullName, setFullName] = useState<String|null>('');
     const [greeting, setGreeting] = useState('');
     const [newsThumbnails, setNewsThumbnails] = useState<React.JSX.Element[]>(
         [...Array(10).keys()].map((i) => <NewsThumbnailSkeleton key={i} />)
@@ -41,32 +41,19 @@ export default function homePage() {
     const audioContext = useContext(AudioPlayerContext);
 
     useEffect(() => {
-        void getPodcastLink();
-        void createNewsThumbnails();
-        void createOldPodcastsThumbnails();
-    }, [userId]);
-
-    useEffect(() => {
-        console.log(`audio link: ${dailyPodcast.podcastLink}`);
-    }, [dailyPodcast.podcastLink]);
-
-    useEffect(() => {
         const fetchFullName = async () => {
-            try {
-                if (userId) {
-                    const name = await getFullName(userId);
-                    if (name !== null) {
-                        setFullName(name);
-                    } else {
-                        console.error('Error fetching full name.');
-                    }
-                }
-            } catch (error: any) {
-                console.error('Error fetching full name:', error.message);
-            }
+            if (!userId) return
+            const name = await getFullName(userId);
+            setFullName(name)
         };
 
         void fetchFullName();
+    }, [userId]);
+
+    useEffect(() => {
+        void getPodcastLink();
+        void createNewsThumbnails();
+        void createOldPodcastsThumbnails();
     }, [userId]);
 
     useEffect(() => {
@@ -91,9 +78,11 @@ export default function homePage() {
         }
         const date = new Date();
         const podcastUrl = await getNewestPodcastUrlFromSupabase(date);
-        if (podcastUrl == null) {
-            alert('We hebben geen podcast kunnen vinden, probeer het morgen opnieuw');
-        }
+        if (podcastUrl == null) return 
+        setDailyPodcast({
+            podcastInfo: dailyPodcast.podcastInfo,
+            podcastLink: podcastUrl
+        });
     }
 
     async function getNewestPodcastUrlFromSupabase(date: Date) {
@@ -114,8 +103,6 @@ export default function homePage() {
             .gte('created_at', fetchDate)
             .single();
         if (error) {
-            console.log(error);
-            // getNewestPodcastUrlFromSupabase;
             // get a day earlier
             const newDate = new Date(date.valueOf() - 86400000);
             return await getNewestPodcastUrlFromSupabase(newDate);
@@ -140,8 +127,6 @@ export default function homePage() {
             podcastInfo: newsAndTimestamps,
             podcastLink: podcast.podcast_link.toString().replace('?', ''),
         });
-
-        console.log(`found podcast of ${date.getUTCDate()}`);
         return podcast.podcast_link;
     }
 
@@ -165,15 +150,13 @@ export default function homePage() {
             .in('id', [audio1, audio2, audio3]);
 
         if (newsError) {
-            console.log(newsError);
+            console.error(newsError);
             return [];
         }
 
         if (!News) {
             return [];
         }
-
-        console.log(News);
 
         let timestampTemp = startTimestamp;
 
@@ -319,7 +302,13 @@ export default function homePage() {
             );
             i++;
         }
+        
         setNewsThumbnails(NewsThumbnailArray.reverse());
+    }
+
+    if (fullName === null){
+        ToastAndroid.show('Account is niet compleet, neem contact op met Crazy4.', ToastAndroid.LONG);
+        return <Redirect href="/login" />;
     }
 
     return (
@@ -360,11 +349,15 @@ export default function homePage() {
                             <Pressable
                                 className={'rounded-lg p-2'}
                                 onPress={() => {
-                                    playAudio(
-                                        dailyPodcast.podcastLink,
-                                        'Dagelijkse Podcast',
-                                        dailyPodcast.podcastInfo
-                                    );
+                                    if (!dailyPodcast.podcastLink){
+                                        ToastAndroid.show('Geen podcasts gevonden. Probeer het morgen opnieuw', ToastAndroid.LONG);
+                                    } else {
+                                        playAudio(
+                                            dailyPodcast.podcastLink,
+                                            'Dagelijkse Podcast',
+                                            dailyPodcast.podcastInfo
+                                        );
+                                    }
                                 }}
                             >
                                 <Icon color={0xdeadff} name={'play-circle-outline'} size={100}></Icon>

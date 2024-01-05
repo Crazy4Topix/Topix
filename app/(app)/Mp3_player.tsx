@@ -78,7 +78,6 @@ const AudioPlayer = () => {
             if (router.canGoBack()) {
               router.back();
             } else {
-              console.log("Cannot go back?");
               // @ts-expect-error It complains about never but it is there
               navigation.navigate('index', { screen: 'index' });
             }

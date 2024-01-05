@@ -36,7 +36,7 @@ const Signup: FunctionComponent<Props> = (_: OwnProps) => {
     }
 
     if (data?.data === null) {
-      console.log('No data found?');
+      console.error('No data found');
       return;
     }
 

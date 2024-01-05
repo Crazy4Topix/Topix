@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Pressable, SafeAreaView, View, Text, ScrollView } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { supabase } from '../lib/supabase';
@@ -15,18 +15,7 @@ interface Navigation {
 }
 
 const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
-  const [topics, setTopics] = useState([
-    { text: 'Cultuur', value: 'cultuur', state: 'neutral' },
-    { text: 'Klimaat', value: 'klimaat', state: 'neutral' },
-    { text: 'Economie', value: 'economie', state: 'neutral' },
-    { text: 'Opmerkelijk', value: 'opmerkelijk', state: 'neutral' },
-    { text: 'Educatie', value: 'educatie', state: 'neutral' },
-    { text: 'Sport', value: 'sport', state: 'neutral' },
-    { text: 'Politiek', value: 'politiek', state: 'neutral' },
-    { text: 'Gezondheid', value: 'gezondheid', state: 'neutral' },
-    { text: 'Tech', value: 'tech', state: 'neutral' },
-    { text: 'Wetenschap', value: 'wetenschap', state: 'neutral' },
-  ]);
+  const [topics, setTopics] = useState([]);
 
   const navigation = useNavigation();
   const userContext = useContext(SupabaseUserSession); // Moved useContext here
@@ -39,7 +28,6 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
           t.state =
             t.state === 'neutral' ? 'positive' : t.state === 'positive' ? 'negative' : 'neutral';
         }
-        console.log(t);
         return t;
       })
     );
@@ -58,8 +46,7 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
   };
 
   const handleSubmit = async () => {
-    const userId = userContext.session?.user.id; // Replace with the actual user ID from Supabase
-    console.log(supabase);
+    const userId = userContext.session?.user.id;
 
     const topicsSelected = topics.filter(
       (topic) => topic.state === 'positive' || topic.state === 'negative'
@@ -71,8 +58,7 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
       .in('name', selectedTopicNames);
 
     if (topicError !== null) {
-      console.log('error fetching topix id');
-      console.log(topicError);
+      console.error(topicError);
     }
 
     // Delete all rows
@@ -81,8 +67,7 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
       .delete()
       .eq('user_id', userId);
     if (delError !== null) {
-      console.log('error deleting old topix');
-      console.log(delError);
+      console.error(delError);
     }
 
     // Map each ID to an object with user_id and topic_id
@@ -96,52 +81,104 @@ const TopicSelection: React.FC<Navigation> = ({ navigationDest }) => {
     const { data, error } = await supabase.from('topic_preferences').insert(rowsToInsert).select();
 
     if (error !== null) {
-      console.log('error adding new topix');
-      console.log(error);
+      console.error(error);
     }
 
     // @ts-expect-error It complains about never but it is there
     navigation.navigate(navigationDest);
   };
 
+  const loadCurrentTopics = async () => {
+    const userId = userContext.session?.user.id;
+  
+    try {
+      // Read current topics
+      const { data: curTopics, error: fetchError } = await supabase
+        .from('topic_preferences')
+        .select('*')
+        .eq('user_id', userId);
+  
+      if (fetchError !== null) {
+        console.error('Error getting current topics:', fetchError);
+        return;
+      }
+  
+      const allTopicsQuery = await supabase
+        .from('topic')
+        .select('*');
+      const { data: allTopics, error: allTopicsError } = allTopicsQuery;
+  
+      if (allTopicsError !== null) {
+        console.error('Error fetching all topics:', allTopicsError);
+        return;
+      }
+  
+      const mergedList = allTopics?.map(topic => {
+        const curTopic = curTopics?.find(cur => cur.topic_id === topic.id);
+        return {
+          text: topic.display_name,
+          value: topic.name,
+          state: curTopic?.positive ? 'positive' : curTopic?.positive === false ? 'negative' : 'neutral',
+        };
+      });
+  
+      // Set the mergedList directly in the state
+      setTopics(mergedList);
+  
+    } catch (error) {
+      console.error('Error in loadCurrentTopics:', error);
+    }
+  };
+  
+  
+
+useEffect(() => {
+  void loadCurrentTopics();
+}, []);
+  
   return (
-    <ScrollView className={'bg-white'}>
-      <View className={'flex h-full w-full justify-center  pt-12'}>
-        <Text className={'mx-8 pb-10 text-center font-primary_medium text-2xl'}>
-          <Text>Kies de</Text>
-          <Text className={'font-primary_bold'}> Topix </Text>
-          <Text>die jij interessant vindt{'\n\n'}</Text>
-          <Text className={'text-sm'}>Klik twee keer als je</Text>
-          <Text className={'font-primary_bold text-sm'}> Topix </Text>
-          <Text className={'text-sm'}>niet wil zien</Text>
-        </Text>
-        <SafeAreaView className={'flex flex-row flex-wrap justify-center gap-2 self-center'}>
-          {topics.map((topic) => {
-            return (
-              <Pressable
-                className={`${getBackgroundColor(
-                  topic.state
-                )} flex h-20 w-5/12 justify-center rounded-lg`}
-                key={'topic-' + topic.text}
-                onPress={() => {
-                  handlePress(topic);
-                }}
-              >
-                <Text className={'text-center font-primary_medium'}>{topic.text}</Text>
-              </Pressable>
-            );
-          })}
-          <Pressable
-            onPress={() => {
-              void handleSubmit();
-            }}
-            className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
-          >
-            <Text className={'self-center font-primary_bold text-white'}>Bevestig</Text>
-          </Pressable>
-        </SafeAreaView>
+    <View className={'flex-centering h-full w-full bg-white pb-4'}>
+      <ScrollView className={'bg-white'}>
+        <View className={'flex h-full w-full justify-center  pt-12'}>
+          <Text className={'mx-8 pb-10 text-center font-primary_medium text-2xl'}>
+            <Text>Kies de</Text>
+            <Text className={'font-primary_bold'}> Topix </Text>
+            <Text>die jij interessant vindt{'\n\n'}</Text>
+            <Text className={'text-sm'}>Klik twee keer als je</Text>
+            <Text className={'font-primary_bold text-sm'}> Topix </Text>
+            <Text className={'text-sm'}>niet wil zien</Text>
+          </Text>
+          <SafeAreaView className={'flex flex-row flex-wrap justify-center gap-2 self-center'}>
+            {topics.map((topic) => {
+              return (
+                <Pressable
+                  className={`${getBackgroundColor(
+                    topic.state
+                  )} flex h-20 w-5/12 justify-center rounded-lg`}
+                  key={'topic-' + topic.text}
+                  onPress={() => {
+                    handlePress(topic);
+                  }}
+                >
+                  <Text className={'text-center font-primary_medium'}>{topic.text}</Text>
+                </Pressable>
+              );
+            })}
+            
+          </SafeAreaView>
+        </View>
+      </ScrollView>
+      <View className='justify-center self-center pt-4'>
+        <Pressable
+              onPress={() => {
+                void handleSubmit();
+              }}
+              className={'flex h-16 w-32 justify-center rounded-md bg-accent'}
+            >
+              <Text className={'self-center font-primary_bold text-white'}>Bevestig</Text>
+            </Pressable>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 

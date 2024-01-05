@@ -13,14 +13,13 @@ export default function TabLayout() {
   useEffect(() => {
     void supabase.auth.getSession().then(({ data: { session } }) => {
       if (session == null) {
-        console.log('Redirecting to welcome');
         SplashScreen.hideAsync();
         setRedirectToWelcome(true);
       } else {
         setSession(session);
       }
     });
-  }, []); // Empty dependency array to run the effect only once on component mount
+  }, []);
 
   if (redirectToWelcome) {
     return <Redirect href="/welcome" />;

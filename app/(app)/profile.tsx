@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Pressable, StyleSheet} from 'react-native';
+import { View, Text, Pressable, StyleSheet, ToastAndroid} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { signOut, getFullName } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session'
@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase';
 import { Icon } from '@rneui/themed';
 import { Dropdown } from 'react-native-element-dropdown';
 import { styled } from 'nativewind';
+import { Redirect } from 'expo-router';
 
 const StyledDropdown = styled(Dropdown);
 
@@ -44,7 +45,7 @@ export default function ProfilePage() {
         .from('speakers')
         .select('display_name, id, name');
         if (error != null) {
-        console.log(error);
+            console.error(error);
         }
         setVoices(speakers as Voice[] | null);
 
@@ -69,10 +70,10 @@ export default function ProfilePage() {
                 const speakerName = selectedSpeaker.display_name;
                 setSelectedValue(speakerName)
             } else {
-                console.log('Speaker not found for the given speaker_id.');
+                console.error('Speaker not found for the given speaker_id.');
             }
         } else {
-            console.log('No speaker_id found for the user.');
+            console.error('No speaker_id found for the user.');
         }
     } catch (error) {
         console.error('Error fetching speakers:', error.message);
@@ -93,7 +94,7 @@ export default function ProfilePage() {
             .insert({ user_id: userId, speaker_id: selectedVoice, length: "normal"})
             .select()
             if(error){
-                console.log(error)
+                console.error(error)
             }
         } else {
             const { data, error } = await supabase
@@ -102,25 +103,17 @@ export default function ProfilePage() {
                 .eq('user_id', userId)
                 .select()
             if(error){
-                console.log(`error: ${error}`)
+                console.error(error)
             }
         }
       };
 
     useEffect(() => {
         const fetchFullName = async () => {
-            try {
-                if (userId) { // Check if userId is defined
-                    const name = await getFullName(userId);
-                    if (name !== null) {
-                        setFullName(name);
-                    } else {
-                        console.log('Error fetching full name.');
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching full name:', error.message);
-            }
+            if (!userId) return
+
+            const name = await getFullName(userId);
+            setFullName(name)
         };
         
         void fetchFullName();
@@ -132,6 +125,11 @@ export default function ProfilePage() {
       }
 
     const data = voices.map(voice => ({ label: voice.display_name, value: voice.id }))
+
+    if (fullName === null){
+        ToastAndroid.show('Account is niet compleet, neem contact op met Crazy4.', ToastAndroid.LONG);
+        return <Redirect href="/login" />;
+    }
   
     return (
         <View className="flex-1 justify-center content-center bg-white px-20">
