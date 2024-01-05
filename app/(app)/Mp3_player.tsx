@@ -102,7 +102,7 @@ const AudioPlayer = () => {
                   audioContext.seekBackward();
                 }}
               >
-                <Icon name="skip-previous" size={70} color="#00DEAD" />
+                <Icon name="skip-previous" size={70} color="white" />
               </TouchableOpacity>
               {audioContext.audioState && audioContext.audioState.isPlaying ? (
                 <TouchableOpacity className="flex rounded-full" onPress={audioContext.pauseTrack}>
@@ -119,7 +119,7 @@ const AudioPlayer = () => {
                   audioContext.seekForward();
                 }}
               >
-                <Icon name="skip-next" size={70} color="#00DEAD" />
+                <Icon name="skip-next" size={70} color="white" />
               </TouchableOpacity>
             </View>
             <Seekbar className={""} currTime={currTime}/>
