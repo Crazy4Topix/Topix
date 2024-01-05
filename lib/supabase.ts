@@ -1,3 +1,4 @@
+import 'react-native-url-polyfill/auto'; // DO NOT REMOVE THIS LINE, very weird error otherwise
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 import { Alert } from 'react-native';
