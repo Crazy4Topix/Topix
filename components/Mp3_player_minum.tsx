@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import {View, Text, Image, TouchableOpacity, Pressable} from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Icon } from '@rneui/themed';
 import { AudioPlayerContext } from '../contexts/audio_player';
 import { router } from 'expo-router';
 

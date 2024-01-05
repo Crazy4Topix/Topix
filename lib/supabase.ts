@@ -1,4 +1,4 @@
-import 'react-native-url-polyfill/auto';
+import 'react-native-url-polyfill/auto'; // DO NOT REMOVE THIS LINE, very weird error otherwise
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 import { Alert } from 'react-native';
@@ -69,7 +69,7 @@ export async function getFullName(userId: string) {
     console.error(error.details);
     return null;
   }
-
+  
   return profile?.full_name || null;
 }
 
@@ -83,6 +83,35 @@ export async function getSampleBySpeakerId(speakerId: string) {
     return data.publicUrl;
   } catch (error) {
     console.error('Error fetching sample:', (error as Error));
+    return null;
+  }
+}
+
+export async function getSample(userId: string) {
+  try {
+    console.log('getSample', userId);
+    const { data: speaker, error } = await supabase
+      .from('speakers')
+      .select('id')
+      .eq('custom_voice_owner', userId)
+      .single(); // Assuming you want to fetch a single profile
+
+    if (error != null) {
+      throw new Error(error.message);
+    }
+    console.log('getSample', speaker.id);
+
+
+    const { data } = supabase
+      .storage
+      .from('audio')
+      .getPublicUrl(`samples/${speaker.id}/sample.mp3`)
+
+    console.log('getSample', data.publicUrl);
+
+    return data.publicUrl;
+  } catch (error) {
+    console.error('Error fetching full name:', (error as Error).message);
     return null;
   }
 }

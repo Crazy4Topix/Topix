@@ -3,9 +3,7 @@ import { View, Text, Pressable, ToastAndroid} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { signOut, getFullName } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session'
-import { Icon } from 'react-native-elements';
-import { Dropdown } from 'react-native-element-dropdown';
-import { styled } from 'nativewind';
+import { Icon } from '@rneui/themed';
 import { Redirect } from 'expo-router';
 
 export default function ProfilePage() {
@@ -16,10 +14,18 @@ export default function ProfilePage() {
 
     useEffect(() => {
         const fetchFullName = async () => {
-            if (!userId) return
-
-            const name = await getFullName(userId);
-            setFullName(name)
+            try {
+                if (userId) { // Check if userId is defined
+                    const name = await getFullName(userId);
+                    if (name !== null) {
+                        setFullName(name);
+                    } else {
+                        console.log('Error fetching full name.');
+                    }
+                }
+            } catch (error: any) {
+                console.error('Error fetching full name:', error.message);
+            }
         };
         
         void fetchFullName();
@@ -51,7 +57,7 @@ export default function ProfilePage() {
         return <Redirect href="/login" />;
     }
   
-    return (
+  return (
         <View className="flex-1 justify-center content-center bg-white px-20">
             <View className="absolute top-8 left-4 z-10">
                 <Pressable onPress={handleGoBack}>
@@ -60,26 +66,35 @@ export default function ProfilePage() {
             </View>
             <Text className="text-2xl font-semibold mb-4 text-center">Profiel Pagina</Text>
 
-      <Text className="mb-4 font-primary text-xl">{fullName}</Text>
+            <Text className="mb-4 font-primary text-xl">{fullName}</Text>
 
-      <View className="mb-4 rounded-md bg-primary p-2">
-        <Pressable onPress={navigateTopicSelection}>
-          <Text className="font-primary text-white">Selecteer Topix</Text>
-        </Pressable>
-      </View>
+            <View className="mb-4 rounded-md bg-primary p-2">
+                <Pressable onPress={navigateTopicSelection}>
+                <Text className="font-primary text-white">Selecteer Topix</Text>
+                </Pressable>
+            </View>
 
-      <View className="mb-4 rounded-md bg-primary p-2">
-        <Pressable onPress={navigateVoiceSelection}>
-          <Text className="font-primary text-white">Selecteer stem</Text>
-        </Pressable>
-      </View>
+            <View className="mb-4 rounded-md bg-primary p-2">
+                <Pressable onPress={navigateVoiceSelection}>
+                <Text className="font-primary text-white">Selecteer stem</Text>
+                </Pressable>
+            </View>
 
-      <Pressable onPress={handleLogout}>
-        <View className="rounded-md bg-primary p-2 mb-4">
-          <Text className="font-primary text-white">Uitloggen</Text>
-        </View>
-      </Pressable>
-    </View>
-        
-  );
+            <Pressable onPress={() => {
+            // @ts-expect-error: route is there
+            navigation.navigate('(clone)', { error: (false).toString()});
+            }}>
+            <View className="rounded-md bg-primary p-2 mb-4">
+                <Text className="font-primary text-white">Clone je stem</Text>
+            </View>
+            </Pressable>
+
+            {/* Logout Button */}
+            <Pressable onPress={() => {void handleLogout}}>
+                <View className="rounded-md bg-primary p-2 mb-4">
+                <Text className="font-primary text-white">Uitloggen</Text>
+                </View>
+            </Pressable>
+        </View>  
+    );
 }

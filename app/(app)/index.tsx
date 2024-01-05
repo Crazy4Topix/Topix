@@ -2,7 +2,7 @@ import { ScrollView, View, Text, Image, Pressable, ToastAndroid } from 'react-na
 import NewsThumbnail from '../../components/NewsThumbnail';
 import React, { useContext, useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
-import { Icon } from 'react-native-elements';
+import { Icon } from '@rneui/themed';
 import { Link, router, Redirect } from 'expo-router';
 import AudioPlayerMinimal from '../../components/Mp3_player_minum';
 import { supabase, getFullName } from '../../lib/supabase';
