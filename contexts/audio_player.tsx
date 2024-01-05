@@ -15,6 +15,8 @@ interface AudioPlayerState {
   currentTrack: Track | null;
   isPlaying: boolean;
   currentTime: number;
+  lastTimeCheck: Date;
+  duration: number;
 }
 
 interface AudioPlayerContextProps {
@@ -36,6 +38,8 @@ export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
     currentTrack: null,
     isPlaying: false,
     currentTime: 0,
+    lastTimeCheck: new Date(),
+    duration: 0,
   },
   podcastInfo: [],
   setPodcastInfo: () => {
@@ -62,6 +66,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     currentTrack: null,
     isPlaying: false,
     currentTime: 0,
+    lastTimeCheck: new Date(),
+    duration: 0,
   });
   const [podcastInfo, setPodcastInfo] = useState<PodcastInfo[]>([]);
 
@@ -74,6 +80,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         reject(new Error('timeout'));
       }, TIMEOUT)),
     ]);
+
     if (info != null) {
       return info.duration;
     } else {
@@ -113,6 +120,12 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   };
 
   const getTime = async () => {
+    const now = new Date();
+    // @ts-expect-error: lastTimeCheck is a Date
+    if ((now - audioState.lastTimeCheck) < TIMEOUT) {
+      return audioState.currentTrack?.track_duration ?? 0;
+    }
+
     let info = null;
     await Promise.race([
       info = await SoundPlayer.getInfo(),
@@ -122,7 +135,10 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }, TIMEOUT)),
     ]);
 
+
     if (info != null) {
+      setAudioState({ ...audioState, lastTimeCheck: new Date(), currentTime: info.currentTime });
+
       return info.currentTime;
     } else {
       console.error('Error getting duration: media player in react-native-sound-player is null');
@@ -139,7 +155,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         // Seek to the calculated time
         SoundPlayer.seek(targetTime);
         SoundPlayer.play();
-        setAudioState({ ...audioState, currentTime: targetTime });
+        setAudioState({ ...audioState, currentTime: targetTime, lastTimeCheck: new Date(), isPlaying: true });
       } catch (e) {
         console.error('Error seeking:', e);
       }
@@ -151,23 +167,16 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (currentTrack) {
       try {
         // Calculate the target time based on the percentage
-        let info = null;
-        await Promise.race([
-          info = await SoundPlayer.getInfo(),
-          // eslint-disable-next-line promise/param-names
-          new Promise((_, reject) => setTimeout(() => {
-            reject(new Error('timeout'));
-          }, TIMEOUT)),
-        ]);
+
         let targetTime = 0;
-        if (info.currentTime < info.duration + 10) {
-          targetTime = info.currentTime + 10;
+        if (audioState.currentTime < audioState.duration + 10) {
+          targetTime = audioState.currentTime + 10;
         } else {
-          targetTime = info.duration;
+          targetTime = audioState.duration;
         }
         // Seek to the calculated time
         SoundPlayer.seek(targetTime);
-        setAudioState({ ...audioState, currentTime: targetTime, isPlaying: true });
+        setAudioState({ ...audioState, currentTime: targetTime, isPlaying: true, lastTimeCheck: new Date() });
       } catch (e) {
         console.error('Error seeking:', e);
       }
@@ -179,23 +188,15 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (currentTrack) {
       try {
         // Calculate the target time based on the percentage
-        let info = null;
-        await Promise.race([
-          info = await SoundPlayer.getInfo(),
-          // eslint-disable-next-line promise/param-names
-          new Promise((_, reject) => setTimeout(() => {
-            reject(new Error('timeout'));
-          }, TIMEOUT)),
-        ]);
         let targetTime = 0;
-        if (info.currentTime > 11) {
-          targetTime = info.currentTime - 11;
+        if (audioState.currentTime > 11) {
+          targetTime = audioState.currentTime - 11;
         } else {
           targetTime = 0;
         }
         // Seek to the calculated time
         SoundPlayer.seek(targetTime);
-        setAudioState({ ...audioState, currentTime: targetTime });
+        setAudioState({ ...audioState, currentTime: targetTime, lastTimeCheck: new Date() });
       } catch (e) {
         console.error('Error seeking:', e);
       }
@@ -215,7 +216,10 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
           title,
           artist,
           track_duration: duration,
+          currentTime: 0,
+          lastTimeCheck: new Date()
         },
+
         isPlaying: true,
       };
       setAudioState(newAudioState);
