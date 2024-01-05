@@ -38,15 +38,23 @@ export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
     currentTime: 0,
   },
   podcastInfo: [],
-  setPodcastInfo: () => {},
-  playTrack: () => {},
-  pauseTrack: () => {},
-  resumeTrack: () => {},
+  setPodcastInfo: () => {
+  },
+  playTrack: () => {
+  },
+  pauseTrack: () => {
+  },
+  resumeTrack: () => {
+  },
   getTime: async () => 0,
-  seekTo: () => {},
-  seekForward: () => {},
-  seekBackward: () => {},
-  setupAndAddAudio: async () => {},
+  seekTo: () => {
+  },
+  seekForward: () => {
+  },
+  seekBackward: () => {
+  },
+  setupAndAddAudio: async () => {
+  },
 });
 
 export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -67,7 +75,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }, TIMEOUT)),
     ]);
     if (info != null) {
-      return info.duration
+      return info.duration;
     } else {
       return 0;
     }

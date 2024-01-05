@@ -48,4 +48,5 @@ function timeToTimeString(time: number){
   return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
 }
 
+
 export default Seekbar;

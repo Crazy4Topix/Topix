@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Pressable, StyleSheet, ToastAndroid} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { signOut, getFullName } from '../../lib/supabase';
+import { signOut, getFullName, supabase } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session'
 import { supabase } from '../../lib/supabase';
 import { Icon } from '@rneui/themed';
 import { Dropdown } from 'react-native-element-dropdown';
 import { styled } from 'nativewind';
+import { type Voice } from '../../types/supabase_types';
 import { Redirect } from 'expo-router';
 
 const StyledDropdown = styled(Dropdown);
@@ -25,8 +26,9 @@ export default function ProfilePage() {
     const handleLogout = async () => {
         try {
             await signOut();
+            // @ts-expect-error: route is there
             navigation.navigate('welcome');
-        } catch (e) {
+        } catch (e: any) {
             console.error('Error logging out:', e.message);
         }
     };
@@ -36,7 +38,8 @@ export default function ProfilePage() {
   };
 
     const navigateTopicSelection = () => {
-        navigation.navigate('updateTopics');
+      // @ts-expect-error: route is there
+      navigation.navigate('updateTopics');
     };
 
     const fetchSpeakersName = async () => {
@@ -50,17 +53,17 @@ export default function ProfilePage() {
         setVoices(speakers as Voice[] | null);
 
         
-        let { data: cur_voice, errorCur } = await supabase
+        const { data: curVoice } = await supabase
         .from('audio_preferences')
         .select('speaker_id')
         .eq("user_id", userId)
 
-        if(!cur_voice){
+        if(!curVoice || !speakers){
             return;
         }
 
-        if (cur_voice.length > 0) {
-            const speakerId = cur_voice[0].speaker_id;
+        if (curVoice.length > 0) {
+            const speakerId = curVoice[0].speaker_id;
     
             // Find the corresponding speaker in the speakers data
             const selectedSpeaker = speakers.find(speaker => speaker.id === speakerId);
@@ -75,7 +78,7 @@ export default function ProfilePage() {
         } else {
             console.error('No speaker_id found for the user.');
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error fetching speakers:', error.message);
     }
     };
@@ -84,12 +87,12 @@ export default function ProfilePage() {
         setSelectedValue(value);
         const selectedVoice = voices ? voices.find(voice => voice.id === value)?.id : null;
         
-        let { data: audio_preferences, error: userNotExistError } = await supabase
+        const { data: audioPreferences, error: userNotExistError } = await supabase
             .from('audio_preferences')
             .select('user_id')
             .eq('user_id', userId)
-        if(userNotExistError || !audio_preferences){
-            const { data, error } = await supabase
+        if(userNotExistError ?? !audioPreferences){
+            const {  error } = await supabase
             .from('audio_preferences')
             .insert({ user_id: userId, speaker_id: selectedVoice, length: "normal"})
             .select()
@@ -97,30 +100,38 @@ export default function ProfilePage() {
                 console.error(error)
             }
         } else {
-            const { data, error } = await supabase
+            const {  error } = await supabase
                 .from('audio_preferences')
                 .update({ speaker_id: selectedVoice })
                 .eq('user_id', userId)
                 .select()
             if(error){
-                console.error(error)
+                console.log(`error: ${error.message} - ${error.code}`)
             }
         }
       };
 
     useEffect(() => {
         const fetchFullName = async () => {
-            if (!userId) return
-
-            const name = await getFullName(userId);
-            setFullName(name)
+            try {
+                if (userId) { // Check if userId is defined
+                    const name = await getFullName(userId);
+                    if (name !== null) {
+                        setFullName(name);
+                    } else {
+                        console.log('Error fetching full name.');
+                    }
+                }
+            } catch (error: any) {
+                console.error('Error fetching full name:', error.message);
+            }
         };
         
         void fetchFullName();
         void fetchSpeakersName();
     }, [userId]);
 
-    if (!voices || voices === null) {
+    if (!voices) {
         return null; // or a loading component if you prefer
       }
 
@@ -131,7 +142,7 @@ export default function ProfilePage() {
         return <Redirect href="/login" />;
     }
   
-    return (
+  return (
         <View className="flex-1 justify-center content-center bg-white px-20">
             <View className="absolute top-8 left-4 z-10">
                 <Pressable onPress={handleGoBack}>
@@ -151,11 +162,21 @@ export default function ProfilePage() {
       </View>
 
       {/* Logout Button */}
-      <Pressable onPress={handleLogout}>
+      <Pressable onPress={() => {void handleLogout}}>
         <View className="rounded-md bg-primary p-2 mb-4">
           <Text className="font-primary text-white">Uitloggen</Text>
         </View>
       </Pressable>
+
+          <Pressable onPress={() => {
+            // @ts-expect-error: route is there
+            navigation.navigate('(clone)', { error: (false).toString()});
+            // navigation.navigate("(clone)")
+          }}>
+            <View className="rounded-md bg-primary p-2 mb-4">
+              <Text className="font-primary text-white">Clone je stem</Text>
+            </View>
+          </Pressable>
 
         {/* Voice Selection */}
         <View className='mb-4 rounded-md bg-primary px-2 py-1'>
@@ -164,23 +185,24 @@ export default function ProfilePage() {
             selectedTextStyle={styles.TextStyle}
             placeholderStyle={styles.TextStyle}
             data={data}
+            // @ts-expect-error: labelField and valueField are there
             labelField="label"
+            // @ts-expect-error: labelField and valueField are there
             valueField="value"
             placeholder={!isFocus ? (selectedValue ?? 'Selecteer stem') : '...'}
             value={value}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            onChange={item => {
+            onFocus={() => { setIsFocus(true); }}
+            onBlur={() => { setIsFocus(false); }}
+            onChange={(item: any) => {
                 setValue(item.value);
                 setIsFocus(false);
-                handleVoiceSelection(item.value);
+                void handleVoiceSelection(item.value);
             }}
             renderLeftIcon={() => (
                 <View className='pr-2'>
                     <Icon name="record-voice-over" size={24} color="white" />
                 </View>
-            )}
-            />
+            )}></StyledDropdown>
         </View>
     </View>
         
