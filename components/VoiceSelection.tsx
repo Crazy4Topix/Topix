@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Pressable, SafeAreaView, View, Text, ScrollView, ToastAndroid } from 'react-native';
 import { useNavigation } from 'expo-router';
-import { getSample, getSampleBySpeakerId, supabase } from '../lib/supabase';
+import { getSampleBySpeakerId, supabase } from '../lib/supabase';
 import { SupabaseUserSession } from '../contexts/user_session';
 import { AudioPlayerContext } from '../contexts/audio_player';
 
