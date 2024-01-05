@@ -96,7 +96,16 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   };
 
   const getTime = async () => {
-    const info = await SoundPlayer.getInfo();
+    const timeout = 100;
+    let info = null;
+    await Promise.race([
+      info = await SoundPlayer.getInfo(),
+      // eslint-disable-next-line promise/param-names
+      new Promise((_, reject) => setTimeout(() => {
+        reject(new Error('timeout'));
+      }, timeout)),
+    ]);
+
     if (info != null) {
       return info.currentTime;
     } else {
