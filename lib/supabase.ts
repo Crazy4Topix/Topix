@@ -34,15 +34,13 @@ export async function signInWithEmail(email: string, password: string) {
 }
 
 export async function signUpWithEmail(email: string, password: string) {
-  console.log('signUpWithEmail', email, password);
   const { error, data } = await supabase.auth.signUp({
     email,
     password,
   });
 
   if (error != null) {
-    console.log(error);
-    Alert.alert(error.message);
+    console.error(error);
     return { error, data: null };
   }
 
@@ -61,23 +59,18 @@ export async function signOut() {
 }
 
 export async function getFullName(userId: string) {
-  try {
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('full_name')
-      .eq('id', userId)
-      .single(); // Assuming you want to fetch a single profile
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('full_name')
+    .eq('id', userId)
+    .single();
 
-    if (error != null) {
-      console.log(error.message);
-      return { error };
-    }
-
-    return profile?.full_name || null;
-  } catch (error) {
-    console.error('Error fetching full name:', (error as Error).message);
+  if (error != null) {
+    console.error(error.details);
     return null;
   }
+  
+  return profile?.full_name || null;
 }
 
 export async function getSample(userId: string) {
@@ -107,4 +100,5 @@ export async function getSample(userId: string) {
     console.error('Error fetching full name:', (error as Error).message);
     return null;
   }
+
 }
