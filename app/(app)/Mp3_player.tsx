@@ -33,29 +33,31 @@ const AudioPlayer = () => {
   }
 
   const currentPodcastInfo = (currTimestamp: number) => {
-    for (let i = 0; i < audioContext.podcastInfo.length; i++) {
-      if (
-        currTimestamp >= audioContext.podcastInfo[i].timestamp &&
-        (i === audioContext.podcastInfo.length - 1 ||
-          currTimestamp < audioContext.podcastInfo[i + 1].timestamp)
-      ) {
+        let indexCurrentArticle = 0;
+        for(let i = audioContext.podcastInfo.length - 1; i >=0; i--) {
+          if (audioContext.podcastInfo[i].timestamp <= currTimestamp) {
+            indexCurrentArticle = i;
+            break;
+          }
+        }
+
         const thumbnail =
-          audioContext.podcastInfo[i].thumbnail !== ''
-            ? { uri: audioContext.podcastInfo[i].thumbnail }
+          audioContext.podcastInfo[indexCurrentArticle].thumbnail !== ''
+            ? { uri: audioContext.podcastInfo[indexCurrentArticle].thumbnail }
             : require('../../assets/images/Topix_zwart.png');
         return (
           <>
             <Image source={thumbnail} className="h-64 w-64" />
             <Text className="mt-8  text-center font-primary_bold text-2xl text-white">
-              {audioContext.podcastInfo[i].news}
+              {audioContext.podcastInfo[indexCurrentArticle].news}
             </Text>
-            {audioContext.podcastInfo[i].source === '' ? (
+            {audioContext.podcastInfo[indexCurrentArticle].source === '' ? (
               <Text className="text-20 mt-4 font-primary text-xl text-primary">Welkom</Text>
             ) : (
               <Text
                 className="text-20 mt-4 font-primary text-xl text-primary underline"
                 onPress={() => {
-                  void Linking.openURL(audioContext.podcastInfo[i].source);
+                  void Linking.openURL(audioContext.podcastInfo[indexCurrentArticle].source);
                 }}
               >
                 Lees het orginele artikel
@@ -63,8 +65,6 @@ const AudioPlayer = () => {
             )}
           </>
         );
-      }
-    }
   };
 
   return (
@@ -101,7 +101,7 @@ const AudioPlayer = () => {
                   audioContext.seekBackward();
                 }}
               >
-                <Icon name="skip-previous" size={70} color="#00DEAD" />
+                <Icon name="skip-previous" size={70} color="white" />
               </TouchableOpacity>
               {audioContext.audioState && audioContext.audioState.isPlaying ? (
                 <TouchableOpacity className="flex rounded-full" onPress={audioContext.pauseTrack}>
@@ -118,10 +118,10 @@ const AudioPlayer = () => {
                   audioContext.seekForward();
                 }}
               >
-                <Icon name="skip-next" size={70} color="#00DEAD" />
+                <Icon name="skip-next" size={70} color="white" />
               </TouchableOpacity>
             </View>
-            <Seekbar className={"bg-red-400"} currTime={currTime}/>
+            <Seekbar className={""} currTime={currTime}/>
           </View>
         </>
       )}

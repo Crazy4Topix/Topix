@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, ToastAndroid} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { signOut, getFullName, supabase } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session'
+import { supabase } from '../../lib/supabase';
 import { Icon } from '@rneui/themed';
 import { Dropdown } from 'react-native-element-dropdown';
 import { styled } from 'nativewind';

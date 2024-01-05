@@ -2,6 +2,8 @@ import React, { createContext, useState } from 'react';
 import SoundPlayer from 'react-native-sound-player';
 import { type PodcastInfo } from '../types/podcast_info';
 
+const TIMEOUT = 100;
+
 interface Track {
   url: string;
   title: string;
@@ -64,7 +66,14 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [podcastInfo, setPodcastInfo] = useState<PodcastInfo[]>([]);
 
   const getDuration = async () => {
-    const info = await SoundPlayer.getInfo();
+    let info = null;
+    await Promise.race([
+      info = await SoundPlayer.getInfo(),
+      // eslint-disable-next-line promise/param-names
+      new Promise((_, reject) => setTimeout(() => {
+        reject(new Error('timeout'));
+      }, TIMEOUT)),
+    ]);
     if (info != null) {
       return info.duration;
     } else {
@@ -104,14 +113,13 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   };
 
   const getTime = async () => {
-    const timeout = 100;
     let info = null;
     await Promise.race([
       info = await SoundPlayer.getInfo(),
       // eslint-disable-next-line promise/param-names
       new Promise((_, reject) => setTimeout(() => {
         reject(new Error('timeout'));
-      }, timeout)),
+      }, TIMEOUT)),
     ]);
 
     if (info != null) {
@@ -143,7 +151,14 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (currentTrack) {
       try {
         // Calculate the target time based on the percentage
-        const info = await SoundPlayer.getInfo();
+        let info = null;
+        await Promise.race([
+          info = await SoundPlayer.getInfo(),
+          // eslint-disable-next-line promise/param-names
+          new Promise((_, reject) => setTimeout(() => {
+            reject(new Error('timeout'));
+          }, TIMEOUT)),
+        ]);
         let targetTime = 0;
         if (info.currentTime < info.duration + 10) {
           targetTime = info.currentTime + 10;
@@ -164,7 +179,14 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (currentTrack) {
       try {
         // Calculate the target time based on the percentage
-        const info = await SoundPlayer.getInfo();
+        let info = null;
+        await Promise.race([
+          info = await SoundPlayer.getInfo(),
+          // eslint-disable-next-line promise/param-names
+          new Promise((_, reject) => setTimeout(() => {
+            reject(new Error('timeout'));
+          }, TIMEOUT)),
+        ]);
         let targetTime = 0;
         if (info.currentTime > 11) {
           targetTime = info.currentTime - 11;
