@@ -85,8 +85,6 @@ export async function getSampleBySpeakerId(speakerId: string) {
       .from('audio')
       .getPublicUrl(`samples/${speakerId}/sample.mp3`)
 
-    console.log('getSample', data.publicUrl);
-
     return data.publicUrl;
   } catch (error) {
     console.error('Error fetching sample:', (error as Error));
