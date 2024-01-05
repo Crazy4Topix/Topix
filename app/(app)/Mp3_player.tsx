@@ -73,14 +73,12 @@ const AudioPlayer = () => {
         <Pressable
           className={'mt-10 flex w-full'}
           onPress={() => {
-            router.back();
-
-            if (router.canGoBack()) {
-              router.back();
-            } else {
+            // if (router.canGoBack()) {
+            //   router.back();
+            // } else {
               // @ts-expect-error It complains about never but it is there
               navigation.navigate('index', { screen: 'index' });
-            }
+            // }
           }}
         >
           <Icon name={'expand-more'} color={'white'} size={52} className={'mx-2 self-start'} />

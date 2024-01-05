@@ -179,17 +179,19 @@ export default function homePage() {
     }
 
     const DateThumbnailArray: any[] = [];
-    const today = new Date();
-    today.setDate(today.getDate() - 7);
-    const lastWeek = `${padTo2Digits(today.getFullYear())}-${padTo2Digits(
-      today.getMonth() + 1,
-    )}-${today.getDate()}`;
+
+    // For DEMO purposes commented out
+    // const today = new Date();
+    // today.setDate(today.getDate() - 7);
+    // const lastWeek = `${padTo2Digits(today.getFullYear())}-${padTo2Digits(
+    //   today.getMonth() + 1,
+    // )}-${today.getDate()}`;
 
     const { data: podcasts, error: fetchPodcastsError } = await supabase
       .from('podcasts')
       .select('podcast_link, created_at, start_timestamp,  audio_1, audio_2, audio_3')
-      .gte('created_at', lastWeek)
-      .eq('user_id', userId);
+      // .gte('created_at', lastWeek)
+      .eq('user_id', userId).limit(20);
     if (fetchPodcastsError) {
       console.error(fetchPodcastsError.message);
       return;
@@ -226,11 +228,12 @@ export default function homePage() {
 
     const NewsThumbnailArray = [];
 
-    const lastWeekD = new Date();
-    lastWeekD.setDate(lastWeekD.getDate() - 7);
-    const lastWeek = `${padTo2Digits(lastWeekD.getFullYear())}-${padTo2Digits(
-      lastWeekD.getMonth() + 1,
-    )}-${lastWeekD.getDate()}`;
+    // For DEMO purposes commented out
+    // const lastWeekD = new Date();
+    // lastWeekD.setDate(lastWeekD.getDate() - 7);
+    // const lastWeek = `${padTo2Digits(lastWeekD.getFullYear())}-${padTo2Digits(
+    //   lastWeekD.getMonth() + 1,
+    // )}-${lastWeekD.getDate()}`;
 
     // Get the speaker_id of the preferred speaker of the user
     const { data: speakerId, error: fetchSpeakerError } = await supabase
@@ -245,8 +248,8 @@ export default function homePage() {
     const { data: items, error: fetchItemsError } = await supabase
       .from('audio')
       .select('length, link, news_id')
-      .gte('created_at', lastWeek)
-      .eq('speaker_id', speakerId?.speaker_id);
+      // .gte('created_at', lastWeek)
+      .eq('speaker_id', speakerId?.speaker_id).limit(20);
     if (fetchItemsError) {
       console.error(fetchItemsError.message);
       return;
@@ -312,7 +315,7 @@ export default function homePage() {
 
   return (
     <View className={'flex h-full w-full justify-center bg-white'}>
-      <ScrollView>
+      <ScrollView className={""}>
         <View className={'mb-2 bg-background px-2 pb-5 pt-8'}>
           <View className={'mx-2 flex  flex-row justify-between'}>
             <View>
@@ -374,7 +377,7 @@ export default function homePage() {
         )}
 
         {oldPodcastsThumbnails.length > 0 && (
-          <View className={"pl-2"}>
+          <View className={"pl-2 pb-20"}>
             <Text className={'font-Poppins_700_bold mx-2 mt-4 text-2xl font-semibold'}>
               Terugluisteren
             </Text>
