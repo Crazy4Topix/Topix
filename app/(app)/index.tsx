@@ -29,7 +29,7 @@ export default function homePage() {
         router.push({ pathname: '/Mp3_player' });
     };
 
-    const [fullName, setFullName] = useState<String|null>('');
+    const [fullName, setFullName] = useState<string|null>('');
     const [greeting, setGreeting] = useState('');
     const [newsThumbnails, setNewsThumbnails] = useState<React.JSX.Element[]>(
         [...Array(10).keys()].map((i) => <NewsThumbnailSkeleton key={i} />)
