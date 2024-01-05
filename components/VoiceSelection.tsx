@@ -18,6 +18,7 @@ interface Navigation {
 const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
     const [voices, setVoices] = useState<Voice[]>();
     const [selectedVoice, setSelectedVoice] = useState<Voice>();
+    const [isSignup, setIsSignup] = useState<boolean>(true);
 
     const navigation = useNavigation();
     const userContext = useContext(SupabaseUserSession); 
@@ -26,7 +27,31 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
   
     useEffect(() => {
         void loadVoices();
+        if (navigationDest === "profile"){
+            setIsSignup(false)
+        }
     }, []);
+
+    useEffect(() => {
+        if(!isSignup){
+            getCurrentSelectedVoice();
+        }
+    }, [isSignup, voices])
+
+    const getCurrentSelectedVoice = async () => {
+        const{data: speaker, error} = await supabase
+            .from('audio_preferences')
+            .select('speaker_id')
+            .eq('user_id', userId)
+            .single()
+
+        if(error !== null){
+            console.error(`failed to get current voice ${error}`)
+            return
+        }
+        const currentVoice = voices?.find(voice => voice.id === speaker.speaker_id)
+        setSelectedVoice(currentVoice)
+    }
 
     const getBackgroundColor = (voice: Voice): string => {
         return voice === selectedVoice ? 'bg-primary' : 'bg-gray-300'
@@ -43,12 +68,24 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
             length: 'normal',
         };
 
-        const { data, error } = await supabase.from('audio_preferences').insert(rowToInsert).select();
-
-        if (error !== null) {
-        console.error(error);
+        if(isSignup){
+            const { data, error} = await supabase.from('audio_preferences').insert(rowToInsert).select();
+            if (error !== null) {
+                console.error(error);
+                return
+            }
+        } else {
+            const { data, error } = await supabase
+                .from('audio_preferences')
+                .update(rowToInsert)
+                .eq("user_id", userId)
+                .select();
+            if (error !== null) {
+                console.error(error);
+                return
+            }
         }
-
+        audioContext.pauseTrack()
         // @ts-expect-error It complains about never but it is there
         navigation.navigate(navigationDest);
     };

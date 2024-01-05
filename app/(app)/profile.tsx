@@ -8,6 +8,13 @@ import { Icon } from 'react-native-elements';
 import { Dropdown } from 'react-native-element-dropdown';
 import { styled } from 'nativewind';
 import { Redirect } from 'expo-router';
+import { StringLiteral } from 'typescript';
+
+interface Voice{
+    id: string;
+    name: String;
+    display_name: string
+}
 
 const StyledDropdown = styled(Dropdown);
 
@@ -100,6 +107,10 @@ export default function ProfilePage() {
         navigation.navigate('updateTopics');
     };
 
+    const navigateVoiceSelection = () => {
+        navigation.navigate('updateVoice')
+    }
+
     const handleVoiceSelection = async (value: string | null) => {
         setSelectedVoice(value);
         const selectedVoice = voices ? voices.find(voice => voice.id === value)?.id : null;
@@ -142,6 +153,10 @@ export default function ProfilePage() {
         void fetchSpeakersName();
     }, [userId]);
 
+    const playAudioSample = async (voice: Voice) => {
+
+    }
+
     if (!voices || voices === null) {
         return null;
     }
@@ -172,37 +187,19 @@ export default function ProfilePage() {
         </Pressable>
       </View>
 
+        {/* Voice Selection */}
+      <View className="mb-4 rounded-md bg-primary p-2">
+        <Pressable onPress={navigateVoiceSelection}>
+          <Text className="font-primary text-white">Selecteer stem</Text>
+        </Pressable>
+      </View>
+
       {/* Logout Button */}
       <Pressable onPress={handleLogout}>
         <View className="rounded-md bg-primary p-2 mb-4">
           <Text className="font-primary text-white">Uitloggen</Text>
         </View>
       </Pressable>
-
-        {/* Voice Selection */}
-        <View className='mb-4 rounded-md bg-primary px-2 py-1'>
-            <StyledDropdown
-            className='bg-primary font-primary text-white'
-            selectedTextStyle={styles.TextStyle}
-            placeholderStyle={styles.TextStyle}
-            data={data}
-            labelField="label"
-            valueField="value"
-            placeholder={!isFocus ? (selectedVoice ?? 'Selecteer stem') : '...'}
-            value={selectedVoice}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            onChange={item => {
-                setIsFocus(false);
-                handleVoiceSelection(item.value);
-            }}
-            renderLeftIcon={() => (
-                <View className='pr-2'>
-                    <Icon name="record-voice-over" size={24} color="white" />
-                </View>
-            )}
-            />
-        </View>
     </View>
         
   );
