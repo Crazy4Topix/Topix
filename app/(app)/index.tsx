@@ -374,14 +374,14 @@ export default function homePage() {
         )}
 
         {oldPodcastsThumbnails.length > 0 && (
-          <>
+          <View className={"pl-2"}>
             <Text className={'font-Poppins_700_bold mx-2 mt-4 text-2xl font-semibold'}>
               Terugluisteren
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {oldPodcastsThumbnails}
             </ScrollView>
-          </>
+          </View>
         )}
       </ScrollView>
       <View className={'absolute bottom-0 h-16 w-full'}>
