@@ -84,6 +84,7 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
                 console.error(error);
                 return
             }
+            ToastAndroid.show(`Morgen staat er een nieuwe podcast voor je klaar met ${selectedVoice.display_name}!`, ToastAndroid.LONG)
         }
         audioContext.pauseTrack()
         // @ts-expect-error It complains about never but it is there

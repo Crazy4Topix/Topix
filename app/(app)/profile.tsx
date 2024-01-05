@@ -23,72 +23,7 @@ export default function ProfilePage() {
     const navigation = useNavigation();
     const [fullName, setFullName] = useState('');
     const userContext = useContext(SupabaseUserSession);
-    const userId = userContext.session?.user.id; 
-    const [voices, setVoices] = useState<Voice[] | null>(null);
-    const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
-    const [isFocus, setIsFocus] = useState(false);
-
-    useEffect(() => {
-        
-        void fetchFullName();
-        void fetchSpeakersName();
-    }, [userId]);
-
-
-    const fetchFullName = async () => {
-        try {
-            if (userId) {
-                const name = await getFullName(userId);
-                if (name !== null) {
-                    setFullName(name);
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching full name:', error.message);
-        }
-    };
-
-    const fetchSpeakersName = async () => {
-        try {
-            const { data: speakers, error } = await supabase
-                .from('speakers')
-                .select('display_name, id, name')
-                .eq("published", true);
-            if (error) {
-                console.error(error);
-            }
-            if (!speakers){
-                return
-            }
-            setVoices(speakers as Voice[] | null);
-    
-            
-            let { data: cur_voice, error: errorCur } = await supabase
-                .from('audio_preferences')
-                .select('speaker_id')
-                .eq("user_id", userId)
-                .single()
-            if(errorCur){
-                console.error(errorCur)
-                return
-            }
-    
-            if(!cur_voice){
-                return;
-            }
-    
-            const speakerId = cur_voice.speaker_id;
-            const selectedSpeaker = speakers.find(speaker => speaker.id === speakerId);
-    
-            if (selectedSpeaker) {
-                setSelectedVoice(selectedSpeaker.id)
-            } else {
-                console.error(`Speaker not found for id: ${cur_voice.speaker_id}`);
-            }
-        } catch (error) {
-            console.error('Error fetching speakers:', error.message);
-        }
-        };
+    const userId = userContext.session?.user.id;
 
     const handleLogout = async () => {
         try {
@@ -111,36 +46,6 @@ export default function ProfilePage() {
         navigation.navigate('updateVoice')
     }
 
-    const handleVoiceSelection = async (value: string | null) => {
-        setSelectedVoice(value);
-        const selectedVoice = voices ? voices.find(voice => voice.id === value)?.id : null;
-        
-        let { data: audio_preferences, error: userNotExistError } = await supabase
-            .from('audio_preferences')
-            .select('user_id')
-            .eq('user_id', userId)
-            .single()
-        
-        if(userNotExistError || !audio_preferences){
-            const { data, error } = await supabase
-            .from('audio_preferences')
-            .insert({ user_id: userId, speaker_id: selectedVoice, length: "normal"})
-            .select()
-            if(error){
-                console.error(error)
-            }
-        } else {
-            const { data, error } = await supabase
-                .from('audio_preferences')
-                .update({ speaker_id: selectedVoice })
-                .eq('user_id', userId)
-                .select()
-            if(error){
-                console.error(error)
-            }
-        }
-      };
-
     useEffect(() => {
         const fetchFullName = async () => {
             if (!userId) return
@@ -150,18 +55,7 @@ export default function ProfilePage() {
         };
         
         void fetchFullName();
-        void fetchSpeakersName();
     }, [userId]);
-
-    const playAudioSample = async (voice: Voice) => {
-
-    }
-
-    if (!voices || voices === null) {
-        return null;
-    }
-
-    const data = voices.map(voice => ({ label: voice.display_name, value: voice.id }))
 
     if (fullName === null){
         ToastAndroid.show('Account is niet compleet, neem contact op met Crazy4.', ToastAndroid.LONG);
@@ -204,9 +98,3 @@ export default function ProfilePage() {
         
   );
 }
-
-const styles = StyleSheet.create({
-    TextStyle: {
-      color: 'white'
-    }
-  });
