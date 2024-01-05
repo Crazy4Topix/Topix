@@ -1,8 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Pressable, SafeAreaView, View, Text, ScrollView } from 'react-native';
+import { Pressable, SafeAreaView, View, Text, ScrollView, ToastAndroid } from 'react-native';
 import { useNavigation } from 'expo-router';
-import { supabase } from '../lib/supabase';
+import { getSample, getSampleBySpeakerId, supabase } from '../lib/supabase';
 import { SupabaseUserSession } from '../contexts/user_session';
+import { AudioPlayerContext } from '../contexts/audio_player';
 
 interface Voice {
     id: string;
@@ -20,6 +21,8 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
 
     const navigation = useNavigation();
     const userContext = useContext(SupabaseUserSession); 
+    const userId = userContext.session?.user.id;
+    const audioContext = useContext(AudioPlayerContext);
   
     useEffect(() => {
         void loadVoices();
@@ -30,7 +33,10 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
     };
 
     const handleSubmit = async () => {
-        const userId = userContext.session?.user.id;
+        if(!selectedVoice){
+            ToastAndroid.show("Please select a voice before proceeding", ToastAndroid.LONG)
+            return
+        }
         const rowToInsert = {
             user_id: userId,
             speaker_id: selectedVoice.id,
@@ -62,6 +68,15 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
         }
         setVoices(voices);
     };
+
+    const playSample = async (speaker: Voice) =>{
+        const sampleUrl = await getSampleBySpeakerId(speaker.id);
+        if (!sampleUrl) {
+            ToastAndroid.show("Sample could not be loaded", ToastAndroid.LONG)
+            return
+        }
+        await audioContext.setupAndAddAudio(sampleUrl, 'Sample', speaker.display_name);
+    }
     
     return (
         <View className={'flex-centering h-full w-full bg-white pb-4'}>
@@ -81,6 +96,7 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
                                 className={`${getBackgroundColor(voice)} flex h-20 w-5/12 justify-center rounded-lg`}
                                 key={'voice-' + voice.name}
                                 onPress={() => {
+                                    playSample(voice)
                                     setSelectedVoice(voice);
                                 }}
                                 >

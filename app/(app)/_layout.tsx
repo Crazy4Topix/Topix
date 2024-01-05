@@ -19,14 +19,13 @@ export default function TabLayout() {
         setSession(session);
       }
     });
-  }, []); // Empty dependency array to run the effect only once on component mount
+  }, []);
 
   if (redirectToWelcome) {
     return <Redirect href="/welcome" />;
   }
 
   return (
-    <AudioPlayerProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen
           name="index"
@@ -55,6 +54,5 @@ export default function TabLayout() {
           }}
         />
       </Stack>
-    </AudioPlayerProvider>
   );
 }

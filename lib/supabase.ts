@@ -77,3 +77,19 @@ export async function getFullName(userId: string) {
     return null;
   }
 }
+
+export async function getSampleBySpeakerId(speakerId: string) {
+  try {
+    const { data } = supabase
+      .storage
+      .from('audio')
+      .getPublicUrl(`samples/${speakerId}/sample.mp3`)
+
+    console.log('getSample', data.publicUrl);
+
+    return data.publicUrl;
+  } catch (error) {
+    console.error('Error fetching sample:', (error as Error));
+    return null;
+  }
+}
