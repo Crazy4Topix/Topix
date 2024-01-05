@@ -1,5 +1,5 @@
 import React, { type FunctionComponent, useContext } from 'react';
-import { Pressable, SafeAreaView, Text, TextInput, View, StatusBar } from 'react-native';
+import { Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
 import * as yup from 'yup';
 import { supabase } from '../lib/supabase';
 import { Formik } from 'formik';
@@ -53,7 +53,6 @@ const userInformation: FunctionComponent = () => {
 
   return (
     <SafeAreaView className={'h-full w-full bg-white px-5 pt-12'}>
-      <StatusBar barStyle="light-content" />
       <Formik
         initialValues={{ name: '', birthday: new Date() }}
         onSubmit={submitForm}

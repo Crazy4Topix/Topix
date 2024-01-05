@@ -32,8 +32,6 @@ export const cloneVoice = async (recording: Recording, name: string, session: Se
     console.log(e)
   })
 
-  console.log(res)
-
   return res;
 }
 

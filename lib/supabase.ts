@@ -130,7 +130,6 @@ export async function buyPremium(userId: string) {
 
 export async function getSample(userId: string) {
   try {
-    console.log('getSample', userId);
     const { data: speaker, error } = await supabase
       .from('speakers')
       .select('id')
@@ -140,15 +139,12 @@ export async function getSample(userId: string) {
     if (error != null) {
       throw new Error(error.message);
     }
-    console.log('getSample', speaker.id);
 
 
     const { data } = supabase
       .storage
       .from('audio')
       .getPublicUrl(`samples/${speaker.id}/sample.mp3`)
-
-    console.log('getSample', data.publicUrl);
 
     return data.publicUrl;
   } catch (error) {

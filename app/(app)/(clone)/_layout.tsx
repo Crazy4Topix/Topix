@@ -12,7 +12,6 @@ export default function TabLayout() {
   useEffect(() => {
     void supabase.auth.getSession().then(({ data: { session } }) => {
       if (session == null) {
-        console.log('Redirecting to welcome');
         SplashScreen.hideAsync();
         setRedirectToWelcome(true);
       } else {

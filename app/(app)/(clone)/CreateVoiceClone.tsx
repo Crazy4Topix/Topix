@@ -73,9 +73,7 @@ const CreateVoiceClone: FunctionComponent = () => {
       return;
     }
 
-    console.log("Sending recording to server");
     const resp = await cloneVoice(recording, userContext.session.user?.id , userContext.session);
-    console.log(resp);
 
     const uri = recording.getURI();
     console.log('Recording stopped and stored at', uri);

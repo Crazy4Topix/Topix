@@ -17,7 +17,6 @@ const Sample: FunctionComponent = () => {
 
 
   useEffect(() => {
-    console.log('user', session?.user);
     if(session == null) return;
 
     void getSample(session.user.id).then((url) => {

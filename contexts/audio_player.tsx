@@ -16,7 +16,6 @@ interface AudioPlayerState {
   isPlaying: boolean;
   currentTime: number;
   lastTimeCheck: Date;
-  duration: number;
 }
 
 interface AudioPlayerContextProps {
@@ -39,7 +38,6 @@ export const AudioPlayerContext = createContext<AudioPlayerContextProps>({
     isPlaying: false,
     currentTime: 0,
     lastTimeCheck: new Date(),
-    duration: 0,
   },
   podcastInfo: [],
   setPodcastInfo: () => {
@@ -67,21 +65,13 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     isPlaying: false,
     currentTime: 0,
     lastTimeCheck: new Date(),
-    duration: 0,
   });
   const [podcastInfo, setPodcastInfo] = useState<PodcastInfo[]>([]);
 
   const getDuration = async () => {
-    let info = null;
-    await Promise.race([
-      info = await SoundPlayer.getInfo(),
-      // eslint-disable-next-line promise/param-names
-      new Promise((_, reject) => setTimeout(() => {
-        reject(new Error('timeout'));
-      }, TIMEOUT)),
-    ]);
+    const info = await SoundPlayer.getInfo();
 
-    if (info != null) {
+    if (info) {
       return info.duration;
     } else {
       return 0;
@@ -108,6 +98,10 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       console.error('Error pausing track:', e);
     }
   };
+
+  SoundPlayer.onFinishedPlaying(async () => {
+    setAudioState({ ...audioState, isPlaying: false, currentTime: 0, lastTimeCheck: new Date() });
+  })
 
   const resumeTrack = () => {
     try {
@@ -155,7 +149,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         // Seek to the calculated time
         SoundPlayer.seek(targetTime);
         SoundPlayer.play();
-        setAudioState({ ...audioState, currentTime: targetTime, lastTimeCheck: new Date(), isPlaying: true });
+        setAudioState({ ...audioState, currentTime: targetTime, isPlaying: true, lastTimeCheck: new Date() });
       } catch (e) {
         console.error('Error seeking:', e);
       }
@@ -167,15 +161,15 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (currentTrack) {
       try {
         // Calculate the target time based on the percentage
-
         let targetTime = 0;
-        if (audioState.currentTime < audioState.duration + 10) {
+        if (audioState.currentTime < currentTrack.track_duration + 10) {
           targetTime = audioState.currentTime + 10;
         } else {
-          targetTime = audioState.duration;
+          targetTime = currentTrack.track_duration;
         }
         // Seek to the calculated time
         SoundPlayer.seek(targetTime);
+        SoundPlayer.play();
         setAudioState({ ...audioState, currentTime: targetTime, isPlaying: true, lastTimeCheck: new Date() });
       } catch (e) {
         console.error('Error seeking:', e);
@@ -206,9 +200,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const setupAndAddAudio = async (url: string, title: string, artist: string) => {
     try {
       SoundPlayer.loadUrl(url);
-      SoundPlayer.play();
-      const duration = await getDuration();
 
+      const duration = await getDuration();
       const newAudioState = {
         ...audioState,
         currentTrack: {
@@ -216,14 +209,13 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
           title,
           artist,
           track_duration: duration,
-          currentTime: 0,
-          lastTimeCheck: new Date()
         },
-
+        currentTime: 0,
+        lastTimeCheck: new Date(),
         isPlaying: true,
       };
       setAudioState(newAudioState);
-
+      SoundPlayer.play();
     } catch (e) {
       console.error('Error setting up SoundPlayer:', e);
     }
