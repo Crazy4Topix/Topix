@@ -315,7 +315,7 @@ export default function homePage() {
 
   return (
     <View className={'flex h-full w-full justify-center bg-white'}>
-       <StatusBar barStyle={"light-content"}/>
+      <StatusBar barStyle={"light-content"} backgroundColor={"#212121"}/>
       <ScrollView>
         <View className={'mb-2 bg-background px-2 pb-5 pt-8'}>
           <View className={'mx-2 flex  flex-row justify-between'}>

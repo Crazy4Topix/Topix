@@ -27,7 +27,7 @@ const Introduction: FunctionComponent = () => {
           Als je klaar bent met de opname druk je nogmaals op de knop om de opname te stoppen.
         </Text>
         <Text className={"text-black text-3xl text-left font-primary_bold my-1 w-screen px-5"}>
-          Tip: lees de tekst voor zoals je het nieuws zou voorlezen en lees de tekst vantevoren een keer door.
+          Tip: lees de tekst voor zoals je het nieuws zou voorlezen en lees de tekst van tevoren een keer door.
         </Text>
       </ScrollView>
       <View className={"flex h-32 justify-center"}>
