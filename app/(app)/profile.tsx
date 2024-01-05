@@ -11,7 +11,7 @@ export default function ProfilePage() {
   const [fullName, setFullName] = useState('');
   const userContext = useContext(SupabaseUserSession);
   const userId = userContext.session?.user.id;
-  const [userIsPremium, setuserIsPremium] = useState(false);
+  const [userIsPremium, setUserIsPremium] = useState(false);
 
   useEffect(() => {
     if (userId) { // Check if userId is defined
@@ -30,7 +30,7 @@ export default function ProfilePage() {
 
       void fetchFullName();
       isPremium(userId).then((premium: boolean) => {
-        setuserIsPremium(premium);
+        setUserIsPremium(premium);
       }).catch((error: any) => {
         console.error('Error fetching premium status:', error.message);
       });
