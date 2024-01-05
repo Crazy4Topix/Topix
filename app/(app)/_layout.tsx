@@ -19,7 +19,7 @@ export default function TabLayout() {
         setSession(session);
       }
     });
-  }, []); // Empty dependency array to run the effect only once on component mount
+  }, []);
 
   if (redirectToWelcome) {
     return <Redirect href="/welcome" />;

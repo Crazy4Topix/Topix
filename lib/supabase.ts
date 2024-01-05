@@ -59,21 +59,16 @@ export async function signOut() {
 }
 
 export async function getFullName(userId: string) {
-  try {
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('full_name')
-      .eq('id', userId)
-      .single(); // Assuming you want to fetch a single profile
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('full_name')
+    .eq('id', userId)
+    .single();
 
-    if (error != null) {
-      console.error(error.message);
-      return { error };
-    }
-
-    return profile?.full_name || null;
-  } catch (error) {
-    console.error('Error fetching full name:', (error as Error).message);
+  if (error != null) {
+    console.error(error.details);
     return null;
   }
+
+  return profile?.full_name || null;
 }
