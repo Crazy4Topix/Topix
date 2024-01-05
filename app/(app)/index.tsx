@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Image, Pressable, ToastAndroid } from 'react-native';
+import { ScrollView, View, Text, Image, Pressable, ToastAndroid, StatusBar } from 'react-native';
 import NewsThumbnail from '../../components/NewsThumbnail';
 import React, { useContext, useEffect, useState } from 'react';
 import DateThumbnail from '../../components/DateThumbnail';
@@ -315,7 +315,8 @@ export default function homePage() {
 
   return (
     <View className={'flex h-full w-full justify-center bg-white'}>
-      <ScrollView className={""}>
+      <StatusBar barStyle={"light-content"}/>
+      <ScrollView>
         <View className={'mb-2 bg-background px-2 pb-5 pt-8'}>
           <View className={'mx-2 flex  flex-row justify-between'}>
             <View>

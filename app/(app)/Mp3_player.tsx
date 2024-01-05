@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, Pressable, Linking } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Pressable, Linking, StatusBar } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { AudioPlayerContext } from '../../contexts/audio_player';
 import { router, useNavigation } from 'expo-router';
@@ -69,6 +69,7 @@ const AudioPlayer = () => {
 
   return (
     <>
+      <StatusBar barStyle={"light-content"}/>
       <View className={'absolute left-0 top-0 z-10 w-full'}>
         <Pressable
           className={'mt-10 flex w-full'}

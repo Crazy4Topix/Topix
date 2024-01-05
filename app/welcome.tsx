@@ -1,10 +1,11 @@
-import { Text, Pressable, Image, SafeAreaView, View } from 'react-native';
+import { Text, Pressable, Image, SafeAreaView, View, StatusBar } from 'react-native';
 import { Link } from 'expo-router';
 
 export default function Welcome() {
   return (
     <SafeAreaView className={'justify-content flex h-full w-full bg-primary-text'}>
       <View id={'background'} className={'absolute left-0 top-0 z-0 h-full w-full'}>
+        <StatusBar hidden={true} />
         <Image
           source={require('../assets/images/audio.png')}
           className={'absolute -bottom-16 -left-16 aspect-square h-56 w-52'}

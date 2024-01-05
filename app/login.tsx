@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Pressable, TextInput, View, Text, SafeAreaView, Image } from 'react-native';
+import { Pressable, TextInput, View, Text, SafeAreaView, Image, StatusBar } from 'react-native';
 import { SupabaseUserSession } from '../contexts/user_session';
 import { Formik } from 'formik';
 import * as yup from 'yup';

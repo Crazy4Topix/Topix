@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Pressable, ToastAndroid } from 'react-native';
+import { View, Text, Pressable, ToastAndroid, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { signOut, getFullName, isPremium } from '../../lib/supabase';
 import { SupabaseUserSession } from '../../contexts/user_session';
@@ -73,6 +73,7 @@ export default function ProfilePage() {
 
   return (
     <View className="flex-1 justify-center content-center bg-white px-20">
+      <StatusBar barStyle={"dark-content"}/>
       <View className="absolute top-12 left-4 z-10">
         <Pressable onPress={handleGoBack}>
           <Icon name="keyboard-return" size={36} color="black" />
