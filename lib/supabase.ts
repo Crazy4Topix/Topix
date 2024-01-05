@@ -87,6 +87,47 @@ export async function getSampleBySpeakerId(speakerId: string) {
   }
 }
 
+export async function isPremium(userId: string) {
+  try {
+    const { data: premium, error } = await supabase
+      .from('profiles')
+      .select('premium')
+      .eq('id', userId)
+      .single(); // Assuming you want to fetch a single profile
+
+    if (error != null) {
+      throw new Error(error.message);
+    }
+
+    return premium.premium
+
+
+  } catch (error) {
+    console.error('Error fetching full name:', (error as Error).message);
+    return false;
+  }
+}
+
+// For demo purposes only
+export async function buyPremium(userId: string) {
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ premium: true })
+      .eq('id', userId)
+      .single(); // Assuming you want to fetch a single profile
+
+    if (error != null) {
+      throw new Error(error.message);
+    }
+
+    return true
+  }catch (error) {
+    console.error('Error buying premium:', (error as Error).message);
+    return false;
+  }
+}
+
 export async function getSample(userId: string) {
   try {
     console.log('getSample', userId);
