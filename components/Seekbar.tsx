@@ -15,7 +15,7 @@ const Seekbar: FunctionComponent<Props> = (props) => {
   const audioContext = useContext(AudioPlayerContext);
 
     return (
-      <View className={"w-full flex justify-center"}>
+      <View className={"w-full flex justify-center " + props.className}>
        <Slider
         value={audioContext.audioState.currentTrack ? props.currTime / audioContext.audioState.currentTrack.track_duration * 100 : 0}
         allowTouchTrack
@@ -32,12 +32,20 @@ const Seekbar: FunctionComponent<Props> = (props) => {
         style={{ width: '80%', alignSelf: 'center' }}
        />
         <View className={"flex justify-between self-center w-10/12 flex-row -mt-2"}>
-          <Text className={"text-white "}>{audioContext.audioState.currentTrack ? (props.currTime / 60).toFixed(2) : 0}</Text>
-          <Text className={"text-white"}>{audioContext.audioState.currentTrack ? (audioContext.audioState.currentTrack.track_duration / 60).toFixed(2) : 0}</Text>
+          <Text className={"text-white "}>{audioContext.audioState.currentTrack ? timeToTimeString(props.currTime) : 0}</Text>
+          <Text className={"text-white"}>{audioContext.audioState.currentTrack ? timeToTimeString(audioContext.audioState.currentTrack.track_duration) : 0}</Text>
         </View>
       </View>
 
     )
 };
+
+
+function timeToTimeString(time: number){
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+
+  return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+}
 
 export default Seekbar;

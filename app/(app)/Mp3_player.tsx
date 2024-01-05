@@ -122,7 +122,7 @@ const AudioPlayer = () => {
                 <Icon name="skip-next" size={70} color="#00DEAD" />
               </TouchableOpacity>
             </View>
-            <Seekbar className={"bg-red-400"} currTime={currTime}/>
+            <Seekbar className={""} currTime={currTime}/>
           </View>
         </>
       )}
