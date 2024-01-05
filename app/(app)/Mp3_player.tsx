@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Pressable, Linking } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Icon } from '@rneui/themed';
 import { AudioPlayerContext } from '../../contexts/audio_player';
 import { router, useNavigation } from 'expo-router';
+import Seekbar from "../../components/Seekbar";
 
 const AudioPlayer = () => {
   const audioContext = useContext(AudioPlayerContext);
@@ -16,7 +17,7 @@ const AudioPlayer = () => {
         void audioContext.getTime().then((time) => {
           setCurrTime(time);
         });
-      }, 1000);
+      }, 100);
 
       return () => {
         clearInterval(interval);
@@ -120,6 +121,7 @@ const AudioPlayer = () => {
                 <Icon name="skip-next" size={70} color="#00DEAD" />
               </TouchableOpacity>
             </View>
+            <Seekbar className={"bg-red-400"} currTime={currTime}/>
           </View>
         </>
       )}
