@@ -47,7 +47,7 @@ const BuyPremium: FunctionComponent = () => {
         <Text className={"text-xl font-primary text-left"}>- Geen advertenties</Text>
         <Text className={"text-xl font-primary text-left"}>- Eigen podcast stem</Text>
         <Text className={"text-xl font-primary text-left"}>- Premium stemmen</Text>
-        <Text className={"text-xl font-primary text-left"}>- Eigen topixs (binnenkort)</Text>
+        <Text className={"text-xl font-primary text-left"}>- Eigen Topix (binnenkort)</Text>
         <Text className={"text-xl font-primary text-left"}>- Eigen nieuwsbronnen {"\n"}   (binnenkort)</Text>
       </View>
       <Pressable className={"bg-yellow-600 rounded-2xl w-3/4 self-center py-2 mt-8"} onPress={() => {
