@@ -203,6 +203,7 @@ export default function homePage() {
     }
 
     let key = 0;
+    podcasts.sort((a, b) => b.created_at.localeCompare(a.created_at))
     for (const podcast of podcasts) {
       const info = await getPodcastInfo(podcast.start_timestamp, podcast.audio_1, podcast.audio_2, podcast.audio_3);
       podcast.created_at = podcast.created_at.split('T', 1);
