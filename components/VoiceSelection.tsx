@@ -24,7 +24,7 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
     const userContext = useContext(SupabaseUserSession); 
     const userId = userContext.session?.user.id;
     const audioContext = useContext(AudioPlayerContext);
-  
+
     useEffect(() => {
         void loadVoices();
         if (navigationDest === "profile"){
@@ -95,7 +95,9 @@ const VoiceSelection: React.FC<Navigation> = ({ navigationDest }) => {
         const { data: voices, error: fetchVoicesError } = await supabase
             .from('speakers')
             .select('*')
-            .eq('published', true);
+            .eq('published', true)
+            // Moet raw PostgREST gebruiken voor 'or' https://supabase.com/docs/reference/javascript/or
+            .or(`custom_voice_owner.is.null,custom_voice_owner.eq.${userContext.session?.user.id}`);
 
         if (fetchVoicesError) {
             console.error('Error getting current topics:', fetchVoicesError);
