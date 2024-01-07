@@ -13,7 +13,7 @@ const Introduction: FunctionComponent = () => {
       <ScrollView className={"pt-52"} pagingEnabled={true} horizontal={true} directionalLockEnabled={true}>
         <View className={"w-screen flex"}>
           <Text className={"px-5 text-black text-3xl text-left font-primary_bold my-1 "}>
-            Welkom bij de voice clone tool van Topix. Hiermee kun je je eigen stem klonen en gebruiken om het nieuws voor te lezen.
+            Welkom bij de voice clone tool van Topix. Hiermee kun je je eigen stem clonen en gebruiken om het nieuws voor te lezen.
           </Text>
           <StyledLottieView className={"-mt-10 w-screen"} source={require("../../../assets/lottie/swipe.json")} autoPlay loop />
         </View>
