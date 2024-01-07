@@ -66,10 +66,11 @@ export default function ProfilePage() {
     navigation.navigate('updateVoice');
   };
 
-  if (fullName === null) {
-    ToastAndroid.show('Account is niet compleet, neem contact op met Crazy4.', ToastAndroid.LONG);
-    return <Redirect href="/login" />;
-  }
+  // Blijft de hele tijd toast messages geven tijdens sign up
+  // if (fullName === null) {
+  //   ToastAndroid.show('Account is niet compleet, neem contact op met Crazy4.', ToastAndroid.LONG);
+  //   return <Redirect href="/login" />;
+  // }
 
   return (
     <View className="flex-1 justify-center content-center bg-white px-20">
